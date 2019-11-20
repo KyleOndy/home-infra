@@ -1,5 +1,5 @@
 network:
-  - name: master01
+  - name: master01.cluster01.509ely.com
     macaddress: 00:15:5d:59:33:08
 
 

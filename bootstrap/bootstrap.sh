@@ -93,7 +93,7 @@ fi
 MY_IP=$(hostname -I | awk '{print $1}')
 echo "My IP: $MY_IP"
 
-sed -ie "s|d-i mirror/http/proxy string .*|d-i mirror/http/proxy string http://${MY_IP}:3142/|" "$DIR/images/preseed.cfg"
+#sed -ie "s|d-i mirror/http/proxy string .*|d-i mirror/http/proxy string http://${MY_IP}:3142/|" "$DIR/images/preseed.cfg"
 
 sed -ie "s/{{MY_IP}}/${MY_IP}/" "$DIR/docker-compose.yml"
 sed -ie "s/{{MY_IP}}/${MY_IP}/" "$DIR/waitron/config.yaml"
@@ -105,10 +105,13 @@ sleep 5
 
 MACHINE="master01.cluster01.509ely.com"
 
-TOKEN=$(curl -s -X PUT "http://${MY_IP}:9090/build/${MACHINE}" | jq -r '.Token')
-curl -s -X GET "http://${MY_IP}:9090/status" | jq '.'
+#TOKEN=$(curl -s -X PUT "http://${MY_IP}:9090/build/${MACHINE}" | jq -r '.Token')
+curl -s -X PUT "http://${MY_IP}:9090/build/${MACHINE}"
+#curl -s -X GET "http://${MY_IP}:9090/status" | jq '.'
 
-curl -sX GET http://${MY_IP}:9090/template/preseed/${MACHINE}/${TOKEN} > /tmp/preseed.txt
+curl -sX PUT "http://${MY_IP}:9090/build/worker01.cluster01.509ely.com"
+
+#curl -sX GET http://${MY_IP}:9090/template/preseed/${MACHINE}/${TOKEN} > /tmp/preseed.txt
 
 #docker-compose logs --follow
 
