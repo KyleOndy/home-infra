@@ -1,0 +1,13 @@
+version: "3.7"
+services:
+  pixiecore:
+    build: ./pixiecore
+    network_mode: "host" # need to listen for dhcp
+    volumes:
+      - type: bind
+        source: ./images
+        target: /images
+    command: boot --log-timestamps --debug \
+               /images/vmlinuz \
+               /images/initrd.gz \
+               --cmdline='auto-install/enable=true debconf/priority=critical netcfg/choose_interface=auto preseed/url={{ ID "/images/preseed.cfg" }}'
