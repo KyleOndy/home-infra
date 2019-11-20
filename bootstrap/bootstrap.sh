@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -eou pipefail
 
 # used to bootstrap a new cluster. Need a single node up on the network, then run this script.
 
@@ -18,7 +19,27 @@ install_prereqs() {
   sudo apt update
   sudo apt install -qy \
     apt-cacher-ng \
-    curl
+    curl \
+    unzip
+}
+
+download_and_install_nomad() {
+  version="0.10.1"
+  arch="amd64" # default
+  tmp=$(mktemp -d)
+  zip_location="$tmp/nomad.zip"
+
+  if uname -a | grep -q ARM; then
+    echo "todo: ARM?"
+    exit 1
+  fi
+
+  download_url="https://releases.hashicorp.com/nomad/${version}/nomad_${version}_linux_${arch}.zip"
+  echo "url: $download_url"
+  curl -sL -o "$zip_location" "$download_url"
+  unzip -d "$tmp/nomad" "$zip_location"
+  sudo cp -v "$tmp/nomad/nomad" /usr/local/bin/nomad
+  sudo chmod +x /usr/local/bin/nomad
 }
 
 if is_installed "curl"; then
@@ -48,6 +69,24 @@ if is_installed "apt-cacher-ng"; then
 else
   install_prereqs
 fi
+
+if is_installed "unzip"; then
+  echo "unzip is installed"
+else
+  install_prereqs
+fi
+
+if is_installed "nomad"; then
+  echo "nomad is on PATH"
+else
+  download_and_install_nomad
+fi
+
+# todo: this is pretty fragile
+MY_IP=$(hostname -I | awk '{print $1}')
+echo "My IP: $MY_IP"
+
+sed -ie "s|d-i mirror/http/proxy string .*|d-i mirror/http/proxy string http://${MY_IP}:3142/|" "$DIR/images/preseed.cfg"
 
 docker-compose up --build
 
