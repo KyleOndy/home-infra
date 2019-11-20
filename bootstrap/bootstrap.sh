@@ -107,6 +107,8 @@ TOKEN=$(curl -s -X PUT http://${MY_IP}:9090/build/master01 | jq -r '.Token')
 curl -s -X GET "http://${MY_IP}:9090/status" | jq '.'
 #curl -s -X GET "http://${MY_IP}:9090/cancel/master01/${TOKEN}"
 
+curl -sX GET http://${MY_IP}:9090/template/preseed/master01/${TOKEN} > /tmp/preseed.txt
+
 #docker-compose logs --follow
 
 popd
