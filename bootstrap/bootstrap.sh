@@ -16,10 +16,11 @@ is_installed() {
 
 install_prereqs() {
   echo "installing prereqs from apt"
-  sudo apt update
+  sudo apt update -y
   sudo apt install -qy \
     apt-cacher-ng \
     curl \
+    jq \
     unzip
 }
 
@@ -82,6 +83,12 @@ else
   download_and_install_nomad
 fi
 
+if is_installed "jq"; then
+  echo "jq is installed"
+else
+  install_prereqs
+fi
+
 # todo: this is pretty fragile
 MY_IP=$(hostname -I | awk '{print $1}')
 echo "My IP: $MY_IP"
@@ -96,8 +103,9 @@ docker-compose up --build -d
 echo "sleeping 5..."
 sleep 5
 
-curl -s -X PUT http://${MY_IP}:9090/build/master01
-curl -s -X GET http://${MY_IP}:9090/status
+TOKEN=$(curl -s -X PUT http://${MY_IP}:9090/build/master01 | jq -r '.Token')
+curl -s -X GET "http://${MY_IP}:9090/status" | jq '.'
+#curl -s -X GET "http://${MY_IP}:9090/cancel/master01/${TOKEN}"
 
 #docker-compose logs --follow
 
