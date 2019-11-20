@@ -88,6 +88,18 @@ echo "My IP: $MY_IP"
 
 sed -ie "s|d-i mirror/http/proxy string .*|d-i mirror/http/proxy string http://${MY_IP}:3142/|" "$DIR/images/preseed.cfg"
 
-docker-compose up --build
+sed -ie "s/{{MY_IP}}/${MY_IP}/" "$DIR/docker-compose.yml"
+sed -ie "s/{{MY_IP}}/${MY_IP}/" "$DIR/waitron/config.yaml"
+
+docker-compose stop
+docker-compose up --build -d
+echo "sleeping 5..."
+sleep 5
+
+curl -s -X PUT http://${MY_IP}:9090/build/master01
+curl -s -X GET http://${MY_IP}:9090/status
+
+#docker-compose logs --follow
 
 popd
+
