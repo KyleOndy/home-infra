@@ -1,0 +1,13 @@
+[all:vars]
+config_system_locale='en_US.UTF-8'
+config_system_language='en_US.UTF-8'
+
+[pis]
+10.24.90.20
+#10.24.90.21
+#10.24.90.22
+
+[pis:vars]
+ansible_connection=ssh
+ansible_user=pi
+ansible_ssh_pass=raspberry

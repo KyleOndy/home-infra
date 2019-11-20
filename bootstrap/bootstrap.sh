@@ -103,11 +103,12 @@ docker-compose up --build -d
 echo "sleeping 5..."
 sleep 5
 
-TOKEN=$(curl -s -X PUT http://${MY_IP}:9090/build/master01 | jq -r '.Token')
-curl -s -X GET "http://${MY_IP}:9090/status" | jq '.'
-#curl -s -X GET "http://${MY_IP}:9090/cancel/master01/${TOKEN}"
+MACHINE="master01.cluster01.509ely.com"
 
-curl -sX GET http://${MY_IP}:9090/template/preseed/master01/${TOKEN} > /tmp/preseed.txt
+TOKEN=$(curl -s -X PUT "http://${MY_IP}:9090/build/${MACHINE}" | jq -r '.Token')
+curl -s -X GET "http://${MY_IP}:9090/status" | jq '.'
+
+curl -sX GET http://${MY_IP}:9090/template/preseed/${MACHINE}/${TOKEN} > /tmp/preseed.txt
 
 #docker-compose logs --follow
 

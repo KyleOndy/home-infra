@@ -1,0 +1,6 @@
+---
+collections:
+
+- name: vitalk.secure-ssh
+  version: '0.2.1'
+
