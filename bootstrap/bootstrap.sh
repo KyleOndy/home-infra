@@ -17,6 +17,7 @@ install_prereqs() {
   echo "installing prereqs from apt"
   sudo apt update
   sudo apt install -qy \
+    apt-cacher-ng \
     curl
 }
 
@@ -40,6 +41,12 @@ else
   echo "install docker-compose (via container)..."
   sudo curl -L --fail https://github.com/docker/compose/releases/download/1.24.1/run.sh -o /usr/local/bin/docker-compose
   sudo chmod +x /usr/local/bin/docker-compose
+fi
+
+if is_installed "apt-cacher-ng"; then
+  echo "apt-cacher-ng is installed"
+else
+  install_prereqs
 fi
 
 docker-compose up --build
