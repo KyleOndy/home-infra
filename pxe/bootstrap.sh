@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eou pipefail
 
-# used to bootstrap a new cluster. Need a single node up on the network, then run this script.
+# used to bootstrap fresh ubuntu images onto cluser nodes.
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 pushd "$DIR"
@@ -47,72 +47,39 @@ enable_pxe() {
   curl -sX PUT "http://${MY_IP}:9090/build/$1"
 }
 
-if is_installed "curl"; then
-  echo "curl installed!"
-else
+if ! is_installed "curl" || ! is_installed "apt-cacher-ng" || ! is_installed "jq" || ! is_installed "unzip"; then
   install_prereqs
 fi
 
-if is_installed "docker"; then
-  echo "docker installed"
-else
+if ! is_installed "docker"; then
   echo "installing docker..."
   curl -fsSL https://get.docker.com | sudo sh
-  sudo usermod -aG docker $(whoami)
+  sudo usermod -aG docker "$(whoami)"
 fi
 
-if is_installed "docker-compose"; then
-  echo "docker-compose is installed"
-else
+if ! is_installed "docker-compose"; then
   echo "install docker-compose (via container)..."
   sudo curl -L --fail https://github.com/docker/compose/releases/download/1.24.1/run.sh -o /usr/local/bin/docker-compose
   sudo chmod +x /usr/local/bin/docker-compose
-fi
-
-if is_installed "apt-cacher-ng"; then
-  echo "apt-cacher-ng is installed"
-else
-  install_prereqs
-fi
-
-if is_installed "unzip"; then
-  echo "unzip is installed"
-else
-  install_prereqs
-fi
-
-if is_installed "nomad"; then
-  echo "nomad is on PATH"
-else
-  download_and_install_nomad
-fi
-
-if is_installed "jq"; then
-  echo "jq is installed"
-else
-  install_prereqs
 fi
 
 # todo: this is pretty fragile
 MY_IP=$(hostname -I | awk '{print $1}')
 echo "My IP: $MY_IP"
 
-#sed -ie "s|d-i mirror/http/proxy string .*|d-i mirror/http/proxy string http://${MY_IP}:3142/|" "$DIR/images/preseed.cfg"
-
+# todo: there is proably a better way to handle injects the IP address.
 sed -ie "s/{{MY_IP}}/${MY_IP}/" "$DIR/docker-compose.yml"
 sed -ie "s/{{MY_IP}}/${MY_IP}/" "$DIR/waitron/config.yaml"
 
+# stop anything that was running before
 docker-compose stop
 docker-compose up --build -d
+
+# make sure everyting is up
 echo "sleeping 5..."
 sleep 5
 
-MACHINE="master01.cluster01.509ely.com"
-
-#TOKEN=$(curl -s -X PUT "http://${MY_IP}:9090/build/${MACHINE}" | jq -r '.Token')
-#curl -s -X PUT "http://${MY_IP}:9090/build/${MACHINE}"
-#curl -s -X GET "http://${MY_IP}:9090/status" | jq '.'
-
+# todo: add abilty to selectivly enable each of these.
 enable_pxe master01.cluster01.509ely.com
 enable_pxe master02.cluster01.509ely.com
 enable_pxe master03.cluster01.509ely.com
@@ -120,9 +87,4 @@ enable_pxe worker01.cluster01.509ely.com
 enable_pxe worker02.cluster01.509ely.com
 enable_pxe worker02.cluster01.509ely.com
 
-#curl -sX GET http://${MY_IP}:9090/template/preseed/${MACHINE}/${TOKEN} > /tmp/preseed.txt
-
-#docker-compose logs --follow
-
 popd
-
