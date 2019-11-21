@@ -1,0 +1,5 @@
+network:
+  - name: worker02.cluster01.509ely.com
+    macaddress: 01:1e:06:45:28:5c
+    # todo: only supports one mac address
+    #macaddress: 00:1e:06:45:28:5d

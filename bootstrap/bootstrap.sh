@@ -43,6 +43,10 @@ download_and_install_nomad() {
   sudo chmod +x /usr/local/bin/nomad
 }
 
+enable_pxe() {
+  curl -sX PUT "http://${MY_IP}:9090/build/$1"
+}
+
 if is_installed "curl"; then
   echo "curl installed!"
 else
@@ -106,10 +110,15 @@ sleep 5
 MACHINE="master01.cluster01.509ely.com"
 
 #TOKEN=$(curl -s -X PUT "http://${MY_IP}:9090/build/${MACHINE}" | jq -r '.Token')
-curl -s -X PUT "http://${MY_IP}:9090/build/${MACHINE}"
+#curl -s -X PUT "http://${MY_IP}:9090/build/${MACHINE}"
 #curl -s -X GET "http://${MY_IP}:9090/status" | jq '.'
 
-curl -sX PUT "http://${MY_IP}:9090/build/worker01.cluster01.509ely.com"
+enable_pxe master01.cluster01.509ely.com
+enable_pxe master02.cluster01.509ely.com
+enable_pxe master03.cluster01.509ely.com
+enable_pxe worker01.cluster01.509ely.com
+enable_pxe worker02.cluster01.509ely.com
+enable_pxe worker02.cluster01.509ely.com
 
 #curl -sX GET http://${MY_IP}:9090/template/preseed/${MACHINE}/${TOKEN} > /tmp/preseed.txt
 
