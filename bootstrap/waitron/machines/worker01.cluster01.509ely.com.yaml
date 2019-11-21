@@ -1,3 +1,4 @@
 network:
   - name: worker01.cluster01.509ely.com
     macaddress: 00:1e:06:45:28:5c
+    macaddress: 00:1e:06:45:28:5d
