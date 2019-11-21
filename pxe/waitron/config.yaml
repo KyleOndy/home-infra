@@ -7,3 +7,6 @@ image_url: http://archive.ubuntu.com/ubuntu/dists/bionic-updates/main/installer-
 kernel: linux
 initrd: initrd.gz
 preseed: preseed.j2
+
+params:
+  apt_cache_url: http://{{MY_IP}}:3142
