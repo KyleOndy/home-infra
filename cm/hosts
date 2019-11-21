@@ -1,0 +1,16 @@
+[all:vars]
+config_system_locale='en_US.UTF-8'
+config_system_language='en_US.UTF-8'
+ansible_connection=ssh
+ansible_user=ansible
+ansible_ssh_pass=insecure
+
+[masters]
+10.24.90.21
+10.24.90.22
+10.24.90.23
+
+[workers]
+10.24.90.31
+10.24.90.32
+10.24.90.33

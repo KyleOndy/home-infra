@@ -5,4 +5,4 @@
   remote_user: pi
   roles:
     - common
-    -  { role: ., sshd: ssh, sshd_config: /etc/sshd_config }
+    - vitalk.secure-ssh
