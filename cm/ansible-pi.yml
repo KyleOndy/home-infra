@@ -2,7 +2,11 @@
 # Configure Raspberry Pi
 - name: Configure Raspberry Pi
   hosts: all
-  remote_user: pi
+  remote_user: ansible
+  become: yes
   roles:
     - common
-    - vitalk.secure-ssh
+    #- dev-sec.ssh-hardening
+    #- dev-sec.os-hardening
+    - brianshumate.consul
+    - brianshumate.nomad

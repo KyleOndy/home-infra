@@ -1,82 +1,26 @@
 ---
-# Base task for configuring a Raspi
-
-- name: Ensure localisation files for '{{ config_system_locale }}' are available
-  locale_gen:
-    name: "{{ config_system_locale }}"
-    state: present
-
-- name: Ensure localisation files for '{{ config_system_language }}' are available
-  locale_gen:
-    name: "{{ config_system_language }}"
-    state: present
-
-- name: Get current locale and language configuration
-  command: localectl status
-  register: locale_status
-  changed_when: false
-
-- name: Parse 'LANG' from current locale and language configuration
-  set_fact:
-    locale_lang: "{{ locale_status.stdout | regex_search('LANG=([^\n]+)', '\\1') | first }}"
-
-- name: Parse 'LANGUAGE' from current locale and language configuration
-  set_fact:
-    locale_language: "{{ locale_status.stdout | regex_search('LANGUAGE=([^\n]+)', '\\1') | default([locale_lang], true) | first }}"
-
-- name: Configure locale to '{{ config_system_locale }}' and language to '{{ config_system_language }}'
-  command: localectl set-locale LANG={{ config_system_locale }} LANGUAGE={{ config_system_language }}
-  changed_when: locale_lang != config_system_locale or locale_language != config_system_language
-
-- name: Set timezone to America/New_York
-  become: yes
-  timezone:
-    name: America/New_York
-
 - name: Only run "update_cache=yes" if the last one is more than 3600 seconds ago
-  become: yes
   apt:
     update_cache: yes
     cache_valid_time: 3600
 
 - name: Update all packages to the latest version
-  become: yes
   apt:
     upgrade: dist
 
 - name: Remove useless packages from the cache
-  become: yes
   apt:
     autoclean: yes
 
 - name: Remove dependencies that are no longer required
-  become: yes
   apt:
     autoremove: yes
 
-- name: Add identity key to authorized keys on host
-  authorized_key: user={{ ssh_user }}
-    key="{{ lookup('file', ssh_identity_key) }}"
-  register: add_identity_key
-  when: ssh_identity_key is defined and ssh_user is defined
+- name: passwordless sudo
+  lineinfile:
+    path: /etc/sudoers
+    state: present
+    regexp: '^%sudo'
+    line: '%sudo ALL=(ALL) NOPASSWD: ALL'
+    validate: 'visudo -cf %s'
 
-- name: Disable empty password login
-  become: yes
-  lineinfile: dest={{ sshd_config }} regexp="^#?PermitEmptyPasswords" line="PermitEmptyPasswords no"
-  notify: restart sshd
-
-- name: Disable remote root login
-  become: yes
-  lineinfile: dest={{ sshd_config }} regexp="^#?PermitRootLogin" line="PermitRootLogin no"
-  notify: restart sshd
-
-- name: Disable password login
-  become: yes
-  lineinfile: dest={{ sshd_config }} regexp="^(#\s*)?PasswordAuthentication " line="PasswordAuthentication no"
-  when: add_identity_key is success and not add_identity_key is skipped
-  notify: restart sshd
-
-- name: Enable PAM
-  become: yes
-  lineinfile: dest={{ sshd_config }} regexp="^#?UsePAM" line="UsePAM yes"
-  notify: restart sshd

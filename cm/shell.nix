@@ -10,5 +10,8 @@ stdenv.mkDerivation {
   buildInputs = [
     pkgs.ansible
     pkgs.sshpass
+    pkgs.python38Packages.setuptools
+    pkgs.python38Packages.pip
+    pkgs.python38Packages.netaddr
   ];
 }

@@ -3,14 +3,13 @@ config_system_locale='en_US.UTF-8'
 config_system_language='en_US.UTF-8'
 ansible_connection=ssh
 ansible_user=ansible
-ansible_ssh_pass=insecure
 
 [masters]
-10.24.90.21
-10.24.90.22
-10.24.90.23
+master01.509ely.com
+master02.509ely.com
+master03.509ely.com
 
-[workers]
-10.24.90.31
-10.24.90.32
-10.24.90.33
+#[workers]
+#worker01.509ely.com
+#worker02.509ely.com
+#worker03.509ely.com

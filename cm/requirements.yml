@@ -1,3 +1,4 @@
-- src: vitalk.secure-ssh
-  version: '0.2.1'
-
+- src: dev-sec.os-hardening
+- src: dev-sec.ssh-hardening
+- src: brianshumate.consul
+- src: brianshumate.nomad

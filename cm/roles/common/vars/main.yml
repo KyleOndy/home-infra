@@ -1,0 +1,7 @@
+consul_group_name: masters
+consul_node_role: server
+consul_bootstrap_expect: true
+
+nomad_group_name: masters
+nomad_node_role: both
+nomad_use_consul: true
