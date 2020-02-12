@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# This script enable PXE boot on a RaspberryPi4, and sets the boot
+# order to always atempt to boot from network before ever attempting
+# to boot from the SD card.
+# This script should _only_ be run under raspbian. Other OS are not
+# supported by the rpi-update binary.
+
+
+# the following comads are directly from 
+# https://github.com/raspberrypi/rpi-eeprom/blob/30905b49096df59e50694fab05bcca55b66be5ef/firmware/raspberry_pi4_network_boot_beta.md
+
+
+# Install the rpi-eeprom update package
+sudo apt update
+sudo apt upgrade
+sudo apt install rpi-eeprom
+
+# Get the latest VideoCore firmware which includes the Pi4 network driver in start4.elf
+sudo rpi-update
+
+# Extract the configuration file
+cp /lib/firmware/raspberrypi/bootloader/beta/pieeprom-2019-09-23.bin pieeprom.bin
+rpi-eeprom-config pieeprom.bin > bootconf.txt
+
+# Enable network boot
+# change boot_order from 0x1 (sd-boot) to 
+
+# network boot then failover to sd-boot
+cat << EOF > bootconf.txt
+BOOT_ORDER=0x12
+EOF
+
+# Apply the configuration change to the EEPROM image file
+rpi-eeprom-config --out pieeprom-netboot.bin --config bootconf.txt pieeprom.bin
+
+sudo rpi-eeprom-update -d -f ./pieeprom-netboot.bin
