@@ -1,0 +1,181 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+
+# This script is a big old mess of spaghetti that somehow builds the worker
+# node artifacts. This script is a prime target for refactoring in the future.
+
+# ===========================================================================
+
+# Here are some environment variables we can set to change the behavior of the
+# build.
+DEBUG=${DEBUG:-}
+# max compression is good for network transfer speeds, but does take quite a
+# bit of time. Its nice to set to 0 while iterating.
+PIXZ_COMPRESSION_LEVEL=${PIXZ_COMPRESSION_LEVEL:-9}
+
+
+# make a best effort case to clean up after the build has finished.
+function cleanup()
+{
+  # these drives will already be unmounted if everything has gone well so just
+  # make sure it doesn't error. I could do some `if mount | grep...` mess, but
+  # this seems like an easier way to just get moving.
+  sudo umount "$CHROOT_DIR/proc" "$CHROOT_DIR/sys" || true
+
+  # do not remove the chroot if we are running a debug build
+  [[ -z $DEBUG ]] || sudo rm -rf "$WORK_DIR"
+}
+
+trap cleanup EXIT
+# Using a work directory under `/tmp` so I can be lazy and not care about
+# cleaning up the mount points debootstrap creates if things go awry. I reboot
+# my machines pretty frequently so this will resolve itself.
+WORK_DIR=$(mktemp -d --tmpdir=/tmp debootstrap.XXXX)
+CHROOT_DIR="$WORK_DIR/chroot"
+OUT_DIR=$1
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+# do this early so if there is a GPG error it fails fast
+ENCRYPT_KEY=${CONSUL_ENCRYPT_KEY:-"$(pass show 509ely.com/consul_encryption_key)"}
+
+mkdir --parent "$OUT_DIR"
+# todo: go back to `--varient=minbase` to save more space.
+# todo: move from eoan -> focal once docker is supported.
+sudo debootstrap \
+  --arch=amd64 \
+  --components=main,universe \
+  --include="
+      ca-certificates,
+      curl,
+      gpg-agent,
+      htop,
+      initramfs-tools,
+      keepalived,
+      linux-generic,
+      locales,
+      openssh-server,
+      parted,
+      pixz,
+      rsync,
+      software-properties-common,
+      tar,
+      unzip,
+      vim,
+      xfsprogs,
+  "\
+  --cache-dir=/tmp/debootstrap_cache \
+  eoan \
+  "$CHROOT_DIR" \
+  http://archive.ubuntu.com/ubuntu/
+sudo cp -r "$SCRIPT_DIR"/initramfs-tools/* "$CHROOT_DIR/etc/initramfs-tools/"
+
+
+run_script_in_chroot() {
+  # helper script to run bash scripts within the chroot we just created.
+
+  echo "==> Running '$*'"
+  # todo: I am just giving every script my consul encryption key. This is a
+  # pretty bad security issues, but I also control all the scripts running, so
+  # its not too terrible. I need to work out how to best propagate secrets into
+  # all the configuration files.
+
+  # shellcheck disable=SC2024
+  sudo chroot "$CHROOT_DIR" /usr/bin/env CONSUL_ENCRYPT_KEY="$ENCRYPT_KEY" PATH=/usr/sbin:/usr/bin/:/bin:/sbin:/usr/local/bin bash -s -- < "$@"
+}
+
+run_script_in_chroot <(echo "
+# doing some basic setup
+locale-gen 'en_US.UTF-8'
+update-locale LANG=en_US.UTF-8
+
+# this is used so I can fact check what build I am running
+echo \"$(git rev-parse HEAD)\" > /etc/node-build-rev
+
+# I had an issue where the scripts in '/etc/initramfs-tools/hooks' seemed to be
+# silently ignored. It was becuase the scripts were not executbale.
+chmod -R 755 /etc/initramfs-tools/
+
+# add ssh key for easier management
+# todo: this should be injected in and not hard-coded
+mkdir -p /root/.ssh
+cat << SSH >> /root/.ssh/authorized_keys
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDZq6q45h3OVj7Gs4afJKL7mSz/bG+KMG0wIOEH+wXmzDdJ0OX6DLeN7pua5RAB+YFbs7ljbc8AFu3lAzitQ2FNToJC1hnbLKU0PyoYNQpTukXqP1ptUQf5EsbTFmltBwwcR1Bb/nBjAIAgi+Z54hNFZiaTNFmSTmErZe35bikqS314Ej60xw2/5YSsTdqLOTKcPbOxj2kulznM0K/z/EDcTzGqc0Mcnf51NtzxlmB9NR4ppYLoi7x+rVWq04MbdAmZK70p5ndRobqYSWSKq+WDUAt2+CiTm6ItDowTLuo3zjHyYV1eCnB35DdakKVldIHrQyhmhbf5hJi6Ywx6XCzlFoNpkl/++RrJT2rf0XpGdlRoLQoKFvNRfnO4LI499SIfFb9Pwq7LhF1C1kTmshN/9S44d6VCCYXLE4uS8OPv7IXxUvFQZaIKCbomd2FzXxUwf4lg2gSlczysgDaVsMAUvlfDVgTFX8Xt1LFl3DqNtUiUpa9+Jnst/jCqqOBf3e8= kyle@alpha
+SSH
+")
+
+# todo: I can not seem to pass the encryption key to the script. I get either a
+# `ambiguous redirect` error or its just ignored when I try
+#    > run_script_in_chroot ./foo.sh bar
+run_script_in_chroot "$SCRIPT_DIR"/../scripts/install_consul
+run_script_in_chroot "$SCRIPT_DIR"/../scripts/install_nomad
+
+# todo: install this the real way
+run_script_in_chroot <(echo "
+curl -fsSL https://get.docker.com | sh
+")
+
+# keep alive lets me have a floating IP between all worker nodes
+run_script_in_chroot "$SCRIPT_DIR"/../scripts/install_keepalived
+
+# I install traefik as a system service so I can easily bind to the floating IP. Initally I tried to run this under nomad for the flexibility, but had trouble getting nomad to work correctly with a floating IP.
+run_script_in_chroot "$SCRIPT_DIR"/../scripts/install_traefik
+
+# doing some last housekeeping and cleanup
+run_script_in_chroot <(echo "
+echo 'root:root' | chpasswd # todo: pull from password manager
+echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
+
+# this is what builds the updated initrd to network boot with. It will run the
+# scripts in /etc/initramfs-tools.
+update-initramfs -cu
+")
+
+# setup mount points
+sudo cp "$SCRIPT_DIR/../files/format-scratch.service"  "$CHROOT_DIR/etc/systemd/system/"
+sudo cp "$SCRIPT_DIR/../files/scratch-local.mount"     "$CHROOT_DIR/etc/systemd/system/"
+sudo cp "$SCRIPT_DIR/../files/mnt-nfs.mount"           "$CHROOT_DIR/etc/systemd/system/"
+run_script_in_chroot <(echo "
+systemctl enable format-scratch
+systemctl enable scratch-local.mount
+systemctl enable mnt-nfs.mount
+")
+
+sudo umount "$CHROOT_DIR/proc" "$CHROOT_DIR/sys"
+
+# future: this can be split into two separate process to generate the
+# kerne;/initramfs and the process to create the rootramfs. This would allow
+# easier updating on one or the other. For now, simplicity wins.
+sudo cp -v --dereference "$CHROOT_DIR"/boot/vmlinuz-* "$OUT_DIR"
+sudo cp -v --dereference "$CHROOT_DIR"/boot/initrd.img-* "$OUT_DIR"
+
+
+# now that we have generated the initrd and kerenl, we can remove files that
+# are not needed within the ramFS.
+sudo rm -fr "$CHROOT_DIR/tmp/*"
+sudo rm -fr "$CHROOT_DIR/var/cache" # is this safe?
+sudo rm "$CHROOT_DIR"/boot/vmlinuz-*
+sudo rm "$CHROOT_DIR"/boot/initrd.img-*
+
+# now getting risky...
+# These modules aren't used on my board, but I should comment these out if I
+# seem to be having weird runtime issues.
+sudo rm -fr "$CHROOT_DIR"/usr/lib/firmware/netronome
+sudo rm -fr "$CHROOT_DIR"/usr/lib/firmware/liquidio
+sudo rm -fr "$CHROOT_DIR"/usr/lib/firmware/amdgpu
+sudo rm -fr "$CHROOT_DIR"/usr/lib/modules/5.3.0-18-generic/kernel/drivers/net/wireless
+
+pushd "$CHROOT_DIR" && {
+  # todo: I feel like there should be an easier way to do this.
+  sudo tar -cf "$WORK_DIR/ramroot.tar" .
+}
+popd
+
+# This can take a while. Write to a temp file before copying it over to the
+# outfolder so its not in an intermediate state for too long.
+pixz "-$PIXZ_COMPRESSION_LEVEL" < "$WORK_DIR/ramroot.tar" > "$WORK_DIR/ramroot.tar.xz"
+sudo cp "$WORK_DIR/ramroot.tar.xz" "$OUT_DIR/ramroot.tar.xz"
+
+# set the permissions on the artifacts so they can be consumed by a normal user.
+sudo chown "$(whoami)" "$OUT_DIR"
+sudo chmod -R 755 "$OUT_DIR"

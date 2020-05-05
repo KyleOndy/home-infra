@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+set -eu
+
+# https://www.nomadproject.io/docs/install/production/deployment-guide/
+export CONSUL_VERSION="1.7.3"
+ENCRYPT_KEY=${CONSUL_ENCRYPT_KEY:-$1}
+
+ARCH=$(uname -m)
+CONSUL_ARCH=
+if [[ $ARCH == "x86_64" ]]; then
+  CONSUL_ARCH="amd64"
+elif [[ $ARCH == "armv7l" ]]; then
+  CONSUL_ARCH=armhfv6
+else
+  echo "unknown architecture: $ARCH"
+  exit 1
+fi
+
+
+pushd "$(mktemp -d)" && {
+  curl --silent --show-error --remote-name https://releases.hashicorp.com/consul/${CONSUL_VERSION}/consul_${CONSUL_VERSION}_linux_${CONSUL_ARCH}.zip
+  unzip consul_${CONSUL_VERSION}_linux_${CONSUL_ARCH}.zip
+  chown root:root consul
+  mv consul /usr/local/bin/
+  consul version
+  consul -autocomplete-install
+  complete -C /usr/local/bin/consul nomad
+}
+
+useradd --system --home /etc/consul.d --shell /bin/false consul
+mkdir --parents /opt/consul
+chown --recursive consul:consul /opt/consul
+
+cat << "CONSUL" > /etc/systemd/system/consul.service
+[Unit]
+Description="HashiCorp Consul - A service mesh solution"
+Documentation=https://www.consul.io/
+Requires=network-online.target
+After=network-online.target
+ConditionFileNotEmpty=/etc/consul.d/consul.hcl
+
+[Service]
+Type=notify
+User=consul
+Group=consul
+ExecStart=/usr/local/bin/consul agent -config-dir=/etc/consul.d/
+ExecReload=/usr/local/bin/consul reload
+KillMode=process
+Restart=on-failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+CONSUL
+
+mkdir --parents /etc/consul.d
+
+cat << CONFIG > /etc/consul.d/consul.hcl
+datacenter = "dc1"
+data_dir = "/opt/consul"
+encrypt = "$ENCRYPT_KEY"
+# todo: would like to just point to 10.25.89.5, but need to load balance among
+# master too fo the case where all nodes are down. By trying to join the fixed
+# IPs of the masters, it should work more reliably.
+retry_join = ["10.25.89.10","10.25.89.20","10.25.89.30"]
+ui = true
+#bind_addr = "{{ GetInterfaceIP | exclude \"network\" \"10.25.89.5/32\" | attr \"address\" }}"
+# todo: is it safe to assume the VIP will be not the first IP?
+bind_addr = "{{ GetInterfaceIP \"enp2s0\" }}"
+CONFIG
+
+
+chown --recursive consul:consul    /etc/consul.d
+chmod 640 /etc/consul.d/consul.hcl
+
+sudo systemctl enable consul

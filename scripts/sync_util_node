@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+UTIL_NODE_HOSTNAME=${UTIL_NODE_HOSTNAME:-util.dmz.509ely.com}
+UTIL_NODE_USERNAME=${UTIL_NODE_USERNAME:-pi}
+BOOT_STRAPPING_DIR=${BOOT_STRAPPING_DIR:-/opt/home-infra}
+
+# I want these variables to expand on the client side
+# shellcheck disable=SC2087
+ssh "${UTIL_NODE_USERNAME}@${UTIL_NODE_HOSTNAME}" << EOM
+sudo mkdir -p $BOOT_STRAPPING_DIR
+sudo chown -R $UTIL_NODE_USERNAME $BOOT_STRAPPING_DIR
+EOM
+
+# stage files to copy up to the node
+# todo: this will break sometime in the future
+cp -p ./dist/ramroot.tar.xz              ./util-node/files/x86_64/ramroot.tar.xz
+cp -p ./dist/vmlinuz-5.3.0-18-generic    ./util-node/files/x86_64/vmlinuz
+cp -p ./dist/initrd.img-5.3.0-18-generic ./util-node/files/x86_64/initrd.img
+
+rsync -avrpP --delete "./util-node/" "${UTIL_NODE_USERNAME}@${UTIL_NODE_HOSTNAME}:${BOOT_STRAPPING_DIR}"

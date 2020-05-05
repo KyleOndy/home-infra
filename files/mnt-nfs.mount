@@ -1,0 +1,10 @@
+[Unit]
+Description=mount nfs for simple shared storage
+
+[Mount]
+What=10.25.89.4:/opt/nfs
+Where=/mnt/nfs
+Type=nfs
+
+[Install]
+WantedBy=multi-user.target

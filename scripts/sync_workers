@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -u
+
+_rsync() {
+  rsync -aqrpP --exclude=.git --exclude=.cache --exclude=dist/ --exclude=util-node/ . "$1:/tmp/home-infra"
+}
+
+_rsync w1
+_rsync w2
+_rsync w3

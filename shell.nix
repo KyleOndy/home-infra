@@ -6,9 +6,7 @@ stdenv.mkDerivation {
   name = "home_infra";
 
   buildInputs = [
-    # hashi-stack
-    nomad
-    consul
+    debootstrap
 
     # pre-commit
     # https://pre-commit.com/
@@ -19,7 +17,7 @@ stdenv.mkDerivation {
   ];
 
   shellHook = ''
-    export NOMAD_ADDR=http://10.25.89.5:4646
-    export DOCKER_HOST=ssh://ansible@c01w01.dmz.509ely.com
+    export NOMAD_ADDR=http://10.25.89.10:4646
+    export CONSUL_ADDR=http://10.25.89.10:8500
   '';
 }

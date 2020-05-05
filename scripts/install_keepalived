@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -e
+
+cat << CONF >/etc/keepalived/keepalived.conf
+! Configuration File for keepalived
+
+vrrp_instance VI_1 {
+    state MASTER
+    interface enp2s0
+    virtual_router_id 101
+    priority 101
+    advert_int 1
+    authentication {
+        auth_type PASS
+        auth_pass 1111
+    }
+    virtual_ipaddress {
+        10.25.89.5/24 brd 10.25.89.255
+    }
+    notify /etc/keepalived/notify.sh
+}
+CONF
+
+cat << 'NOTIFY' > /etc/keepalived/notify.sh
+#!/bin/bash
+TYPE=$1
+NAME=$2
+STATE=$3
+case $STATE in
+        "MASTER") systemctl start traefik
+                  ;;
+        "BACKUP") systemctl stop traefik
+                  ;;
+        "FAULT")  exit 0
+                  ;;
+        *)        exit 1
+                  ;;
+              esac
+NOTIFY
+
+chmod +x /etc/keepalived/notify.sh
