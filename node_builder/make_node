@@ -1,9 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-
 # This script is a big old mess of spaghetti that somehow builds the worker
 # node artifacts. This script is a prime target for refactoring in the future.
+
+# to avoid prepending command with sudo and having the build timeout waiting
+# for a password just require that script to be run as root.
+if [ "$EUID" -ne 0 ]
+  then echo "Please run as root"
+  exit
+fi
 
 # ===========================================================================
 
@@ -21,10 +27,10 @@ function cleanup()
   # these drives will already be unmounted if everything has gone well so just
   # make sure it doesn't error. I could do some `if mount | grep...` mess, but
   # this seems like an easier way to just get moving.
-  sudo umount "$CHROOT_DIR/proc" "$CHROOT_DIR/sys" || true
+  umount "$CHROOT_DIR/proc" "$CHROOT_DIR/sys" || true
 
   # do not remove the chroot if we are running a debug build
-  [[ -z $DEBUG ]] || sudo rm -rf "$WORK_DIR"
+  [[ -z $DEBUG ]] || rm -rf "$WORK_DIR"
 }
 
 trap cleanup EXIT
@@ -37,12 +43,12 @@ OUT_DIR=$1
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 # do this early so if there is a GPG error it fails fast
-ENCRYPT_KEY=${CONSUL_ENCRYPT_KEY:-"$(pass show 509ely.com/consul_encryption_key)"}
+ENCRYPT_KEY=${CONSUL_ENCRYPT_KEY:-"$2"}
 
 mkdir --parent "$OUT_DIR"
 # todo: go back to `--varient=minbase` to save more space.
 # todo: move from eoan -> focal once docker is supported.
-sudo debootstrap \
+debootstrap \
   --arch=amd64 \
   --components=main,universe \
   --include="
@@ -68,7 +74,7 @@ sudo debootstrap \
   eoan \
   "$CHROOT_DIR" \
   http://archive.ubuntu.com/ubuntu/
-sudo cp -r "$SCRIPT_DIR"/initramfs-tools/* "$CHROOT_DIR/etc/initramfs-tools/"
+cp -r "$SCRIPT_DIR"/initramfs-tools/* "$CHROOT_DIR/etc/initramfs-tools/"
 
 
 run_script_in_chroot() {
@@ -81,7 +87,7 @@ run_script_in_chroot() {
   # all the configuration files.
 
   # shellcheck disable=SC2024
-  sudo chroot "$CHROOT_DIR" /usr/bin/env CONSUL_ENCRYPT_KEY="$ENCRYPT_KEY" PATH=/usr/sbin:/usr/bin/:/bin:/sbin:/usr/local/bin bash -s -- < "$@"
+  chroot "$CHROOT_DIR" /usr/bin/env CONSUL_ENCRYPT_KEY="$ENCRYPT_KEY" PATH=/usr/sbin:/usr/bin/:/bin:/sbin:/usr/local/bin bash -s -- < "$@"
 }
 
 run_script_in_chroot <(echo "
@@ -132,50 +138,50 @@ update-initramfs -cu
 ")
 
 # setup mount points
-sudo cp "$SCRIPT_DIR/../files/format-scratch.service"  "$CHROOT_DIR/etc/systemd/system/"
-sudo cp "$SCRIPT_DIR/../files/scratch-local.mount"     "$CHROOT_DIR/etc/systemd/system/"
-sudo cp "$SCRIPT_DIR/../files/mnt-nfs.mount"           "$CHROOT_DIR/etc/systemd/system/"
+cp "$SCRIPT_DIR/../files/format-scratch.service"  "$CHROOT_DIR/etc/systemd/system/"
+cp "$SCRIPT_DIR/../files/scratch-local.mount"     "$CHROOT_DIR/etc/systemd/system/"
+cp "$SCRIPT_DIR/../files/mnt-nfs.mount"           "$CHROOT_DIR/etc/systemd/system/"
 run_script_in_chroot <(echo "
 systemctl enable format-scratch
 systemctl enable scratch-local.mount
 systemctl enable mnt-nfs.mount
 ")
 
-sudo umount "$CHROOT_DIR/proc" "$CHROOT_DIR/sys"
+umount "$CHROOT_DIR/proc" "$CHROOT_DIR/sys"
 
 # future: this can be split into two separate process to generate the
 # kerne;/initramfs and the process to create the rootramfs. This would allow
 # easier updating on one or the other. For now, simplicity wins.
-sudo cp -v --dereference "$CHROOT_DIR"/boot/vmlinuz-* "$OUT_DIR"
-sudo cp -v --dereference "$CHROOT_DIR"/boot/initrd.img-* "$OUT_DIR"
+cp -v --dereference "$CHROOT_DIR"/boot/vmlinuz-* "$OUT_DIR"
+cp -v --dereference "$CHROOT_DIR"/boot/initrd.img-* "$OUT_DIR"
 
 
 # now that we have generated the initrd and kerenl, we can remove files that
 # are not needed within the ramFS.
-sudo rm -fr "$CHROOT_DIR/tmp/*"
-sudo rm -fr "$CHROOT_DIR/var/cache" # is this safe?
-sudo rm "$CHROOT_DIR"/boot/vmlinuz-*
-sudo rm "$CHROOT_DIR"/boot/initrd.img-*
+rm -fr "$CHROOT_DIR/tmp/*"
+rm -fr "$CHROOT_DIR/var/cache" # is this safe?
+rm "$CHROOT_DIR"/boot/vmlinuz-*
+rm "$CHROOT_DIR"/boot/initrd.img-*
 
 # now getting risky...
 # These modules aren't used on my board, but I should comment these out if I
 # seem to be having weird runtime issues.
-sudo rm -fr "$CHROOT_DIR"/usr/lib/firmware/netronome
-sudo rm -fr "$CHROOT_DIR"/usr/lib/firmware/liquidio
-sudo rm -fr "$CHROOT_DIR"/usr/lib/firmware/amdgpu
-sudo rm -fr "$CHROOT_DIR"/usr/lib/modules/5.3.0-18-generic/kernel/drivers/net/wireless
+rm -fr "$CHROOT_DIR"/usr/lib/firmware/netronome
+rm -fr "$CHROOT_DIR"/usr/lib/firmware/liquidio
+rm -fr "$CHROOT_DIR"/usr/lib/firmware/amdgpu
+rm -fr "$CHROOT_DIR"/usr/lib/modules/5.3.0-18-generic/kernel/drivers/net/wireless
 
 pushd "$CHROOT_DIR" && {
   # todo: I feel like there should be an easier way to do this.
-  sudo tar -cf "$WORK_DIR/ramroot.tar" .
+  tar -cf "$WORK_DIR/ramroot.tar" .
 }
 popd
 
 # This can take a while. Write to a temp file before copying it over to the
 # outfolder so its not in an intermediate state for too long.
 pixz "-$PIXZ_COMPRESSION_LEVEL" < "$WORK_DIR/ramroot.tar" > "$WORK_DIR/ramroot.tar.xz"
-sudo cp "$WORK_DIR/ramroot.tar.xz" "$OUT_DIR/ramroot.tar.xz"
+cp "$WORK_DIR/ramroot.tar.xz" "$OUT_DIR/ramroot.tar.xz"
 
 # set the permissions on the artifacts so they can be consumed by a normal user.
-sudo chown "$(whoami)" "$OUT_DIR"
-sudo chmod -R 755 "$OUT_DIR"
+chown "$(whoami)" "$OUT_DIR"
+chmod -R 755 "$OUT_DIR"
