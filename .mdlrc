@@ -1,0 +1,4 @@
+# I write markdown with each sentence a single line. I feel that it makes diffs
+# much easier when working with plain text. Not many of my sentences are less
+# that 80 characters.
+rules "~MD013" # Line Lengrh
