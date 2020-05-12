@@ -41,11 +41,12 @@ WORK_DIR=$(mktemp -d --tmpdir=/tmp debootstrap.XXXX)
 CHROOT_DIR="$WORK_DIR/chroot"
 OUT_DIR=$1
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+DEB_BOOTSTRAP=/tmp/debootstrap_cache
 
 # do this early so if there is a GPG error it fails fast
 ENCRYPT_KEY=${CONSUL_ENCRYPT_KEY:-"$2"}
 
-mkdir --parent "$OUT_DIR"
+mkdir --parent "$OUT_DIR" "$DEB_BOOTSTRAP"
 # todo: go back to `--varient=minbase` to save more space.
 # todo: move from eoan -> focal once docker is supported.
 debootstrap \
@@ -70,7 +71,7 @@ debootstrap \
       vim,
       xfsprogs,
   "\
-  --cache-dir=/tmp/debootstrap_cache \
+  --cache-dir=$DEB_BOOTSTRAP \
   eoan \
   "$CHROOT_DIR" \
   http://archive.ubuntu.com/ubuntu/
