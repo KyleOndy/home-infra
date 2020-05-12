@@ -183,7 +183,8 @@ popd
 # This can take a while. Write to a temp file before copying it over to the
 # outfolder so its not in an intermediate state for too long.
 pixz "-$PIXZ_COMPRESSION_LEVEL" < "$WORK_DIR/ramroot.tar" > "$WORK_DIR/ramroot.tar.xz"
-cp "$WORK_DIR/ramroot.tar.xz" "$OUT_DIR/ramroot.tar.xz"
+GIT_REF=$(git rev-parse --short HEAD)
+cp "$WORK_DIR/ramroot.tar.xz" "$OUT_DIR/ramroot_$GIT_REF.tar.xz"
 
 # set the permissions on the artifacts so they can be consumed by a normal user.
 chown "$(whoami)" "$OUT_DIR"
