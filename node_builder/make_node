@@ -61,6 +61,7 @@ debootstrap \
       keepalived,
       linux-generic,
       locales,
+      mosh,
       openssh-server,
       parted,
       pixz,
