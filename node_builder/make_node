@@ -62,6 +62,7 @@ debootstrap \
       linux-generic,
       locales,
       mosh,
+      nfs-common
       openssh-server,
       parted,
       pixz,
