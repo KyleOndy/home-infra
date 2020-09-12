@@ -243,7 +243,7 @@ job "kyleondy.com" {
       # are specific to each driver, so please see specific driver
       # documentation for more information.
       config {
-        image = "kyleondy/website:latest"
+        image = "kyleondy/website:a69b955d3b7e"
         port_map {
           web = "80"
         }

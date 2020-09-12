@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+set -eu
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+# https://www.nomadproject.io/docs/install/production/deployment-guide/
+export CONSUL_VERSION="1.8.4"
+ENCRYPT_KEY=${CONSUL_ENCRYPT_KEY:-$1}
+export ENCRYPT_KEY
+
+ARCH=$(uname -m)
+CONSUL_ARCH=
+if [[ $ARCH == "x86_64" ]]; then
+  CONSUL_ARCH="amd64"
+elif [[ $ARCH == "armv7l" ]]; then
+  CONSUL_ARCH=armhfv6
+else
+  echo "unknown architecture: $ARCH"
+  exit 1
+fi
+
+
+pushd "$(mktemp -d)" && {
+  curl --silent --show-error --remote-name https://releases.hashicorp.com/consul/${CONSUL_VERSION}/consul_${CONSUL_VERSION}_linux_${CONSUL_ARCH}.zip
+  unzip consul_${CONSUL_VERSION}_linux_${CONSUL_ARCH}.zip
+  chown root:root consul
+  mv consul /usr/local/bin/
+  consul version
+  consul -autocomplete-install
+  complete -C /usr/local/bin/consul nomad
+}
+
+useradd --system --home /etc/consul.d --shell /bin/false consul
+mkdir --parents /opt/consul
+chown --recursive consul:consul /opt/consul
+
+cp "$DIR/consul.service" /etc/systemd/system/consul.service
+
+mkdir --parents /etc/consul.d
+#cp "$DIR/consul.hcl" /etc/consul.d/consul.hcl
+envsubst \$ENCRYPT_KEY < "$DIR/consul.hcl" > /etc/consul.d/consul.hcl
+
+chown --recursive consul:consul    /etc/consul.d
+chmod 640 /etc/consul.d/consul.hcl
+
+sudo systemctl enable consul

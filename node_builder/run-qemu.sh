@@ -23,6 +23,8 @@ qemu-system-x86_64 \
   -initrd "$INITRD" \
   -nographic \
   -smp 2 \
+  --enable-kvm \
+  -cpu host \
   -append "
     console=ttyS0
     boot=ramdisk

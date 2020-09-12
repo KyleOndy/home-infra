@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+set -e
+
+MAX_HEALTY_LOOPS=20
+MAX_READY_LOOPS=20
+SLEEP=15
+STEP=1
+STEPS=2
+
+# these have entires in my ssh/config
+default_nodes=(
+  w1
+  w2
+  w3
+)
+
+# can pass in nodes as args
+nodes=("${@:-"${default_nodes[@]}"}")
+
+for node in "${nodes[@]}"; do
+  ssh "$node" nomad node drain -enable -yes -self
+  echo "Rebooting $node"
+  ssh "$node" reboot || true
+
+  # todo: break out of loop after so many iterations
+  # this just waits for the node to come up and be available
+  loop_count=1
+  until [[ $(curl -s "${node}.dmz.509ely.com:4646/v1/agent/health" | jq '.client.ok') == "true" ]]; do
+    if [[ "$loop_count" -gt "$MAX_READY_LOOPS" ]]; then
+      echo "Attempts exceeded. Exiting."
+      exit 1
+    fi
+    echo "s:$STEP/$STEPS a:$loop_count/$MAX_READY_LOOPS - Waiting for $node to be healthy (nomad)"
+    sleep "$SLEEP"
+    loop_count=$((loop_count+1))
+  done
+  step=$((step+1))
+
+  echo "Getting $node's node_id"
+  node_id=$(curl -s w1.dmz.509ely.com:4646/v1/agent/self | jq -r '.stats.client.node_id')
+  loop_count=1
+  # todo: break out of loop after so many iterations
+  until [[ $(curl -s "${node}.dmz.509ely.com:4646/v1/node/$node_id" | jq -r '.Status') == "ready" ]]; do
+    if [[ "$loop_count" -gt "$MAX_READY_LOOPS" ]]; then
+      echo "Attempts exceeded. Exiting."
+      exit 1
+    fi
+    echo "s:$STEP/$STEPS a:$loop_count/$MAX_HEALTY_LOOPS - Waiting for $node to be ready (nomad)"
+    sleep "$SLEEP"
+    loop_count=$((loop_count+1))
+  done
+  echo "$node reports ready. Continuting to next node"
+done

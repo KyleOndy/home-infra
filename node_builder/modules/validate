@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -e
+
+errors=()
+
+for dir in $(fd --type directory); do
+  if ! [[ -f "$dir/install" ]]; then
+    errors+=("$dir does not have an 'install' script")
+  elif ! [[ -x "$dir/install" ]]; then
+    errors+=("$dir/install is not executable")
+  fi
+
+done
+
+# Does everything look ok?
+if [ ${#errors[@]} -eq 0 ]; then
+    echo "Everything looks good"
+    exit 0
+else
+    echo "Somethings looks wrong..."
+    for error in "${errors[@]}"
+    do
+     echo "$error"
+   done
+fi

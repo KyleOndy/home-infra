@@ -1,10 +1,18 @@
 # 509 Ely
 
+> :warning: I makes *no* effort to encourage reusability outside of this repository.
+> Copy and paste at your own risk.
+
 This is the mono-repository that contains the code and assets to build, run, and manage my home infrastructure.
-At this time I am not writing any code with the express intent of being consumed in a wider context.
-This allows me to iterate quick, over-engineer less, and actually ship something.
 
 ## Purpose and Intent
+
+At this time I am not writing any code with the express intent of being consumed in a wider context.
+
+Unlike at my job, I allow myself to disregard typical concerns of software development.
+This allows me to iterate quick, over-engineer less, and actually ship something, even its its not "the right way".
+
+This also allows me to push my boundaries of what I am comfortable doing.
 
 The primary motivator of this lab is to learn, sometimes the hard way, about the underlaying services.
 From layer 1 to layer 7 I own it and control it.
@@ -58,3 +66,11 @@ This section needs to be expanded, but a high level overview is as follows.
 - utility node runs network boot infrastructure: [`run.sh`](./util-node/run.sh)
 - the worker node network  boots and joins the cluster
 - deploy some nomad jobs from the [`jobs`](./jobs) folder.
+
+### Errors
+
+#### `run-qemu.sh`
+
+```
+qemu: linux kernel too old to load a ram disk
+```
