@@ -8,10 +8,9 @@ resource "aws_route53_zone" "ondy_org" {
   name = "ondy.org"
 }
 
-# todo: should I setup a wildcard?
-resource "aws_route53_record" "ondy_org_infra_registry_cname" {
+resource "aws_route53_record" "ondy_org_apps_star_cname" {
   zone_id = aws_route53_zone.ondy_org.zone_id
-  name    = "registry.infra.ondy.org"
+  name    = "*.apps.ondy.org"
   type    = "CNAME"
   ttl     = "300"
   records = ["home.509ely.com"]
@@ -47,14 +46,6 @@ resource "aws_route53_record" "org_ondy_txt" {
   type    = "TXT"
   ttl     = "3600"
   records = ["v=spf1 include:mxroute.com -all"]
-}
-
-resource "aws_route53_record" "org_ondy_ping_txt" {
-  zone_id = aws_route53_zone.ondy_org.zone_id
-  name    = "ping.ondy.org"
-  type    = "TXT"
-  ttl     = "3600"
-  records = ["pong"]
 }
 
 resource "aws_route53_record" "org_ondy_lists_a" {
