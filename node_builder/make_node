@@ -179,10 +179,11 @@ SSH
 ")
 
 # make sure we are running the latest security updates
-run_script_in_chroot <(echo "
-apt-get -q update
-apt-get -yq dist-upgrade
-")
+# todo: this doesn't work
+#run_script_in_chroot <(echo "
+#apt-get -q update
+#apt-get -yq dist-upgrade
+#")
 
 run_script_in_chroot "$SCRIPT_DIR/modules/consul_agent/install" "$ENCRYPT_KEY"
 run_script_in_chroot "$SCRIPT_DIR/modules/nomad_agent/install"
