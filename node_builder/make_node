@@ -158,6 +158,14 @@ run_script_in_chroot() {
 }
 
 run_script_in_chroot <(echo "
+apt update -q
+apt install -yq software-properties-common
+add-apt-repository ppa:gluster/glusterfs-7 -y
+apt update -q
+apt install -yq glusterfs-server
+")
+
+run_script_in_chroot <(echo "
 # doing some basic setup
 locale-gen 'en_US.UTF-8'
 update-locale LANG=en_US.UTF-8

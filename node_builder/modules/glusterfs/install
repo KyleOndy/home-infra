@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -eu
+
+#DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+apt_update() {
+  apt-get update -q
+}
+
+apt_install() {
+  apt-get install -yq "$*"
+}
+
+apt_update
+apt_install software-properties-common
+add-apt-repository ppa:gluster/glusterfs-7 -y
+apt_update
+apt_install glusterfs-server
