@@ -157,13 +157,7 @@ run_script_in_chroot() {
   rm -r "${CHROOT_DIR:?}/$tmp_script_dir"
 }
 
-run_script_in_chroot <(echo "
-apt update -q
-apt install -yq software-properties-common
-add-apt-repository ppa:gluster/glusterfs-7 -y
-apt update -q
-apt install -yq glusterfs-server
-")
+run_script_in_chroot "$SCRIPT_DIR/modules/glusterfs/install"
 
 run_script_in_chroot <(echo "
 # doing some basic setup

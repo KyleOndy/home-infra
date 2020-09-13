@@ -20,7 +20,7 @@ def boot(mac):
     cmdline = ""
     hostname = ""
     arch = None
-    build = "stable"
+    build = "latest"
     app.logger.debug(f"got mac of '{mac}'")
 
     if mac in [ "00:1e:06:45:28:5c", "00:1e:06:45:28:5d" ]:
