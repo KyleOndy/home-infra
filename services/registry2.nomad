@@ -23,6 +23,11 @@ job "registry2" {
     healthy_deadline = "5m"
   }
   group "registry2" {
+    ephemeral_disk {
+      migrate = true
+      size    = "10000" # 10 GB
+      sticky  = true
+    }
     network {
       port "web" { to = 5000 }
     }
