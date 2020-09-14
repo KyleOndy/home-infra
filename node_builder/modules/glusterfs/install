@@ -1,18 +1,29 @@
 #!/usr/bin/env bash
 set -eu
 
-#DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+# todo: secure this
+#   auth.allow
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 apt_update() {
   apt-get update -q
 }
 
 apt_install() {
-  apt-get install -yq "$*"
+  apt-get install -yq "$@"
 }
 
 apt_update
 apt_install software-properties-common
 add-apt-repository ppa:gluster/glusterfs-7 -y
 apt_update
-apt_install glusterfs-server
+apt_install glusterfs-server glusterfs-client
+
+systemctl enable glusterd.service
+
+cp "$DIR/gluster-init.service" /etc/systemd/system/
+systemctl enable gluster-init.service
+
+mkdir -p /usr/local/bin/
+cp "$DIR/gluster-init.sh" /usr/local/bin/gluster-init.sh
