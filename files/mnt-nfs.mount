@@ -1,5 +1,6 @@
 [Unit]
 Description=mount nfs for simple shared storage
+Before=nomad.service
 
 [Mount]
 What=10.25.89.4:/opt/nfs
