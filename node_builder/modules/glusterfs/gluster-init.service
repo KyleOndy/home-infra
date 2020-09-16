@@ -6,7 +6,7 @@ Before=nomad.service
 [Service]
 Restart=on-failure
 RestartSec=15s
-ExecStart=/usr/local/bin/consul lock infra/gluster-init /usr/local/bin/gluster-init.sh
+ExecStart=/usr/local/bin/consul lock -child-exit-code infra/gluster-init /usr/local/bin/gluster-init.sh
 
 [Install]
 WantedBy=default.target
