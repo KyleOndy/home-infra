@@ -13,6 +13,10 @@ if [ "$EUID" -ne 0 ]
   exit
 fi
 
+log() {
+  echo "==> $*"
+}
+
 # -------------------------------------------------------------------------
 
 # Here are some environment variables we can set to change the behavior of the
@@ -96,6 +100,7 @@ debootstrap_packages=(
   xfsprogs
 )
 
+log "Running debootstrap"
 debootstrap \
   --arch=amd64 \
   --components=main,universe \
@@ -103,14 +108,14 @@ debootstrap \
   --include="${debootstrap_packages[*]}" \
   eoan \
   "$CHROOT_DIR" \
-  http://archive.ubuntu.com/ubuntu/
+  http://archive.ubuntu.com/ubuntu/ > /dev/null # less noise
 cp -r "$SCRIPT_DIR"/initramfs-tools/* "$CHROOT_DIR/etc/initramfs-tools/"
 
 
 run_script_in_chroot() {
   # helper script to run bash scripts within the chroot we just created.
 
-  echo "==> Running '$*'"
+  log " Running '$*'"
   # todo: I am just giving every script my consul encryption key. This is a
   # pretty bad security issues, but I also control all the scripts running, so
   # its not too terrible. I need to work out how to best propagate secrets into
@@ -134,22 +139,22 @@ run_script_in_chroot() {
   script_name=$(basename "$script")
 
   # debug info
-  echo "tmp_script_dir: $tmp_script_dir"
-  echo "script: $script"
-  echo "args: ${args[*]}"
-  echo "script_dir: $script_dir"
-  echo "module_name: $module_name"
-  echo "script_name: $script_name"
+  #echo "tmp_script_dir: $tmp_script_dir"
+  #echo "script: $script"
+  #echo "args: ${args[*]}"
+  #echo "script_dir: $script_dir"
+  #echo "module_name: $module_name"
+  #echo "script_name: $script_name"
 
   mkdir -p "$CHROOT_DIR/$tmp_script_dir"
   if [[ "$script_dir" == "/dev/fd" ]]; then
     # copy just the text "script"
     module_name="inline"
     mkdir "$CHROOT_DIR/$tmp_script_dir/$module_name"
-    cp -v --dereference "$script" "$CHROOT_DIR/$tmp_script_dir/$module_name/"
+    cp --dereference "$script" "$CHROOT_DIR/$tmp_script_dir/$module_name/"
   else
     # copy the whole module directory
-    cp -rv --dereference "$script_dir" "$CHROOT_DIR/$tmp_script_dir/"
+    cp -r --dereference "$script_dir" "$CHROOT_DIR/$tmp_script_dir/"
   fi
 
   chroot "$CHROOT_DIR" /usr/bin/env PATH=/usr/sbin:/usr/bin/:/bin:/sbin:/usr/local/bin bash "$tmp_script_dir/$module_name/$script_name" "${args[@]}"
@@ -229,12 +234,10 @@ umount "$CHROOT_DIR/proc" "$CHROOT_DIR/sys"
 # easier updating on one or the other. For now, simplicity wins.
 # todo: symlink these?
 # todo: which versions do I really need?
-cp -v --dereference "$CHROOT_DIR"/boot/vmlinuz-* "$OUT_DIR/"
-#cp -v --dereference "$CHROOT_DIR"/boot/vmlinuz-* "$OUT_DIR/vmlinuz"
+cp --dereference "$CHROOT_DIR"/boot/vmlinuz-* "$OUT_DIR/"
 ln -rs "$OUT_DIR/vmlinuz"* "$OUT_DIR/vmlinuz"
 
-cp -v --dereference "$CHROOT_DIR"/boot/initrd.img-* "$OUT_DIR/"
-#cp -v --dereference "$CHROOT_DIR"/boot/initrd.img-* "$OUT_DIR/initrd.img"
+cp --dereference "$CHROOT_DIR"/boot/initrd.img-* "$OUT_DIR/"
 ln -rs "$OUT_DIR/initrd.img-"* "$OUT_DIR/initrd.img"
 
 # now that we have generated the initrd and kerenl, we can remove files that
