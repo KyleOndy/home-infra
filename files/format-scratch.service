@@ -15,3 +15,6 @@ ExecStart=/bin/sleep 2
 ExecStart=/usr/sbin/mkfs.ext4 -F /dev/nvme0n1p2
 # hack: let system see the FS
 ExecStart=/bin/sleep 2
+
+[Install]
+WantedBy=multi-user.target
