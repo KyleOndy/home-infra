@@ -1,0 +1,10 @@
+[Unit]
+Description=gluster-init timer
+
+[Timer]
+OnBootSec=15
+OnUnitActiveSec=5
+RandomizedDelaySec=5
+
+[Install]
+WantedBy=multi-user.target

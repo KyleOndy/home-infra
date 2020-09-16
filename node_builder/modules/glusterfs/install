@@ -23,7 +23,9 @@ apt_install glusterfs-server glusterfs-client
 systemctl enable glusterd.service
 
 cp "$DIR/gluster-init.service" /etc/systemd/system/
-systemctl enable gluster-init.service
+cp "$DIR/gluster-init.timer"  /etc/systemd/system/
+systemctl enable gluster-init.timer
+systemctl start gluster-init.timer
 
 mkdir -p /usr/local/bin/
 cp "$DIR/gluster-init.sh" /usr/local/bin/gluster-init.sh
