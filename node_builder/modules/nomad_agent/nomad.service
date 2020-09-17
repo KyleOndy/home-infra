@@ -2,7 +2,7 @@
 Description=Nomad
 Documentation=https://nomadproject.io/docs/
 Wants=network-online.target
-After=network-online.target
+# todo: require gluster to be mounted
 StartLimitIntervalSec=10
 
 [Service]

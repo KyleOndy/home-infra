@@ -1,7 +1,8 @@
 [Unit]
 Description=Traefik
 Documentation=https://docs.traefik.io
-#After=network-online.target
+After=network-online.target
+Requires=mnt-nfs.mount
 #AssertFileIsExecutable=/usr/bin/traefik
 #AssertPathExists=/etc/traefik/traefik.toml
 

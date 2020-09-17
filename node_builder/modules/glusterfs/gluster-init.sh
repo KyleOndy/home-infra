@@ -2,6 +2,8 @@
 set -eu
 set -x
 
+# https://github.com/jtopjian/scripts/blob/master/gluster/gluster-status.sh
+
 ###########################################################################
 #
 # GLUSTER INIT. The scrip that keeps getting scarier
@@ -15,14 +17,32 @@ set -x
 ###########################################################################
 
 VOLUME_NAME="shared"
-SERVER_MOUNT="/gluster"
+SERVER_MOUNT="/gluster" # also known as a brick
 CLIENT_MOUNT="/data"
 
-# is everything good? Lets just exit.
+# is everything good?
+for peer in $(gluster peer status | grep '^Hostname: ' | awk '{print $2}'); do
+  state=$(gluster peer status | grep -A 2 "^Hostname: $peer$" | grep '^State: ')
+  if [[ "$state" == "State: Peer in Cluster (Connected)" ]]; then
+    echo "$peer: all is good"
+  elif [[ "$state" == "State: Peer Rejected (Connected)" ]]; then
+    echo "$peer is broken. Removing from cluster"
+      gluster volume remove-brick shared replica 2 "$peer:$SERVER_MOUNT" force
+      gluster volume add-brick shared replica 3 "$peer:$SERVER_MOUNT" force
+  else
+    echo "Unknown state: $state"
+  fi
+done
 
-# are things in a broken state? Try and fix it
-gluster peer status | grep 'State: Peer Rejected' -B2 | grep Hostname | cut -d" " -f2 | xargs -I{} bash -c 'yes | gluster peer detach {} force'
-gluster peer status | grep 'State: Peer Rejected' -B2 | grep Uuid | cut -d" " -f2 | xargs -I{} rm /var/lib/glusterd/peers/{}
+
+## This means volume is mounted and all three nodes are health
+#mkdir -p "$SERVER_MOUNT/.meta"
+#echo "$(date): $(hostname): healthy" >> "$SERVER_MOUNT/.meta/health"
+#exit 0
+# Lets just exit.
+
+# Is only one node down? Remove it, let it try and rejoin
+
 
 # todo: script for startup
 gluster peer probe w1.dmz.509ely.com
