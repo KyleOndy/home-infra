@@ -1,11 +1,13 @@
-{ pkgs ? import <nixpkgs> { } }:
+{}:
+let
+  sources = import ./nix/sources.nix;
+  pkgs = import sources.nixpkgs { };
+in
+pkgs.mkShell {
 
-with pkgs;
+  buildInputs = with pkgs; [
+    nixops
 
-stdenv.mkDerivation {
-  name = "home_infra";
-
-  buildInputs = [
     # pre-commit
     # https://pre-commit.com/
     pre-commit
