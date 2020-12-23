@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-set -e
-
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-
-cp "$DIR/scheduled-reboot.service" /etc/systemd/system/scheduled-reboot.service
-cp "$DIR/scheduled-reboot.timer"   /etc/systemd/system/scheduled-reboot.timer
