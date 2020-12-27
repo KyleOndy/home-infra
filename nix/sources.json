@@ -11,16 +11,40 @@
         "url": "https://github.com/nmattia/niv/archive/ba57d5a29b4e0f2085917010380ef3ddc3cf380f.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
-    "nixpkgs": {
+    "nixops": {
         "branch": "master",
+        "description": "NixOps is a tool for deploying to NixOS machines in a network or cloud.",
+        "homepage": "https://nixos.org/nixops",
+        "owner": "NixOS",
+        "repo": "nixops",
+        "rev": "ed2868fbc0b5924fcd4a60a8bd32a14fa196381b",
+        "sha256": "14av9x7i3fvnzmx711x180dkjngx99g1l65wr7b5784fslzbcv5r",
+        "type": "tarball",
+        "url": "https://github.com/NixOS/nixops/archive/ed2868fbc0b5924fcd4a60a8bd32a14fa196381b.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "nixos-generators": {
+        "branch": "master",
+        "description": "Collection of image builders [maintainer=@Lassulus]",
+        "homepage": "",
+        "owner": "nix-community",
+        "repo": "nixos-generators",
+        "rev": "450f39121c45b93951c52874fe233455d007d3bc",
+        "sha256": "1iwc39hzvzzyndxwbnl3fck7phxnjpnhy8zn4nyp8is1fiw0648v",
+        "type": "tarball",
+        "url": "https://github.com/nix-community/nixos-generators/archive/450f39121c45b93951c52874fe233455d007d3bc.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "nixpkgs": {
+        "branch": "nixos-unstable",
         "description": "Nix Packages collection",
         "homepage": "",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "a1fb1e9ef855a84c89a5ef419dde18300dcbb336",
-        "sha256": "0ymf0394dwzz058j19nd6q8qwx56a6rwn1xxm285rbmk87g37i7n",
+        "rev": "e9158eca70ae59e73fae23be5d13d3fa0cfc78b4",
+        "sha256": "0cnmvnvin9ixzl98fmlm3g17l6w95gifqfb3rfxs55c0wj2ddy53",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/a1fb1e9ef855a84c89a5ef419dde18300dcbb336.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/e9158eca70ae59e73fae23be5d13d3fa0cfc78b4.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }

@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -e
+
+nixos-generate -f sd-aarch64-installer --system aarch64-linux -c sd-card.nix -I "$NIX_PATH"
