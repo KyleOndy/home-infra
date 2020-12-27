@@ -46,16 +46,16 @@
     package = pkgs.nixUnstable;
     gc.automatic = true;
     optimise.automatic = true;
-    buildMachines = [
-      {
-        hostName = "builder";
-        system = "x86_64-linux";
-        maxJobs = 2;
-        speedFactor = 1;
-        supportedFeatures = [ ];
-        mandatoryFeatures = [ ];
-      }
-    ];
+    #buildMachines = [
+    #  {
+    #    hostName = "builder";
+    #    system = "x86_64-linux";
+    #    maxJobs = 2;
+    #    speedFactor = 1;
+    #    supportedFeatures = [ ];
+    #    mandatoryFeatures = [ ];
+    #  }
+    #];
     distributedBuilds = true;
     extraOptions = ''
       builders-use-substitutes = true
