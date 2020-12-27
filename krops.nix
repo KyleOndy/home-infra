@@ -14,12 +14,9 @@ let
       ref = "4b4bbce199d3b3a8001ee93495604289b01aaad3";
       url = https://github.com/NixOS/nixpkgs;
     };
-    nixos-config.file = toString ./configuration.worker.nix;
-  }
-    {
-      config.file = toString ./hardware-configuration.nix;
-      nix-config.symlink = "config/hardware-configuration.nix";
-    }];
+    "nixos-config.nix".file = toString ./configuration.worker.nix;
+    "hardware-config.nix".file = toString ./hardware-configuration.nix;
+  }];
 
 in
 {

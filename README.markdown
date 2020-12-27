@@ -84,3 +84,6 @@ Targets need to be minimally bootstrapped first.
 
 - `touch /var/src/.populate`
 - ` git` installed
+
+
+https://cgit.krebsco.de/stockholm/tree/krebs/krops.nix
