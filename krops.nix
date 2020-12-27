@@ -12,10 +12,11 @@ let
     nixpkgs.git = {
       clean.exclude = [ "/.version-suffix" ];
       ref = "a7e559a5504572008567383c3dc8e142fa7a8633";
+      #ref = "84917aa00bf23c88e5874c683abe05edb0ba4078";
       url = https://github.com/NixOS/nixpkgs;
     };
     nixos-config.file = toString ./configuration.worker.nix;
-    "hardware-config.nix".file = toString ./hardware-configuration.nix;
+    "hardware-configuration.nix".file = toString ./hardware-configuration.nix;
   }];
 
   w1 = pkgs.krops.writeDeploy "deploy-w1" {
