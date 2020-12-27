@@ -19,10 +19,22 @@ let
     "hardware-config.nix".file = toString ./hardware-configuration.nix;
   }];
 
-in
-{
   w1 = pkgs.krops.writeDeploy "deploy-w1" {
     source = source;
     target = "root@w1.dmz.509ely.com";
   };
+
+  w2 = pkgs.krops.writeDeploy "deploy-w2" {
+    source = source;
+    target = "root@w2.dmz.509ely.com";
+  };
+
+  w3 = pkgs.krops.writeDeploy "deploy-w3" {
+    source = source;
+    target = "root@w3.dmz.509ely.com";
+  };
+in
+{
+  all = pkgs.writeScript "deploy-all-servers"
+    (lib.concatStringsSep "\n" [ w1 w2 w3 ]);
 }

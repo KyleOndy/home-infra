@@ -28,6 +28,8 @@
 
   environment.systemPackages = with pkgs; [
     git
+    glances
+    htop
     neovim
     rsync
   ];
