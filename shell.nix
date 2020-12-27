@@ -19,6 +19,7 @@ pkgs.mkShell {
   ];
 
   shellHook = ''
-    export NIX_PATH=nixpkgs=${pkgs.path}
+    shell_dir="${toString ./.}"
+    export NIX_PATH="nixpkgs=$shell_dir/vendor/nixpkgs"
   '';
 }
