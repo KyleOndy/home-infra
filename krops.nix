@@ -11,8 +11,11 @@ let
   source = { host }: lib.evalSource [{
     nixpkgs.git = {
       clean.exclude = [ "/.version-suffix" ];
-      ref = "a7e559a5504572008567383c3dc8e142fa7a8633";
-      #ref = "84917aa00bf23c88e5874c683abe05edb0ba4078";
+      #ref = "34c7eb7545d155cc5b6f499b23a7cb1c96ab4d59"; # 19.03
+      #ref = "75f4ba05c63be3f147bcc2f7bd4ba1f029cedcb1"; # 19.09
+      #ref = "929768261a3ede470eafb58d5b819e1a848aa8bf"; # 20.03
+      #ref = "ca119749d86f484066fae7680af8a44ea1f11ca8"; # 20.09
+      ref = "84917aa00bf23c88e5874c683abe05edb0ba4078"; # unstable
       url = https://github.com/NixOS/nixpkgs;
     };
     nixos-config.file = toString ./configuration.worker.nix;

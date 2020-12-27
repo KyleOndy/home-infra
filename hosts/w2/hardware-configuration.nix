@@ -13,6 +13,7 @@
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
+  networking.hostName = "w2";
 
   fileSystems."/" =
     {
