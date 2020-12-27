@@ -17,7 +17,7 @@ let
     nixos-config.file = toString ./configuration.worker.nix;
   }
     {
-      config.file = toString ./hardware-configuraiton.nix;
+      config.file = toString ./hardware-configuration.nix;
       nix-config.symlink = "config/hardware-configuration.nix";
     }];
 
