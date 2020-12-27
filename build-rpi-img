@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -ex
 
-nixos-generate -f sd-aarch64-installer --system aarch64-linux -c sd-card.nix -I "$NIX_PATH"
+#nixos-generate -f sd-aarch64-installer --system aarch64-linux -c sd-card.nix -I "$NIX_PATH"
+nix-build ./vendor/nixpkgs/nixos/release.nix -A sd_image_raspberrypi4

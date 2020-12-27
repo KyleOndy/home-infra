@@ -74,3 +74,13 @@ This section needs to be expanded, but a high level overview is as follows.
 ```
 qemu: linux kernel too old to load a ram disk
 ```
+
+
+######################
+
+Use Krops
+
+Targets need to be minimally bootstrapped first.
+
+- `touch /var/src/.populate`
+- ` git` installed
