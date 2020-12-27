@@ -82,7 +82,7 @@ Use Krops
 
 Targets need to be minimally bootstrapped first.
 
-- `touch /var/src/.populate`
+- `mkdir /var/src && touch /var/src/.populate`
 - ` git` installed
 
 

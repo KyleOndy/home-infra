@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-set -ex
+set -e
 
+echo "Building all hosts"
 nix-build ./krops.nix -A all
+
+echo "Deploying to all hosts"
 ./result

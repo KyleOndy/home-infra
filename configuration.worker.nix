@@ -32,6 +32,7 @@
     htop
     neovim
     rsync
+    watch
   ];
 
   # Enable the OpenSSH daemon.
@@ -60,7 +61,7 @@
         builders-use-substitutes = true
         experimental-features = nix-command
       '';
-    }
+    };
 
 
       # This value determines the NixOS release from which the default
