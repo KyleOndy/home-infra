@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -ex
+
+nix-build ./krops.nix -A w1
+./result
