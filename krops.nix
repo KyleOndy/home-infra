@@ -9,11 +9,12 @@ let
 
   # todo: use niv
   source = lib.evalSource [{
-    nixpkgs.git = {
-      clean.exclude = [ "/.version-suffix" ];
-      ref = "4b4bbce199d3b3a8001ee93495604289b01aaad3";
-      url = https://github.com/NixOS/nixpkgs;
-    };
+    #nixpkgs.git = {
+    #  clean.exclude = [ "/.version-suffix" ];
+    #  ref = "4b4bbce199d3b3a8001ee93495604289b01aaad3";
+    #  url = https://github.com/NixOS/nixpkgs;
+    #};
+    nixpkgs.file = toString ./vendor/nixpkgs;
     "nixos-config.nix".file = toString ./configuration.worker.nix;
     "hardware-config.nix".file = toString ./hardware-configuration.nix;
   }];
