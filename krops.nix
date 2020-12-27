@@ -8,7 +8,7 @@ let
   pkgs = import "${krops}/pkgs" { };
 
   # todo: use niv
-  source = lib.evalSource [{
+  source = { host }: lib.evalSource [{
     nixpkgs.git = {
       clean.exclude = [ "/.version-suffix" ];
       ref = "a7e559a5504572008567383c3dc8e142fa7a8633";
@@ -16,21 +16,22 @@ let
       url = https://github.com/NixOS/nixpkgs;
     };
     nixos-config.file = toString ./configuration.worker.nix;
-    "hardware-configuration.nix".file = toString ./hardware-configuration.nix;
+    # todo: find a better way to do this string interpolation
+    "hardware-configuration.nix".file = toString ./. + "/hosts/${host}/hardware-configuration.nix";
   }];
 
   w1 = pkgs.krops.writeDeploy "deploy-w1" {
-    source = source;
+    source = source { host = "w1"; };
     target = "root@w1.dmz.509ely.com";
   };
 
   w2 = pkgs.krops.writeDeploy "deploy-w2" {
-    source = source;
+    source = source { host = "w2"; };
     target = "root@w2.dmz.509ely.com";
   };
 
   w3 = pkgs.krops.writeDeploy "deploy-w3" {
-    source = source;
+    source = source { host = "w3"; };
     target = "root@w3.dmz.509ely.com";
   };
 in
