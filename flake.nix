@@ -43,10 +43,9 @@
       fastConnection = true;
       profiles = {
         system = {
-          #sshUser = "root";
-          sshUser = "kyle";
+          sshUser = "root";
           path =
-            deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.m1;
+            deploy-rs.lib.aarch64-linux.activate.nixos self.nixosConfigurations.m1;
         };
       };
     };
@@ -55,10 +54,9 @@
       fastConnection = true;
       profiles = {
         system = {
-          #sshUser = "root";
-          sshUser = "kyle";
+          sshUser = "root";
           path =
-            deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.m2;
+            deploy-rs.lib.aarch64-linux.activate.nixos self.nixosConfigurations.m1;
         };
       };
     };
@@ -67,10 +65,9 @@
       fastConnection = true;
       profiles = {
         system = {
-          #sshUser = "root";
-          sshUser = "kyle";
+          sshUser = "root";
           path =
-            deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.m3;
+            deploy-rs.lib.aarch64-linux.activate.nixos self.nixosConfigurations.m1;
         };
       };
     };
