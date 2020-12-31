@@ -1,6 +1,0 @@
-[Unit]
-Description=Scheduled Reboot
-
-[Service]
-Type=simple
-ExecStart=/usr/bin/systemctl --force reboot
