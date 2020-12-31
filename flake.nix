@@ -14,6 +14,14 @@
       system = "aarch64-linux";
       modules = [ ./nodes/m1 ];
     };
+    nixosConfigurations.m2 = nixpkgs.lib.nixosSystem {
+      system = "aarch64-linux";
+      modules = [ ./nodes/m2 ];
+    };
+    nixosConfigurations.m3 = nixpkgs.lib.nixosSystem {
+      system = "aarch64-linux";
+      modules = [ ./nodes/m3 ];
+    };
     nixosConfigurations.w1 = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [ ./nodes/w1 ];
@@ -35,9 +43,34 @@
       fastConnection = true;
       profiles = {
         system = {
-          sshUser = "root";
+          #sshUser = "root";
+          sshUser = "kyle";
           path =
             deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.m1;
+        };
+      };
+    };
+    deploy.nodes.m2 = {
+      hostname = "m2.dmz.509ely.com";
+      fastConnection = true;
+      profiles = {
+        system = {
+          #sshUser = "root";
+          sshUser = "kyle";
+          path =
+            deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.m2;
+        };
+      };
+    };
+    deploy.nodes.m3 = {
+      hostname = "m3.dmz.509ely.com";
+      fastConnection = true;
+      profiles = {
+        system = {
+          #sshUser = "root";
+          sshUser = "kyle";
+          path =
+            deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.m3;
         };
       };
     };

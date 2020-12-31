@@ -6,5 +6,5 @@
     ./../../modules/master-k3s.nix
   ];
 
-  networking.hostName = "m1";
+  networking.hostName = "m2";
 }
