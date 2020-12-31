@@ -2,8 +2,8 @@
 {
   imports = [
     ./../../modules/worker-configuration.nix
-    ./../../modules/keepalived.nix
-    ./../../modules/k3s.nix
+    ./../../modules/worker-keepalived.nix
+    ./../../modules/worker-k3s.nix
   ];
 
   networking.hostName = "w3";
