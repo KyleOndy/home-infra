@@ -10,6 +10,10 @@
   };
 
   outputs = { self, nixpkgs, deploy-rs }: {
+    nixosConfigurations.m1 = nixpkgs.lib.nixosSystem {
+      system = "aarch64-linux";
+      modules = [ ./nodes/m1 ];
+    };
     nixosConfigurations.w1 = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [ ./nodes/w1 ];
@@ -26,6 +30,17 @@
     # This is the application we actually want to run
     # defaultPackage.x86_64-linux = import ./hello.nix nixpkgs;
 
+    deploy.nodes.m1 = {
+      hostname = "m1.dmz.509ely.com";
+      fastConnection = true;
+      profiles = {
+        system = {
+          sshUser = "root";
+          path =
+            deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.m1;
+        };
+      };
+    };
     deploy.nodes.w1 = {
       hostname = "w1.dmz.509ely.com";
       fastConnection = true;

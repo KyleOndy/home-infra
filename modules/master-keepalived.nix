@@ -7,9 +7,9 @@
     enable = true;
     vrrpInstances = {
       default = {
-        interface = "enp2s0";
+        interface = "eth0";
         state = "MASTER";
-        virtualIps = [{ addr = "10.25.89.6"; }];
+        virtualIps = [{ addr = "10.25.89.5"; }];
         virtualRouterId = 1;
       };
     };
