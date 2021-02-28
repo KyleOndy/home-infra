@@ -69,4 +69,5 @@
       experimental-features = nix-command
     '';
   };
+  virtualisation.docker.enable = true;
 }
