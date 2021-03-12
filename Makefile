@@ -16,17 +16,6 @@ $(DIST_DIR)/vmlinuz: vendor/linux-$(KERNEL_VERSION)
 	mkdir -p $(shell dirname $@)
 	cp $</arch/$(ARCH)/boot/bzImage $@
 
-
-
-
-.PHONY: docker-build-env
-docker-build-env: Dockerfile.build_env
-	docker build -t build_env:latest -f Dockerfile.build_env .
-
-.PHONY: docker-kernel-build
-docker-kernel-build: Dockerfile.kernel_build
-	docker build -t kernel_build:latest -f Dockerfile.kernel_build .
-
 myinit: myinit.c
 	gcc -static myinit.c -o myinit
 
