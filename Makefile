@@ -3,28 +3,29 @@ ARCH=x86
 KERNEL_VERSION=5.12-rc2
 NOMAD_VERSION=1.0.4
 DIST_DIR=dist
+VENDOR_DIR=vendor
 
-vendor/linux-$(KERNEL_VERSION):
+$(VENDOR_DIR)/linux-$(KERNEL_VERSION):
 	rm -rf $@
 	mkdir -p $(shell dirname $@)
 # todo: this URL format only holds for this release
 	wget -qO- https://git.kernel.org/torvalds/t/linux-$(KERNEL_VERSION).tar.gz | tar xzf - -C $(shell dirname $@)
 
-vendor/nomad-$(NOMAD_VERSION):
+$(VENDOR_DIR)/nomad-$(NOMAD_VERSION):
 	rm -rf $@
 	mkdir -p $(shell dirname $@)
 	wget -qO- https://github.com/hashicorp/nomad/archive/v$(NOMAD_VERSION).tar.gz | tar xzf - -C $(shell dirname $@)
-	cd vendor/nomad-$(NOMAD_VERSION) && make GO_LDFLAGS+='"-extldflags=-static"' pkg/linux_amd64/nomad
+	cd $(VENDOR_DIR)/nomad-$(NOMAD_VERSION) && make GO_LDFLAGS+='"-extldflags=-static"' pkg/linux_amd64/nomad
 
-$(DIST_DIR)/nomad: vendor/nomad-$(NOMAD_VERSION)
+$(DIST_DIR)/nomad: $(VENDOR_DIR)/nomad-$(NOMAD_VERSION)
 	mkdir -p $(shell dirname $@)
-	cp vendor/nomad-$(NOMAD_VERSION)/pkg/linux_amd64/nomad $@
+	cp $(VENDOR_DIR)/nomad-$(NOMAD_VERSION)/pkg/linux_amd64/nomad $@
 
-$(DIST_DIR)/vmlinuz: vendor/linux-$(KERNEL_VERSION)
+$(DIST_DIR)/vmlinuz: $(VENDOR_DIR)/linux-$(KERNEL_VERSION)
 	mkdir -p $(shell dirname $@)
-	$(MAKE) -C vendor/linux-$(KERNEL_VERSION) CONFIG_DEVTMPFS=y defconfig
-	$(MAKE) -C vendor/linux-$(KERNEL_VERSION) CONFIG_DEVTMPFS=y kvm_guest.config
-	$(MAKE) -C vendor/linux-$(KERNEL_VERSION) CONFIG_DEVTMPFS=y
+	$(MAKE) -C $(VENDOR_DIR)/linux-$(KERNEL_VERSION) CONFIG_DEVTMPFS=y defconfig
+	$(MAKE) -C $(VENDOR_DIR)/linux-$(KERNEL_VERSION) CONFIG_DEVTMPFS=y kvm_guest.config
+	$(MAKE) -C $(VENDOR_DIR)/linux-$(KERNEL_VERSION) CONFIG_DEVTMPFS=y
 	mkdir -p $(shell dirname $@)
 	cp $</arch/$(ARCH)/boot/bzImage $@
 
@@ -38,8 +39,8 @@ $(DIST_DIR)/init: myinit.c
 	gcc -static myinit.c -o myinit
 	mv myinit $@
 
-vendor/linux/arch/x86_64/boot/bzImage:
-	cd vendor/linux && \
+$(VENDOR_DIR)/linux/arch/x86_64/boot/bzImage:
+	cd $(VENDOR_DIR)/linux && \
 		$(MAKE) defconfig && \
 		$(MAKE) kvm_guest.config && \
 		$(MAKE)
@@ -60,3 +61,4 @@ run-qemu:
 .PHONY: clean
 clean:
 	rm -rf $(DIST_DIR)
+	rm -rf $(VENDOR_DIR)
