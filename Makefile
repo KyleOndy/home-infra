@@ -25,6 +25,11 @@ vendor/linux/arch/x86_64/boot/bzImage:
 		$(MAKE) kvm_guest.config && \
 		$(MAKE)
 
+$(DIST_DIR)/initramfs.cpio: mk_initramfs $(DIST_DIR)/init
+	./mk_initramfs $(DIST_DIR)/init
+	mv initramfs.cpio $@
+
+
 .PHONY: clean
 clean:
 	rm -rf $(DIST_DIR)
