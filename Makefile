@@ -1,6 +1,7 @@
 MAKE=make -j$(shell grep -c ^processor /proc/cpuinfo)
 ARCH=x86
 KERNEL_VERSION=5.12-rc2
+DIST_DIR=dist
 
 vendor/linux-$(KERNEL_VERSION):
 	rm -rf $@
@@ -8,7 +9,7 @@ vendor/linux-$(KERNEL_VERSION):
 # todo: this URL format only holds for this release
 	wget -qO- https://git.kernel.org/torvalds/t/linux-$(KERNEL_VERSION).tar.gz | tar xzf - -C $(shell dirname $@)
 
-dist/vmlinuz: vendor/linux-$(KERNEL_VERSION)
+$(DIST_DIR)/vmlinuz: vendor/linux-$(KERNEL_VERSION)
 	$(MAKE) -C vendor/linux-$(KERNEL_VERSION) defconfig
 	$(MAKE) -C vendor/linux-$(KERNEL_VERSION) kvm_guest.config
 	$(MAKE) -C vendor/linux-$(KERNEL_VERSION)
@@ -34,3 +35,7 @@ vendor/linux/arch/x86_64/boot/bzImage:
 		$(MAKE) defconfig && \
 		$(MAKE) kvm_guest.config && \
 		$(MAKE)
+
+.PHONY: clean
+clean:
+	rm -rf $(DIST_DIR)
