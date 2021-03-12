@@ -4,8 +4,10 @@ set -Eex
 [ -d initramfs ] && rm -r initramfs
 mkdir initramfs
 
-cp "$1" ./initramfs/init
-cp "$2" ./initramfs/nomad
+cp ./dist/init    ./initramfs/init
+cp ./dist/nomad   ./initramfs/nomad
+cp ./dist/busybox ./initramfs/busybox
+
 cd initramfs
 fakeroot -- << SCRIPT
 mkdir -p dev

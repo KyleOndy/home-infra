@@ -11,7 +11,8 @@ main ()
 {
     printf ("\n");
     printf ("Hello world from %s!\n", __FILE__);
-    system("/nomad agent");
+    system("/nomad agent -dev >/var/log/nomad.log 2>/var/log/nomad.err&&");
+    system("/busybox ash");
     while (1) { }
     return 0;
 }

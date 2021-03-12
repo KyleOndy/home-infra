@@ -26,6 +26,10 @@ $(DIST_DIR)/vmlinuz: vendor/linux-$(KERNEL_VERSION)
 	mkdir -p $(shell dirname $@)
 	cp $</arch/$(ARCH)/boot/bzImage $@
 
+$(DIST_DIR)/busybox:
+	wget -q -O $@ https://busybox.net/downloads/binaries/1.31.0-defconfig-multiarch-musl/busybox-x86_64
+	chmod +x $@
+
 $(DIST_DIR)/init: myinit.c
 	gcc -static myinit.c -o $@
 
@@ -35,8 +39,8 @@ vendor/linux/arch/x86_64/boot/bzImage:
 		$(MAKE) kvm_guest.config && \
 		$(MAKE)
 
-$(DIST_DIR)/initramfs.cpio: mk_initramfs $(DIST_DIR)/init $(DIST_DIR)/nomad
-	./mk_initramfs $(DIST_DIR)/init $(DIST_DIR)/nomad
+$(DIST_DIR)/initramfs.cpio: mk_initramfs $(DIST_DIR)/init $(DIST_DIR)/nomad $(DIST_DIR)/busybox
+	./mk_initramfs
 	mv initramfs.cpio $@
 
 .PHONY: run-qemu
