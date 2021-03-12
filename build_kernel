@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -ex
+
+_make() {
+  make -j "$(grep -c ^processor /proc/cpuinfo)" "$@"
+}
+
+cd ./vendor/linux
+_make defconfig kvm_guest.config
+_make

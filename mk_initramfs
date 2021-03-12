@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -Eex
+
+[ -d initramfs ] && rm -r initramfs
+mkdir initramfs
+
+cp ./myinit ./initramfs/init
+cd initramfs
+fakeroot -- << SCRIPT
+mkdir -p dev
+mknod ./dev/console c 5 1
+chown root init
+find . | cpio -H newc -o > ../initramfs.cpio
+SCRIPT
+
+cd ..
+#cat initramfs.cpio | gzip > initramfs.igz

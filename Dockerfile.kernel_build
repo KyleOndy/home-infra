@@ -1,0 +1,23 @@
+FROM ubuntu:20.04
+
+ARG DEBIAN_FRONTEND=noninteractive
+run apt-get -q update \
+ && apt-get -yq install \
+        bc \
+        bison \
+        build-essential \
+        crossbuild-essential-arm64 \
+        curl \
+        device-tree-compiler \
+        flex \
+        gcc \
+        git \
+        kmod \
+        libc6-dev \
+        libelf-dev \
+        libncurses-dev \
+        libncurses5-dev \
+        libssl-dev \
+        make \
+        neovim \
+        wget
