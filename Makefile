@@ -29,6 +29,14 @@ $(DIST_DIR)/initramfs.cpio: mk_initramfs $(DIST_DIR)/init
 	./mk_initramfs $(DIST_DIR)/init
 	mv initramfs.cpio $@
 
+.PHONY: run-qemu
+run-qemu:
+	qemu-system-x86_64 \
+		-kernel $(DIST_DIR)/vmlinuz \
+		-initrd $(DIST_DIR)/initramfs.cpio \
+		-nographic \
+		-m 1G \
+		-append "console=ttyS0"
 
 .PHONY: clean
 clean:
