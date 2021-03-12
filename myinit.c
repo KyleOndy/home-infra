@@ -11,7 +11,7 @@ main ()
 {
     printf ("\n");
     printf ("Hello world from %s!\n", __FILE__);
-    system("/usr/bin/nomad agent");
+    system("/nomad agent");
     while (1) { }
     return 0;
 }

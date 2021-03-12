@@ -5,6 +5,7 @@ set -Eex
 mkdir initramfs
 
 cp "$1" ./initramfs/init
+cp "$2" ./initramfs/nomad
 cd initramfs
 fakeroot -- << SCRIPT
 mkdir -p dev

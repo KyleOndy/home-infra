@@ -16,6 +16,8 @@ vendor/nomad-$(NOMAD_VERSION):
 	wget -qO- https://github.com/hashicorp/nomad/archive/v$(NOMAD_VERSION).tar.gz | tar xzf - -C $(shell dirname $@)
 	cd vendor/nomad-$(NOMAD_VERSION) && make GO_LDFLAGS+='"-extldflags=-static"' pkg/linux_amd64/nomad
 
+$(DIST_DIR)/nomad: vendor/nomad-$(NOMAD_VERSION)
+	cp vendor/nomad-$(NOMAD_VERSION)/pkg/linux_amd64/nomad $@
 
 $(DIST_DIR)/vmlinuz: vendor/linux-$(KERNEL_VERSION)
 	$(MAKE) -C vendor/linux-$(KERNEL_VERSION) defconfig
@@ -33,8 +35,8 @@ vendor/linux/arch/x86_64/boot/bzImage:
 		$(MAKE) kvm_guest.config && \
 		$(MAKE)
 
-$(DIST_DIR)/initramfs.cpio: mk_initramfs $(DIST_DIR)/init
-	./mk_initramfs $(DIST_DIR)/init
+$(DIST_DIR)/initramfs.cpio: mk_initramfs $(DIST_DIR)/init $(DIST_DIR)/nomad
+	./mk_initramfs $(DIST_DIR)/init $(DIST_DIR)/nomad
 	mv initramfs.cpio $@
 
 .PHONY: run-qemu
