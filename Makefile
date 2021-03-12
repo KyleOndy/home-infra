@@ -17,9 +17,11 @@ vendor/nomad-$(NOMAD_VERSION):
 	cd vendor/nomad-$(NOMAD_VERSION) && make GO_LDFLAGS+='"-extldflags=-static"' pkg/linux_amd64/nomad
 
 $(DIST_DIR)/nomad: vendor/nomad-$(NOMAD_VERSION)
+	mkdir -p $(shell dirname $@)
 	cp vendor/nomad-$(NOMAD_VERSION)/pkg/linux_amd64/nomad $@
 
 $(DIST_DIR)/vmlinuz: vendor/linux-$(KERNEL_VERSION)
+	mkdir -p $(shell dirname $@)
 	$(MAKE) -C vendor/linux-$(KERNEL_VERSION) CONFIG_DEVTMPFS=y defconfig
 	$(MAKE) -C vendor/linux-$(KERNEL_VERSION) CONFIG_DEVTMPFS=y kvm_guest.config
 	$(MAKE) -C vendor/linux-$(KERNEL_VERSION) CONFIG_DEVTMPFS=y
@@ -27,11 +29,14 @@ $(DIST_DIR)/vmlinuz: vendor/linux-$(KERNEL_VERSION)
 	cp $</arch/$(ARCH)/boot/bzImage $@
 
 $(DIST_DIR)/busybox:
+	mkdir -p $(shell dirname $@)
 	wget -q -O $@ https://busybox.net/downloads/binaries/1.31.0-defconfig-multiarch-musl/busybox-x86_64
 	chmod +x $@
 
 $(DIST_DIR)/init: myinit.c
-	gcc -static myinit.c -o $@
+	mkdir -p $(shell dirname $@)
+	gcc -static myinit.c -o myinit
+	mv myinit $@
 
 vendor/linux/arch/x86_64/boot/bzImage:
 	cd vendor/linux && \
@@ -39,7 +44,7 @@ vendor/linux/arch/x86_64/boot/bzImage:
 		$(MAKE) kvm_guest.config && \
 		$(MAKE)
 
-$(DIST_DIR)/initramfs.cpio: mk_initramfs $(DIST_DIR)/init $(DIST_DIR)/nomad $(DIST_DIR)/busybox
+$(DIST_DIR)/initramfs.cpio: mk_initramfs $(DIST_DIR)/init $(DIST_DIR)/vmlinuz $(DIST_DIR)/nomad $(DIST_DIR)/busybox
 	./mk_initramfs
 	mv initramfs.cpio $@
 
