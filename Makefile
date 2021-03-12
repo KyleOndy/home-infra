@@ -16,8 +16,8 @@ $(DIST_DIR)/vmlinuz: vendor/linux-$(KERNEL_VERSION)
 	mkdir -p $(shell dirname $@)
 	cp $</arch/$(ARCH)/boot/bzImage $@
 
-myinit: myinit.c
-	gcc -static myinit.c -o myinit
+$(DIST_DIR)/init: myinit.c
+	gcc -static myinit.c -o $@
 
 vendor/linux/arch/x86_64/boot/bzImage:
 	cd vendor/linux && \
