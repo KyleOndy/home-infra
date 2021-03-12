@@ -1,6 +1,7 @@
 MAKE=make -j$(shell grep -c ^processor /proc/cpuinfo)
 ARCH=x86
 KERNEL_VERSION=5.12-rc2
+NOMAD_VERSION=1.0.4
 DIST_DIR=dist
 
 vendor/linux-$(KERNEL_VERSION):
@@ -8,6 +9,12 @@ vendor/linux-$(KERNEL_VERSION):
 	mkdir -p $(shell dirname $@)
 # todo: this URL format only holds for this release
 	wget -qO- https://git.kernel.org/torvalds/t/linux-$(KERNEL_VERSION).tar.gz | tar xzf - -C $(shell dirname $@)
+
+vendor/nomad-$(NOMAD_VERSION):
+	rm -rf $@
+	mkdir -p $(shell dirname $@)
+	wget -qO- https://github.com/hashicorp/nomad/archive/v$(NOMAD_VERSION).tar.gz | tar xzf - -C $(shell dirname $@)
+	cd vendor/nomad-$(NOMAD_VERSION) && CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags "-static"' .
 
 $(DIST_DIR)/vmlinuz: vendor/linux-$(KERNEL_VERSION)
 	$(MAKE) -C vendor/linux-$(KERNEL_VERSION) defconfig
