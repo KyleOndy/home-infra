@@ -20,9 +20,9 @@ $(DIST_DIR)/nomad: vendor/nomad-$(NOMAD_VERSION)
 	cp vendor/nomad-$(NOMAD_VERSION)/pkg/linux_amd64/nomad $@
 
 $(DIST_DIR)/vmlinuz: vendor/linux-$(KERNEL_VERSION)
-	$(MAKE) -C vendor/linux-$(KERNEL_VERSION) defconfig
-	$(MAKE) -C vendor/linux-$(KERNEL_VERSION) kvm_guest.config
-	$(MAKE) -C vendor/linux-$(KERNEL_VERSION)
+	$(MAKE) -C vendor/linux-$(KERNEL_VERSION) CONFIG_DEVTMPFS=y defconfig
+	$(MAKE) -C vendor/linux-$(KERNEL_VERSION) CONFIG_DEVTMPFS=y kvm_guest.config
+	$(MAKE) -C vendor/linux-$(KERNEL_VERSION) CONFIG_DEVTMPFS=y
 	mkdir -p $(shell dirname $@)
 	cp $</arch/$(ARCH)/boot/bzImage $@
 
