@@ -14,7 +14,8 @@ vendor/nomad-$(NOMAD_VERSION):
 	rm -rf $@
 	mkdir -p $(shell dirname $@)
 	wget -qO- https://github.com/hashicorp/nomad/archive/v$(NOMAD_VERSION).tar.gz | tar xzf - -C $(shell dirname $@)
-	cd vendor/nomad-$(NOMAD_VERSION) && CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags "-static"' .
+	cd vendor/nomad-$(NOMAD_VERSION) && make GO_LDFLAGS+='"-extldflags=-static"' pkg/linux_amd64/nomad
+
 
 $(DIST_DIR)/vmlinuz: vendor/linux-$(KERNEL_VERSION)
 	$(MAKE) -C vendor/linux-$(KERNEL_VERSION) defconfig
