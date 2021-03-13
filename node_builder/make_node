@@ -82,7 +82,7 @@ debootstrap_packages=(
   # core system package. Without these system will not boot
   locales
   # openssh-server # it will boot, but I like remote access
-  # initramfs-tools
+  initramfs-tools
   # linux-generic
 
   # debugging / util. These increase size, but are nice to have
