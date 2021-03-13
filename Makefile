@@ -7,5 +7,5 @@ export PIXZ_COMPRESSION_LEVEL = ${COMPRESSION_LEVEL}
 env:
 	env | sort
 
-worker-node:
-	sudo -E ./node_builder/make_node ./dist ${CONSUL_ENCRYPT_KEY}
+worker-node: $(shell fd --type=file . ./node_builder)
+	sudo -E ./node_builder/make_node ../dist ${CONSUL_ENCRYPT_KEY}

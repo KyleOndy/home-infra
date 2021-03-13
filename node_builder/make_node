@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -Eeuo pipefail
+set -x
 
 # -------------------------------------------------------------------------
 # This script is a big old mess of spaghetti that somehow builds the worker
@@ -54,7 +55,15 @@ git diff-index --quiet HEAD -- && GIT_DIRTY=
 BUILD_TIMESTAMP=$(date --utc --iso-8601=seconds)
 OUT_DIR="$1/$BUILD_TIMESTAMP-${GIT_REF}${GIT_DIRTY}"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-DEB_BOOTSTRAP=/tmp/debootstrap_cache
+
+# I think there is a one liner using parameter expansion, but didn't want to
+# fuss with it too much.
+DEB_BOOTSTRAP=deb_cache
+if [ -z "$CACHE_DIR" ]; then
+  DEB_BOOTSTRAP="/tmp/$DEB_BOOTSTRAP"
+else
+  DEB_BOOTSTRAP="${PWD}/${CACHE_DIR}/$DEB_BOOTSTRAP"
+fi
 
 # do this early so if there is a GPG error it fails fast
 # todo: could this be passed in a node boot time with an boot arg?
@@ -72,43 +81,44 @@ mkdir --parent "$OUT_DIR" "$DEB_BOOTSTRAP"
 debootstrap_packages=(
   # core system package. Without these system will not boot
   locales
-  openssh-server # it will boot, but I like remote access
-  initramfs-tools
-  linux-generic
+  # openssh-server # it will boot, but I like remote access
+  # initramfs-tools
+  # linux-generic
 
   # debugging / util. These increase size, but are nice to have
-  htop
-  mosh
-  vim
+  # htop
+  # mosh
+  # vim
 
   # application specific
   # todo: should thier own scripts handle installing these?
-  gettext-base    # needed for envsubst, in consul install
-  keepalived      # used for poor mans load balanceer
-  nfs-common      # for NFS share, used by traefik
+  # gettext-base    # needed for envsubst, in consul install
+  # keepalived      # used for poor mans load balanceer
+  # nfs-common      # for NFS share, used by traefik
 
   # these need to be verified that they are required
-  ca-certificates
-  curl
-  gpg-agent
-  parted
-  pixz
-  rsync
-  software-properties-common
-  tar
-  unzip
-  xfsprogs
+  # ca-certificates
+  # curl
+  # gpg-agent
+  # parted
+  # pixz
+  # rsync
+  # software-properties-common
+  # tar
+  # unzip
+  # xfsprogs
 )
 
 log "Running debootstrap"
 debootstrap \
+  --verbose \
   --arch=amd64 \
   --components=main,universe \
-  --cache-dir=$DEB_BOOTSTRAP \
+  --cache-dir="$DEB_BOOTSTRAP" \
   --include="${debootstrap_packages[*]}" \
-  eoan \
+  focal \
   "$CHROOT_DIR" \
-  http://archive.ubuntu.com/ubuntu/ > /dev/null # less noise
+  http://archive.ubuntu.com/ubuntu/ #> /dev/null # less noise
 cp -r "$SCRIPT_DIR"/initramfs-tools/* "$CHROOT_DIR/etc/initramfs-tools/"
 
 
