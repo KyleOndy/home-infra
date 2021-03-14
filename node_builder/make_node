@@ -73,7 +73,9 @@ fi
 
 # do this early so if there is a GPG error it fails fast
 # todo: could this be passed in a node boot time with an boot arg?
-ENCRYPT_KEY=${CONSUL_ENCRYPT_KEY:-"$2"}
+# todo: renable this
+# todo: pass in a boot arg?
+# ENCRYPT_KEY=${CONSUL_ENCRYPT_KEY:-"$2"}
 
 
 
@@ -87,16 +89,16 @@ mkdir --parent "$OUT_DIR" "$DEB_BOOTSTRAP"
 debootstrap_packages=(
   # core system package. Without these system will not boot
   locales
-  # openssh-server # it will boot, but I like remote access
   initramfs-tools
   # linux-generic
 
   # basic dev tools. These tools are available for the sake of installion
-  # script.
+  #                  script.
+  #software-properties-common
   curl
+  openssh-server # it will boot, but I like remote access
   parted
   rsync
-  #software-properties-common
   tar
 
   # debugging / util. These increase size, and are not nessacary to boot or build the image, but are nice to have.
