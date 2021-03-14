@@ -6,6 +6,9 @@ set -x
 # todo / roadmap
 # - download all external assets before running script, have this script
 #   consume things out of a local artifact store (directory)
+# - enable ability to build kernel / initramfs / ramroot separately. The kernel
+#   and initramfs will need much less iteration than the ramroot, a _lot_ of
+#   the build process now is generating the kernel.
 # - build my own kernel. Can strip it down, have a better understanding how
 #   thing work at that level
 # -------------------------------------------------------------------------
@@ -32,7 +35,7 @@ log() {
 # build.
 DEBUG=${DEBUG:-}
 # max compression is good for network transfer speeds, but does take quite a
-# bit of time. Its nice to set to 0 while iterating.
+# bit of time. Its nice to set to 0 while iterating and working locally.
 PIXZ_COMPRESSION_LEVEL=${PIXZ_COMPRESSION_LEVEL:-9}
 
 
@@ -42,6 +45,11 @@ function cleanup()
   # these drives will already be unmounted if everything has gone well so just
   # make sure it doesn't error. I could do some `if mount | grep...` mess, but
   # this seems like an easier way to just get moving.
+
+  echo "### START WIP ###"
+  mount | rg "$CHROOT_DIR"
+  echo "### END WIP ###"
+
   umount "$CHROOT_DIR/proc" "$CHROOT_DIR/sys" || true
 
   # do not remove the chroot if we are running a debug build
@@ -127,7 +135,6 @@ debootstrap_packages=(
 #       purity, it does take a bit of time.
 log "Running debootstrap"
 debootstrap \
-  --verbose \
   --arch=amd64 \
   --components=main,universe \
   --cache-dir="$DEB_BOOTSTRAP" \
