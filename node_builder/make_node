@@ -3,6 +3,12 @@ set -Eeuo pipefail
 set -x
 
 # -------------------------------------------------------------------------
+# todo / roadmap
+# - download all external assets before running script, have this script
+#   consume things out of a local artifact store (directory)
+# -------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------
 # This script is a big old mess of spaghetti that somehow builds the worker
 # node artifacts. This script is a prime target for refactoring in the future.
 # -------------------------------------------------------------------------
@@ -87,8 +93,11 @@ debootstrap_packages=(
 
   # basic dev tools. These tools are available for the sake of installion
   # script.
-  curl # to download external packages. Maybe in the future I will download all
-        # assets before running the install scripts.
+  curl
+  parted
+  rsync
+  software-properties-common
+  tar
 
   # debugging / util. These increase size, and are not nessacary to boot or build the image, but are nice to have.
   glances # system monitoring
@@ -104,14 +113,8 @@ debootstrap_packages=(
 
   # these need to be verified that they are required
   # ca-certificates
-  # curl
   # gpg-agent
-  # parted
   # pixz
-  # rsync
-  # software-properties-common
-  # tar
-  # unzip
   # xfsprogs
 )
 
