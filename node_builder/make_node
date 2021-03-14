@@ -6,6 +6,8 @@ set -x
 # todo / roadmap
 # - download all external assets before running script, have this script
 #   consume things out of a local artifact store (directory)
+# - build my own kernel. Can strip it down, have a better understanding how
+#   thing work at that level
 # -------------------------------------------------------------------------
 
 # -------------------------------------------------------------------------
@@ -90,7 +92,7 @@ debootstrap_packages=(
   # core system package. Without these system will not boot
   locales
   initramfs-tools
-  # linux-generic
+  linux-generic # todo: is -generic the right choice?
 
   # basic dev tools. These tools are available for the sake of installion
   #                  script.
