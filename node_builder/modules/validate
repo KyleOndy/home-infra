@@ -1,15 +1,14 @@
 #!/usr/bin/env bash
-set -e
+set -Eeu
 
 errors=()
 
 for dir in $(fd --type directory); do
   if ! [[ -f "$dir/install" ]]; then
-    errors+=("$dir does not have an 'install' script")
+    errors+=("$dir does not have an 'install' script entry point")
   elif ! [[ -x "$dir/install" ]]; then
-    errors+=("$dir/install is not executable")
+    errors+=("$dir/install is not set executable")
   fi
-
 done
 
 # Does everything look ok?
