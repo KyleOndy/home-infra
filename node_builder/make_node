@@ -13,6 +13,7 @@ set -x
 #   thing work at that level
 # - can this be configured to run without root? I've failed more than one build
 #   while the script was waiting for a sudo password.
+# - go through all the initramfs-tools and format / cleanup
 # -------------------------------------------------------------------------
 
 # -------------------------------------------------------------------------
