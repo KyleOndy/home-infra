@@ -93,11 +93,11 @@ debootstrap_packages=(
 
   # basic dev tools. These tools are available for the sake of installion
   # script.
-  #curl
-  #parted
-  #rsync
+  curl
+  parted
+  rsync
   #software-properties-common
-  #tar
+  tar
 
   # debugging / util. These increase size, and are not nessacary to boot or build the image, but are nice to have.
   glances # system monitoring
