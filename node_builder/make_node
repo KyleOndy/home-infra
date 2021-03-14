@@ -11,6 +11,8 @@ set -x
 #   the build process now is generating the kernel.
 # - build my own kernel. Can strip it down, have a better understanding how
 #   thing work at that level
+# - can this be configured to run without root? I've failed more than one build
+#   while the script was waiting for a sudo password.
 # -------------------------------------------------------------------------
 
 # -------------------------------------------------------------------------
@@ -46,11 +48,10 @@ function cleanup()
   # make sure it doesn't error. I could do some `if mount | grep...` mess, but
   # this seems like an easier way to just get moving.
 
-  echo "### START WIP ###"
-  mount | rg "$CHROOT_DIR"
-  echo "### END WIP ###"
+  if mount | rg "$CHROOT_DIR"; then
+    umount "$CHROOT_DIR/proc" "$CHROOT_DIR/sys" || true
+  fi
 
-  umount "$CHROOT_DIR/proc" "$CHROOT_DIR/sys" || true
 
   # do not remove the chroot if we are running a debug build
   [[ -z $DEBUG ]] || rm -rf "$WORK_DIR"
@@ -138,10 +139,11 @@ debootstrap \
   --arch=amd64 \
   --components=main,universe \
   --cache-dir="$DEB_BOOTSTRAP" \
-  --include="${debootstrap_packages[*]}" \
+  "--include=${debootstrap_packages[*]}" \
   focal \
   "$CHROOT_DIR" \
-  http://archive.ubuntu.com/ubuntu/ #> /dev/null # less noise
+  http://archive.ubuntu.com/ubuntu/
+
 cp -r "$SCRIPT_DIR"/initramfs-tools/* "$CHROOT_DIR/etc/initramfs-tools/"
 
 
