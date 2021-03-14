@@ -181,7 +181,7 @@ run_script_in_chroot() {
     cp -r --dereference "$script_dir" "$CHROOT_DIR/$tmp_script_dir/"
   fi
 
-  chroot "$CHROOT_DIR" /usr/bin/env PATH=/usr/sbin:/usr/bin/:/bin:/sbin:/usr/local/bin bash "$tmp_script_dir/$module_name/$script_name" "${args[@]}"
+  chroot "$CHROOT_DIR" /usr/bin/env DEBIAN_FRONTEND=noninteractive PATH=/usr/sbin:/usr/bin/:/bin:/sbin:/usr/local/bin bash "$tmp_script_dir/$module_name/$script_name" "${args[@]}"
 
   rm -r "${CHROOT_DIR:?}/$tmp_script_dir"
 }
