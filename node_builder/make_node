@@ -69,7 +69,8 @@ GIT_REF=$(git rev-parse --short HEAD)
 # todo: in the future: maybe a mark work worker nodes to run dirty builds?
 GIT_DIRTY="-dirty"
 git diff-index --quiet HEAD -- && GIT_DIRTY=
-BUILD_TIMESTAMP=$(date --utc --iso-8601=seconds)
+# can't use ISO-8601 due to `:` in file paths
+BUILD_TIMESTAMP=$(date --utc +%Y-%M-%d_%H%M%S)
 OUT_DIR="$1/$BUILD_TIMESTAMP-${GIT_REF}${GIT_DIRTY}"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 

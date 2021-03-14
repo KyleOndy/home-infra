@@ -20,7 +20,7 @@ KERNEL=$1
 INITRD=$2
 RAMROOT=$3
 
-NGINX_CONTAINER_ID=$(docker run --rm -d -p 80 -v "$(dirname "$RAMROOT"):/usr/share/nginx/html" nginx:stable)
+NGINX_CONTAINER_ID=$(docker run --rm -d -p 80 -v "$PWD/$(dirname "$RAMROOT"):/usr/share/nginx/html" nginx:stable)
 PORT="$(docker inspect -f '{{ (index (index .NetworkSettings.Ports "80/tcp") 0).HostPort }}' "$NGINX_CONTAINER_ID")"
 
 set -x
