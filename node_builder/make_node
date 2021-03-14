@@ -247,16 +247,16 @@ run_script_in_chroot() {
 #
 ## I install traefik as a system service so I can easily bind to the floating IP. Initally I tried to run this under nomad for the flexibility, but had trouble getting nomad to work correctly with a floating IP.
 #run_script_in_chroot "$SCRIPT_DIR/modules/traefik/install"
-#
-## doing some last housekeeping and cleanup
-#run_script_in_chroot <(echo "
-#echo 'root:root' | chpasswd # todo: pull from password manager
-#echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
-#
-## this is what builds the updated initrd to network boot with. It will run the
-## scripts in /etc/initramfs-tools.
-#update-initramfs -cu
-#")
+
+# doing some last housekeeping and cleanup
+run_script_in_chroot <(echo "
+echo 'root:root' | chpasswd # todo: pull from password manager
+echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
+
+# this is what builds the updated initrd to network boot with. It will run the
+# scripts in /etc/initramfs-tools.
+update-initramfs -cu
+")
 #
 ## setup mount points
 #cp "$SCRIPT_DIR/../files/format-scratch.service"  "$CHROOT_DIR/etc/systemd/system/"
