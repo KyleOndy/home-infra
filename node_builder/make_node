@@ -85,10 +85,16 @@ debootstrap_packages=(
   initramfs-tools
   # linux-generic
 
-  # debugging / util. These increase size, but are nice to have
-  # htop
-  # mosh
-  # vim
+  # basic dev tools. These tools are available for the sake of installion
+  # script.
+  curl # to download external packages. Maybe in the future I will download all
+        # assets before running the install scripts.
+
+  # debugging / util. These increase size, and are not nessacary to boot or build the image, but are nice to have.
+  glances # system monitoring
+  htop    # ligherwirght monitoring
+  mosh    # better ssh
+  neovim  # text editing
 
   # application specific
   # todo: should thier own scripts handle installing these?
