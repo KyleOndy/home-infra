@@ -42,6 +42,8 @@ build_initramfs() {
     linux-generic # todo: is -generic the right choice?
     locales
     openssh-server
+    pixz # need by ramroot script
+    tar # need by ramroot script
   )
 
   debootstrap \
@@ -123,26 +125,26 @@ run_script_in_chroot() {
   script="$2"
   args=( "${@:3}" ) # could be empty
   tmp_script_dir="tmp/chroot-script"
-  script_dir=$(dirname "$script")
-  module_name=$(basename "$script_dir")
-  script_name=$(basename "$script")
 
   # debug info
-  echo "== START SCRIPT INFO =="
-  echo "tmp_script_dir: $tmp_script_dir"
-  echo "script: $script"
-  echo "args: ${args[*]}"
-  echo "script_dir: $script_dir"
-  echo "module_name: $module_name"
-  echo "script_name: $script_name"
-  echo -e "script_contents:\n$(cat "$script")"
-  echo "== END SCRIPT INFO =="
+  #echo "== START SCRIPT INFO =="
+  #echo "tmp_script_dir: $tmp_script_dir"
+  #echo "script: $script"
+  #echo "args: ${args[*]}"
+  #echo "script_dir: $script_dir"
+  #echo "module_name: $module_name"
+  #echo "script_name: $script_name"
+  #echo -e "script_contents:\n$(cat "$script")"
+  #echo "== END SCRIPT INFO =="
 
   mkdir -p "$CHROOT_DIR/$tmp_script_dir"
 
 
   if [[ -f "$script" ]]; then
     # copy the whole module directory
+    script_dir=$(dirname "$script")
+    module_name=$(basename "$script_dir")
+    script_name=$(basename "$script")
     cp -r --dereference "$script_dir" "$CHROOT_DIR/$tmp_script_dir/"
   else
     module_name="inline"
