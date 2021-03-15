@@ -199,7 +199,7 @@ legacy() {
   cp "$WORK_DIR/ramroot.tar.xz" "$OUT_DIR/ramroot.tar.xz"
 
   # set the permissions on the artifacts so they can be consumed by a normal user.
-  chown "$(whoami)" "$OUT_DIR"
+  chown -R "kyle" "$OUT_DIR"
   chmod -R 755 "$OUT_DIR"
 }
 
@@ -252,14 +252,18 @@ build_initramfs() {
 
   cp -p "${WORK_DIR}/boot"/vmlinuz-*    "${OUT_DIR}/vmlinuz"
   cp -p "${WORK_DIR}/boot"/initrd.img-* "${OUT_DIR}/initramfs"
-  chown 755 "${OUT_DIR}/vmlinuz" "${OUT_DIR}/initramfs"
+  chown kyle "${OUT_DIR}/vmlinuz" "${OUT_DIR}/initramfs"
+  chmod 755 "${OUT_DIR}/vmlinuz" "${OUT_DIR}/initramfs"
 }
 
 build_ramroot() {
   tmp=$(mktemp -d)
   date > "$tmp/hello.txt"
-  tar --sort=name -cf "$tmp" "$WORK_DIR/ramroot.tar"
+  tar --sort=name -cf "$WORK_DIR/ramroot.tar" "$tmp"
   pixz "-$PIXZ_COMPRESSION_LEVEL" < "$WORK_DIR/ramroot.tar" > "$WORK_DIR/ramroot.tar.xz"
+  cp -p "${WORK_DIR}/ramroot.tar.xz" "${OUT_DIR}/ramroot.tar.xz"
+  chown kyle "${OUT_DIR}/ramroot.tar.xz"
+  chmod 755 "${OUT_DIR}/ramroot.tar.xz"
 }
 
 run_script_in_chroot() {
