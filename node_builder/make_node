@@ -316,7 +316,51 @@ legacy() {
   chmod -R 755 "$OUT_DIR"
 }
 
+build_kernel() {
+  echo "--kernel is not yet supported. Kernel is currently built as part of initramfs building."
+  exit 1
+}
 
+build_initramfs() {
+  # keeping this naive for now, just reproducing the logic being used in the
+  # prior monolith approach.
+
+  WORK_DIR="$(mktemp --directory --tmpdir initramfs.XXXX)"
+
+  packages=(
+    initramfs-tools
+    openssh-server
+  )
+
+  debootstrap \
+    --varient=minibase \
+    --cache-dir="$DEB_BOOTSTRAP" \
+    "--include=${packages[*]}" \
+    focal \
+    "$WORK_DIR" \
+    http://archive.ubuntu.com/ubuntu/
+
+    cp -r "$SCRIPT_DIR"/initramfs-tools/* "$WORK_DIR/etc/initramfs-tools/"
+    chroot "${WORK_DIR}" update-initramfs -u
+    # Implement insecurity
+    chroot "${WORK_DIR}" passwd -d root # remove password on root account
+    sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' "${WORK_DIR}/etc/ssh/sshd_config"
+    sed -i 's/PermitEmptyPasswords no/PermitEmptyPasswords yes/' "${WORK_DIR}/etc/ssh/sshd_config"
+
+    cp -p "${WORK_DIR}/boot"/vmlinuz-*    "${OUT_DIR}/vmlinuz"
+    cp -p "${WORK_DIR}/boot"/initrd.img-* "${OUT_DIR}/initramfs"
+}
+
+build_ramroot() {
+  tmp=$(mktemp -d)
+  date > "$tmp/hello.txt"
+  tar --sort=name -cf "$tmp" "$WORK_DIR/ramroot.tar"
+  pixz "-$PIXZ_COMPRESSION_LEVEL" < "$WORK_DIR/ramroot.tar" > "$WORK_DIR/ramroot.tar.xz"
+}
+
+BUILD_KERNEL=false
+BUILD_INITRAMFS=false
+BUILD_RAMROOM=false
 
 while (( "$#" )); do
   case "$1" in
