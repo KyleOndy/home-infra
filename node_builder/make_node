@@ -326,6 +326,11 @@ build_initramfs() {
   # keeping this naive for now, just reproducing the logic being used in the
   # prior monolith approach.
 
+  # trying to use some variation of `chroot --variant=fakechroot ...`,
+  # `fakechroot`, and `fakeroot` was leading me down a dark hole, PATH errors
+  # and GLIBC errors. Both I think related to NixOS toself. I'd like to revisit
+  # it at some point, but just using sudo for now to keep things simple and
+  # keep moving forward.
   WORK_DIR="$(mktemp --directory --tmpdir=/tmp initramfs.XXXX)"
 
   packages=(
@@ -333,37 +338,22 @@ build_initramfs() {
     openssh-server
   )
 
-  # todo: --varient=minibase
-  # todo: --varient=fakechroot
-    #"--include=${packages[*]}" \
-  #PATH=/usr/sbin:/usr/bin/:/bin:/sbin:/usr/local/bin:$PATH \
+  sudo debootstrap \
+  --cache-dir="$DEB_BOOTSTRAP" \
+  "--include=${packages[*]}" \
+  focal \
+  "$WORK_DIR" \
+  http://archive.ubuntu.com/ubuntu/
 
+  cp -r "$SCRIPT_DIR"/initramfs-tools/* "$WORK_DIR/etc/initramfs-tools/"
+  fakechroot "${WORK_DIR}" update-initramfs -u
+  # Implement insecurity
+  fakechroot "${WORK_DIR}" passwd -d root # remove password on root account
+  sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' "${WORK_DIR}/etc/ssh/sshd_config"
+  sed -i 's/PermitEmptyPasswords no/PermitEmptyPasswords yes/' "${WORK_DIR}/etc/ssh/sshd_config"
 
-  #chroot "$CHROOT_DIR" /usr/bin/env DEBIAN_FRONTEND=noninteractive PATH=/usr/sbin:/usr/bin/:/bin:/sbin:/usr/local/bin bash "$tmp_script_dir/$module_name/$script_name" "${args[@]}"
-
-  # trying to use some variation of `chroot --variant=fakechroot ...`,
-  # `fakechroot`, and `fakeroot` was leading me down a dark hole, PATH errors
-  # and GLIBC errors. Both I think related to NixOS toself. I'd like to revisit
-  # it at some point, but just using sudo for now to keep things simple and
-  # keep moving forward.
-
-  fakechroot -- \
-    fakeroot -- \
-    debootstrap \
-    --cache-dir="$DEB_BOOTSTRAP" \
-    focal \
-    "$WORK_DIR" \
-    http://archive.ubuntu.com/ubuntu/
-
-    cp -r "$SCRIPT_DIR"/initramfs-tools/* "$WORK_DIR/etc/initramfs-tools/"
-    fakechroot "${WORK_DIR}" update-initramfs -u
-    # Implement insecurity
-    fakechroot "${WORK_DIR}" passwd -d root # remove password on root account
-    sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' "${WORK_DIR}/etc/ssh/sshd_config"
-    sed -i 's/PermitEmptyPasswords no/PermitEmptyPasswords yes/' "${WORK_DIR}/etc/ssh/sshd_config"
-
-    cp -p "${WORK_DIR}/boot"/vmlinuz-*    "${OUT_DIR}/vmlinuz"
-    cp -p "${WORK_DIR}/boot"/initrd.img-* "${OUT_DIR}/initramfs"
+  cp -p "${WORK_DIR}/boot"/vmlinuz-*    "${OUT_DIR}/vmlinuz"
+  cp -p "${WORK_DIR}/boot"/initrd.img-* "${OUT_DIR}/initramfs"
 }
 
 build_ramroot() {
