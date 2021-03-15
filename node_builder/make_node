@@ -154,7 +154,7 @@ run_script_in_chroot() {
     echo "$script" > "${sp}/${script_name}"
   fi
 
-  chroot "$CHROOT_DIR" /usr/bin/env DEBIAN_FRONTEND=noninteractive PATH=/usr/sbin:/usr/bin/:/bin:/sbin:/usr/local/bin bash "${CHROOT_DIR}/${tmp_script_dir}/${module_name}/${script_name}" "${args[@]}"
+  chroot "$CHROOT_DIR" /usr/bin/env DEBIAN_FRONTEND=noninteractive PATH=/usr/sbin:/usr/bin/:/bin:/sbin:/usr/local/bin bash "/${tmp_script_dir}/${module_name}/${script_name}" "${args[@]}"
   set +x
 
   #rm -r "${CHROOT_DIR:?}/$tmp_script_dir"
