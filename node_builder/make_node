@@ -92,7 +92,7 @@ build_ramroot() {
 
 run_script_in_chroot() {
   # helper script to run bash scripts within the chroot we just created.
-  log " Running '$*'"
+  #log " Running '$*'"
   # todo: I am just giving every script my consul encryption key. This is a
   # pretty bad security issues, but I also control all the scripts running, so
   # its not too terrible. I need to work out how to best propagate secrets into
