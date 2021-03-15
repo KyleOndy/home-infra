@@ -383,6 +383,14 @@ while (( "$#" )); do
   esac
 done
 
+# I think there is a one liner using parameter expansion, but didn't want to
+# fuss with it too much.
+DEB_BOOTSTRAP=deb_cache
+if [ -z "$CACHE_DIR" ]; then
+  DEB_BOOTSTRAP="/tmp/$DEB_BOOTSTRAP"
+else
+  DEB_BOOTSTRAP="${PWD}/${CACHE_DIR}/$DEB_BOOTSTRAP"
+fi
 
 $BUILD_KERNEL    && build_kernel
 $BUILD_INITRAMFS && build_initramfs
