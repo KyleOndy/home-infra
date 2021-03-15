@@ -227,6 +227,8 @@ build_initramfs() {
   )
 
   debootstrap \
+  --arch=amd64 \
+  --components=main,universe \
   --cache-dir="$DEB_BOOTSTRAP" \
   --include="${packages[*]}" \
   focal \
@@ -234,7 +236,6 @@ build_initramfs() {
   http://archive.ubuntu.com/ubuntu/
 
   cp -r "$SCRIPT_DIR"/initramfs-tools/* "$WORK_DIR/etc/initramfs-tools/"
-  run_script_in_chroot "${WORK_DIR}" <(echo "update-initramfs -u")
   # Implement insecurity
   run_script_in_chroot "${WORK_DIR}" <(echo "
   locale-gen 'en_US.UTF-8'
@@ -244,6 +245,9 @@ build_initramfs() {
   echo \"$(git rev-parse HEAD)\" > /etc/node-build-rev
   echo \"$BUILD_TIMESTAMP\" > /etc/node-build-date
   passwd -d root # remove password on root account
+
+  ls -laxo /etc/initramfs-tools/
+  update-initramfs -cu
   ")
 
   # todo: add my ssh key
