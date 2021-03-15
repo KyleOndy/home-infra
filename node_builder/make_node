@@ -344,17 +344,18 @@ build_initramfs() {
   "$WORK_DIR" \
   http://archive.ubuntu.com/ubuntu/
 
-  cp -r "$SCRIPT_DIR"/initramfs-tools/* "$WORK_DIR/etc/initramfs-tools/"
-  fakechroot "${WORK_DIR}" update-initramfs -u
+  sudo cp -r "$SCRIPT_DIR"/initramfs-tools/* "$WORK_DIR/etc/initramfs-tools/"
+  chroot "${WORK_DIR}" update-initramfs -u
   # Implement insecurity
-  fakechroot "${WORK_DIR}" passwd -d root # remove password on root account
+  chroot "${WORK_DIR}" passwd -d root # remove password on root account
 
   # todo: add my ssh key
-  sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' "${WORK_DIR}/etc/ssh/sshd_config"
-  sed -i 's/PermitEmptyPasswords no/PermitEmptyPasswords yes/' "${WORK_DIR}/etc/ssh/sshd_config"
+  sudo sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' "${WORK_DIR}/etc/ssh/sshd_config"
+  sudo sed -i 's/PermitEmptyPasswords no/PermitEmptyPasswords yes/' "${WORK_DIR}/etc/ssh/sshd_config"
 
-  cp -p "${WORK_DIR}/boot"/vmlinuz-*    "${OUT_DIR}/vmlinuz"
-  cp -p "${WORK_DIR}/boot"/initrd.img-* "${OUT_DIR}/initramfs"
+  sudo cp -p "${WORK_DIR}/boot"/vmlinuz-*    "${OUT_DIR}/vmlinuz"
+  sudo cp -p "${WORK_DIR}/boot"/initrd.img-* "${OUT_DIR}/initramfs"
+  chown 755 "${OUT_DIR}/vmlinuz" "${OUT_DIR}/initramfs"
 }
 
 build_ramroot() {
