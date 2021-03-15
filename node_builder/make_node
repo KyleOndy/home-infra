@@ -106,50 +106,53 @@ run_script_in_chroot() {
   # I suppose there is some edge case where I actaully write a script under
   # /prod/self/fd/ and it doesn't work as expeced?
 
+  # either a file (script) is being passed in, or its an inline script. If its
+  # a file, there may be arguments along with it
+  #if [[ -f "$script" ]]; then
+  #  true
+  #else
+  #  tmp=$(mktemp)
+  #  echo "$script" > "$tmp"
+  #  script=$tmp
+  #fi
+
+  #chroot "$CHROOT_DIR" /usr/bin/env DEBIAN_FRONTEND=noninteractive PATH=/usr/sbin:/usr/bin/:/bin:/sbin:/usr/local/bin bash "$script" "${args[@]}"
+
+
   set -x
   CHROOT_DIR=$1
   script="$2"
   args=( "${@:3}" ) # could be empty
-  # either a file (script) is being passed in, or its an inline script. If its
-  # a file, there may be arguments along with it
-  if [[ -f "$script" ]]; then
-    true
-  else
-    script=" -s '$script'"
-  fi
+  tmp_script_dir="tmp/chroot-script"
+  script_dir=$(dirname "$script")
+  module_name=$(basename "$script_dir")
+  script_name=$(basename "$script")
 
-  chroot "$CHROOT_DIR" /usr/bin/env DEBIAN_FRONTEND=noninteractive PATH=/usr/sbin:/usr/bin/:/bin:/sbin:/usr/local/bin bash "$script" "${args[@]}"
-
-
-  #tmp_script_dir="tmp/chroot-script"
-  #script_dir=$(dirname "$script")
-  #module_name=$(basename "$script_dir")
-  #script_name=$(basename "$script")
-
-  ## debug info
-  #echo "== START SCRIPT INFO =="
-  #echo "tmp_script_dir: $tmp_script_dir"
-  #echo "script: $script"
-  #echo "args: ${args[*]}"
-  #echo "script_dir: $script_dir"
-  #echo "module_name: $module_name"
-  #echo "script_name: $script_name"
-  #echo -e "script_contents:\n$(cat "$script")"
-  #echo "== END SCRIPT INFO =="
+  # debug info
+  echo "== START SCRIPT INFO =="
+  echo "tmp_script_dir: $tmp_script_dir"
+  echo "script: $script"
+  echo "args: ${args[*]}"
+  echo "script_dir: $script_dir"
+  echo "module_name: $module_name"
+  echo "script_name: $script_name"
+  echo -e "script_contents:\n$(cat "$script")"
+  echo "== END SCRIPT INFO =="
 
   #set -x
-  #mkdir -p "$CHROOT_DIR/$tmp_script_dir"
-  #if [[ "$script_dir" == "/dev/fd" ]]; then
-  #  # copy just the text "script"
-  #  module_name="inline"
-  #  mkdir "$CHROOT_DIR/$tmp_script_dir/$module_name"
-  #  cp --dereference "$script" "$CHROOT_DIR/$tmp_script_dir/$module_name/"
-  #else
-  #  # copy the whole module directory
-  #  cp -r --dereference "$script_dir" "$CHROOT_DIR/$tmp_script_dir/"
-  #fi
+  mkdir -p "$CHROOT_DIR/$tmp_script_dir"
 
-  #chroot "$CHROOT_DIR" /usr/bin/env DEBIAN_FRONTEND=noninteractive PATH=/usr/sbin:/usr/bin/:/bin:/sbin:/usr/local/bin bash "${CHROOT_DIR}/${tmp_script_dir}/${module_name}/${script_name}" "${args[@]}"
+
+  if [[ -f "$script" ]]; then
+    # copy the whole module directory
+    cp -r --dereference "$script_dir" "$CHROOT_DIR/$tmp_script_dir/"
+  else
+    module_name="inline"
+    script_name=$$
+    echo "$script" > "${CHROOT_DIR}/${tmp_script_dir}/${module_name}/${script_name}"
+  fi
+
+  chroot "$CHROOT_DIR" /usr/bin/env DEBIAN_FRONTEND=noninteractive PATH=/usr/sbin:/usr/bin/:/bin:/sbin:/usr/local/bin bash "${CHROOT_DIR}/${tmp_script_dir}/${module_name}/${script_name}" "${args[@]}"
   set +x
 
   #rm -r "${CHROOT_DIR:?}/$tmp_script_dir"
