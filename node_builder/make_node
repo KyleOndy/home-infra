@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
-set -x
 
 # -------------------------------------------------------------------------
 # todo / roadmap
@@ -299,6 +298,7 @@ run_script_in_chroot() {
   echo "script_dir: $script_dir"
   echo "module_name: $module_name"
   echo "script_name: $script_name"
+  echo -e "script_contents:\n$(cat "$script")"
   echo "== END SCRIPT INFO =="
 
   mkdir -p "$CHROOT_DIR/$tmp_script_dir"
