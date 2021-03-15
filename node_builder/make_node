@@ -126,7 +126,7 @@ SSH
   tmp=$(mktemp -d)
   pushd "$WORK_DIR" && {
     tar --sort=name -cf "$tmp/ramroot.tar" .
-  }
+  } && popd
   pixz "-$PIXZ_COMPRESSION_LEVEL" < "${tmp}/ramroot.tar" > "${tmp}/ramroot.tar.xz"
   cp -p "${tmp}/ramroot.tar.xz" "${OUT_DIR}/ramroot.tar.xz"
   chown kyle "${OUT_DIR}/ramroot.tar.xz"
