@@ -151,57 +151,6 @@ legacy() {
   cp -r "$SCRIPT_DIR"/initramfs-tools/* "$CHROOT_DIR/etc/initramfs-tools/"
 
 
-  run_script_in_chroot() {
-    # helper script to run bash scripts within the chroot we just created.
-
-    log " Running '$*'"
-    # todo: I am just giving every script my consul encryption key. This is a
-    # pretty bad security issues, but I also control all the scripts running, so
-    # its not too terrible. I need to work out how to best propagate secrets into
-    # all the configuration files.
-
-    # shellcheck disable=SC2024
-    # deep breath. Stuff of madness or genious below. The goal here is to be able
-    # to write scripts in a normal way, refrencing files alongside or deeper in
-    # the file hiarchery. This way I don't need to heredoc every config file
-    # inline with a script. However, some of my "scripts" are still just text,
-    # hence having to check if this "script" lives under /prod/self/fd.
-    #
-    # I suppose there is some edge case where I actaully write a script under
-    # /prod/self/fd/ and it doesn't work as expeced?
-
-    tmp_script_dir="/tmp/chroot-script"
-    script="$1"
-    args=( "${@:2}" ) # could be empty
-    script_dir=$(dirname "$script")
-    module_name=$(basename "$script_dir")
-    script_name=$(basename "$script")
-
-    # debug info
-    echo "== START SCRIPT INFO =="
-    echo "tmp_script_dir: $tmp_script_dir"
-    echo "script: $script"
-    echo "args: ${args[*]}"
-    echo "script_dir: $script_dir"
-    echo "module_name: $module_name"
-    echo "script_name: $script_name"
-    echo "== END SCRIPT INFO =="
-
-    mkdir -p "$CHROOT_DIR/$tmp_script_dir"
-    if [[ "$script_dir" == "/dev/fd" ]]; then
-      # copy just the text "script"
-      module_name="inline"
-      mkdir "$CHROOT_DIR/$tmp_script_dir/$module_name"
-      cp --dereference "$script" "$CHROOT_DIR/$tmp_script_dir/$module_name/"
-    else
-      # copy the whole module directory
-      cp -r --dereference "$script_dir" "$CHROOT_DIR/$tmp_script_dir/"
-    fi
-
-    chroot "$CHROOT_DIR" /usr/bin/env DEBIAN_FRONTEND=noninteractive PATH=/usr/sbin:/usr/bin/:/bin:/sbin:/usr/local/bin bash "$tmp_script_dir/$module_name/$script_name" "${args[@]}"
-
-    rm -r "${CHROOT_DIR:?}/$tmp_script_dir"
-  }
 
   # todo: enable and make this work
   #run_script_in_chroot "$SCRIPT_DIR/modules/glusterfs/install"
@@ -345,9 +294,9 @@ build_initramfs() {
   http://archive.ubuntu.com/ubuntu/
 
   sudo cp -r "$SCRIPT_DIR"/initramfs-tools/* "$WORK_DIR/etc/initramfs-tools/"
-  sudo chroot "${WORK_DIR}" update-initramfs -u
+  run_script_in_chroot "${WORK_DIR}" update-initramfs -u
   # Implement insecurity
-  suod chroot "${WORK_DIR}" passwd -d root # remove password on root account
+  run_script_in_chroot "${WORK_DIR}" passwd -d root # remove password on root account
 
   # todo: add my ssh key
   sudo sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' "${WORK_DIR}/etc/ssh/sshd_config"
@@ -364,6 +313,59 @@ build_ramroot() {
   tar --sort=name -cf "$tmp" "$WORK_DIR/ramroot.tar"
   pixz "-$PIXZ_COMPRESSION_LEVEL" < "$WORK_DIR/ramroot.tar" > "$WORK_DIR/ramroot.tar.xz"
 }
+
+run_script_in_chroot() {
+  # helper script to run bash scripts within the chroot we just created.
+
+  log " Running '$*'"
+  # todo: I am just giving every script my consul encryption key. This is a
+  # pretty bad security issues, but I also control all the scripts running, so
+  # its not too terrible. I need to work out how to best propagate secrets into
+  # all the configuration files.
+
+  # shellcheck disable=SC2024
+  # deep breath. Stuff of madness or genious below. The goal here is to be able
+  # to write scripts in a normal way, refrencing files alongside or deeper in
+  # the file hiarchery. This way I don't need to heredoc every config file
+  # inline with a script. However, some of my "scripts" are still just text,
+  # hence having to check if this "script" lives under /prod/self/fd.
+  #
+  # I suppose there is some edge case where I actaully write a script under
+  # /prod/self/fd/ and it doesn't work as expeced?
+
+  tmp_script_dir="/tmp/chroot-script"
+  script="$1"
+  args=( "${@:2}" ) # could be empty
+  script_dir=$(dirname "$script")
+  module_name=$(basename "$script_dir")
+  script_name=$(basename "$script")
+
+  # debug info
+  echo "== START SCRIPT INFO =="
+  echo "tmp_script_dir: $tmp_script_dir"
+  echo "script: $script"
+  echo "args: ${args[*]}"
+  echo "script_dir: $script_dir"
+  echo "module_name: $module_name"
+  echo "script_name: $script_name"
+  echo "== END SCRIPT INFO =="
+
+  mkdir -p "$CHROOT_DIR/$tmp_script_dir"
+  if [[ "$script_dir" == "/dev/fd" ]]; then
+    # copy just the text "script"
+    module_name="inline"
+    mkdir "$CHROOT_DIR/$tmp_script_dir/$module_name"
+    cp --dereference "$script" "$CHROOT_DIR/$tmp_script_dir/$module_name/"
+  else
+    # copy the whole module directory
+    cp -r --dereference "$script_dir" "$CHROOT_DIR/$tmp_script_dir/"
+  fi
+
+  chroot "$CHROOT_DIR" /usr/bin/env DEBIAN_FRONTEND=noninteractive PATH=/usr/sbin:/usr/bin/:/bin:/sbin:/usr/local/bin bash "$tmp_script_dir/$module_name/$script_name" "${args[@]}"
+
+  rm -r "${CHROOT_DIR:?}/$tmp_script_dir"
+}
+
 
 BUILD_KERNEL=false
 BUILD_INITRAMFS=false
