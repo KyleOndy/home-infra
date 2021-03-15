@@ -379,7 +379,9 @@ GIT_DIRTY="-dirty"
 git diff-index --quiet HEAD -- && GIT_DIRTY=
 # can't use ISO-8601 due to `:` in file paths
 BUILD_TIMESTAMP=$(date --utc +%Y-%M-%d_%H%M%S)
-OUT_DIR="$1/$BUILD_TIMESTAMP-${GIT_REF}${GIT_DIRTY}"
+
+DIST=${DIST:-dist}
+OUT_DIR="$DIST/$BUILD_TIMESTAMP-${GIT_REF}${GIT_DIRTY}"
 
 # I think there is a one liner using parameter expansion, but didn't want to
 # fuss with it too much.
