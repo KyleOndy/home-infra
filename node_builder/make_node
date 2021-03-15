@@ -335,10 +335,22 @@ build_initramfs() {
 
   # todo: --varient=minibase
   # todo: --varient=fakechroot
-  fakechroot fakeroot debootstrap \
-    --variant=fakechroot \
+    #"--include=${packages[*]}" \
+  #PATH=/usr/sbin:/usr/bin/:/bin:/sbin:/usr/local/bin:$PATH \
+
+
+  #chroot "$CHROOT_DIR" /usr/bin/env DEBIAN_FRONTEND=noninteractive PATH=/usr/sbin:/usr/bin/:/bin:/sbin:/usr/local/bin bash "$tmp_script_dir/$module_name/$script_name" "${args[@]}"
+
+  # trying to use some variation of `chroot --variant=fakechroot ...`,
+  # `fakechroot`, and `fakeroot` was leading me down a dark hole, PATH errors
+  # and GLIBC errors. Both I think related to NixOS toself. I'd like to revisit
+  # it at some point, but just using sudo for now to keep things simple and
+  # keep moving forward.
+
+  fakechroot -- \
+    fakeroot -- \
+    debootstrap \
     --cache-dir="$DEB_BOOTSTRAP" \
-    "--include=${packages[*]}" \
     focal \
     "$WORK_DIR" \
     http://archive.ubuntu.com/ubuntu/
@@ -394,6 +406,7 @@ if [ -z "$CACHE_DIR" ]; then
 else
   DEB_BOOTSTRAP="${PWD}/${CACHE_DIR}/$DEB_BOOTSTRAP"
 fi
+mkdir -p "$DEB_BOOTSTRAP"
 
 $BUILD_KERNEL    && build_kernel
 $BUILD_INITRAMFS && build_initramfs
