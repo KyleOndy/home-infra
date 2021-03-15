@@ -339,15 +339,15 @@ build_initramfs() {
 
   sudo debootstrap \
   --cache-dir="$DEB_BOOTSTRAP" \
-  "--include=${packages[*]}" \
+  --include="${packages[*]}" \
   focal \
   "$WORK_DIR" \
   http://archive.ubuntu.com/ubuntu/
 
   sudo cp -r "$SCRIPT_DIR"/initramfs-tools/* "$WORK_DIR/etc/initramfs-tools/"
-  chroot "${WORK_DIR}" update-initramfs -u
+  sudo chroot "${WORK_DIR}" update-initramfs -u
   # Implement insecurity
-  chroot "${WORK_DIR}" passwd -d root # remove password on root account
+  suod chroot "${WORK_DIR}" passwd -d root # remove password on root account
 
   # todo: add my ssh key
   sudo sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' "${WORK_DIR}/etc/ssh/sshd_config"
