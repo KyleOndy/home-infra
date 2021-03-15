@@ -233,9 +233,9 @@ build_initramfs() {
   http://archive.ubuntu.com/ubuntu/
 
   cp -r "$SCRIPT_DIR"/initramfs-tools/* "$WORK_DIR/etc/initramfs-tools/"
-  run_script_in_chroot "${WORK_DIR}" <(update-initramfs -u)
+  run_script_in_chroot "${WORK_DIR}" <(echo "update-initramfs -u")
   # Implement insecurity
-  run_script_in_chroot "${WORK_DIR}" <(passwd -d root) # remove password on root account
+  run_script_in_chroot "${WORK_DIR}" <(echo "passwd -d root") # remove password on root account
 
   # todo: add my ssh key
   sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' "${WORK_DIR}/etc/ssh/sshd_config"
@@ -337,7 +337,14 @@ while (( "$#" )); do
 done
 
 
+# -------------------------------------------------------------------------
 
+# to avoid prepending command with sudo and having the build timeout waiting
+# for a password just require that script to be run as root.
+if [ "$EUID" -ne 0 ]
+  then echo "Please run as root"
+  exit
+fi
 
 # -------------------------------------------------------------------------
 
@@ -396,12 +403,6 @@ mkdir --parent "$OUT_DIR" "$DEB_BOOTSTRAP"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 
-# to avoid prepending command with sudo and having the build timeout waiting
-# for a password just require that script to be run as root.
-if [ "$EUID" -ne 0 ]
-  then echo "Please run as root"
-  exit
-fi
 
 $BUILD_KERNEL    && build_kernel
 $BUILD_INITRAMFS && build_initramfs
