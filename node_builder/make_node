@@ -30,9 +30,6 @@ legacy() {
     exit
   fi
 
-  log() {
-    echo "==> $*"
-  }
 
   # -------------------------------------------------------------------------
 
@@ -366,6 +363,9 @@ run_script_in_chroot() {
   rm -r "${CHROOT_DIR:?}/$tmp_script_dir"
 }
 
+log() {
+  echo "==> $*"
+}
 
 BUILD_KERNEL=false
 BUILD_INITRAMFS=false
