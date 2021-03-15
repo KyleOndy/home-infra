@@ -332,8 +332,9 @@ build_initramfs() {
     openssh-server
   )
 
+  # todo: --varient=minibase
+  # todo: --varient=fakechroot
   debootstrap \
-    --varient=minibase \
     --cache-dir="$DEB_BOOTSTRAP" \
     "--include=${packages[*]}" \
     focal \
