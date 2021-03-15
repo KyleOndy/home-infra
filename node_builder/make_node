@@ -139,7 +139,7 @@ legacy() {
   #       not just blindly recreate one. While this behavior is nice to ensuring
   #       purity, it does take a bit of time.
   log "Running debootstrap"
-  debootstrap \
+  fakechroot fakeroot debootstrap \
     --arch=amd64 \
     --components=main,universe \
     --cache-dir="$DEB_BOOTSTRAP" \
