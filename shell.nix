@@ -7,6 +7,8 @@ stdenv.mkDerivation {
 
   buildInputs = [
     debootstrap
+    fakechroot
+    fakeroot
 
     # pre-commit
     # https://pre-commit.com/
