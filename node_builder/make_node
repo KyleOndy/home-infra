@@ -329,15 +329,13 @@ build_initramfs() {
   WORK_DIR="$(mktemp --directory --tmpdir=/tmp initramfs.XXXX)"
 
   packages=(
-    bash
     initramfs-tools
     openssh-server
   )
 
   # todo: --varient=minibase
   # todo: --varient=fakechroot
-  #fakechroot fakeroot debootstrap \
-  debootstrap \
+  fakechroot fakeroot debootstrap \
     --variant=fakechroot \
     --cache-dir="$DEB_BOOTSTRAP" \
     "--include=${packages[*]}" \
