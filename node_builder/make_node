@@ -222,6 +222,7 @@ build_initramfs() {
 
   packages=(
     initramfs-tools
+    linux-generic # todo: is -generic the right choice?
     openssh-server
   )
 
