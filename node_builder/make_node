@@ -395,7 +395,7 @@ GIT_REF=$(git rev-parse --short HEAD)
 GIT_DIRTY="-dirty"
 git diff-index --quiet HEAD -- && GIT_DIRTY=
 # can't use ISO-8601 due to `:` in file paths
-BUILD_TIMESTAMP=$(date --utc +%Y-%M-%d_%H%M%S)
+BUILD_TIMESTAMP=$(date --utc +%Y-%m-%d_%H%M%S)
 
 DIST=${DIST:-dist}
 OUT_DIR="$DIST/$BUILD_TIMESTAMP-${GIT_REF}${GIT_DIRTY}"
