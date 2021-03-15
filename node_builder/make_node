@@ -337,8 +337,8 @@ build_initramfs() {
   # todo: --varient=minibase
   # todo: --varient=fakechroot
   #fakechroot fakeroot debootstrap \
-  fakechroot fakeroot debootstrap \
-    --varient=fakechroot \
+  debootstrap \
+    --variant=fakechroot \
     --cache-dir="$DEB_BOOTSTRAP" \
     "--include=${packages[*]}" \
     focal \
