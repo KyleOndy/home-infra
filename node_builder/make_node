@@ -55,7 +55,7 @@ build_initramfs() {
 
   cp -r "$SCRIPT_DIR"/initramfs-tools/* "$WORK_DIR/etc/initramfs-tools/"
   # Implement insecurity
-  run_script_in_chroot "${WORK_DIR}" <(echo "
+  run_script_in_chroot "${WORK_DIR}" "
   locale-gen 'en_US.UTF-8'
   update-locale LANG=en_US.UTF-8
 
@@ -66,7 +66,7 @@ build_initramfs() {
 
   ls -laxo /etc/initramfs-tools/
   update-initramfs -cu
-  ")
+  "
 
   # todo: add my ssh key
   sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' "${WORK_DIR}/etc/ssh/sshd_config"
@@ -90,8 +90,6 @@ build_ramroot() {
 
 run_script_in_chroot() {
   # helper script to run bash scripts within the chroot we just created.
-
-
   log " Running '$*'"
   # todo: I am just giving every script my consul encryption key. This is a
   # pretty bad security issues, but I also control all the scripts running, so
@@ -108,38 +106,50 @@ run_script_in_chroot() {
   # I suppose there is some edge case where I actaully write a script under
   # /prod/self/fd/ and it doesn't work as expeced?
 
-  tmp_script_dir="tmp/chroot-script"
+  set -x
   CHROOT_DIR=$1
   script="$2"
   args=( "${@:3}" ) # could be empty
-  script_dir=$(dirname "$script")
-  module_name=$(basename "$script_dir")
-  script_name=$(basename "$script")
-
-  # debug info
-  echo "== START SCRIPT INFO =="
-  echo "tmp_script_dir: $tmp_script_dir"
-  echo "script: $script"
-  echo "args: ${args[*]}"
-  echo "script_dir: $script_dir"
-  echo "module_name: $module_name"
-  echo "script_name: $script_name"
-  echo -e "script_contents:\n$(cat "$script")"
-  echo "== END SCRIPT INFO =="
-
-  set -x
-  mkdir -p "$CHROOT_DIR/$tmp_script_dir"
-  if [[ "$script_dir" == "/dev/fd" ]]; then
-    # copy just the text "script"
-    module_name="inline"
-    mkdir "$CHROOT_DIR/$tmp_script_dir/$module_name"
-    cp --dereference "$script" "$CHROOT_DIR/$tmp_script_dir/$module_name/"
+  # either a file (script) is being passed in, or its an inline script. If its
+  # a file, there may be arguments along with it
+  if [[ -f "$script" ]]; then
+    true
   else
-    # copy the whole module directory
-    cp -r --dereference "$script_dir" "$CHROOT_DIR/$tmp_script_dir/"
+    script=" -s '$script'"
   fi
 
-  chroot "$CHROOT_DIR" /usr/bin/env DEBIAN_FRONTEND=noninteractive PATH=/usr/sbin:/usr/bin/:/bin:/sbin:/usr/local/bin bash "${CHROOT_DIR}/${tmp_script_dir}/${module_name}/${script_name}" "${args[@]}"
+  chroot "$CHROOT_DIR" /usr/bin/env DEBIAN_FRONTEND=noninteractive PATH=/usr/sbin:/usr/bin/:/bin:/sbin:/usr/local/bin bash "$script" "${args[@]}"
+
+
+  #tmp_script_dir="tmp/chroot-script"
+  #script_dir=$(dirname "$script")
+  #module_name=$(basename "$script_dir")
+  #script_name=$(basename "$script")
+
+  ## debug info
+  #echo "== START SCRIPT INFO =="
+  #echo "tmp_script_dir: $tmp_script_dir"
+  #echo "script: $script"
+  #echo "args: ${args[*]}"
+  #echo "script_dir: $script_dir"
+  #echo "module_name: $module_name"
+  #echo "script_name: $script_name"
+  #echo -e "script_contents:\n$(cat "$script")"
+  #echo "== END SCRIPT INFO =="
+
+  #set -x
+  #mkdir -p "$CHROOT_DIR/$tmp_script_dir"
+  #if [[ "$script_dir" == "/dev/fd" ]]; then
+  #  # copy just the text "script"
+  #  module_name="inline"
+  #  mkdir "$CHROOT_DIR/$tmp_script_dir/$module_name"
+  #  cp --dereference "$script" "$CHROOT_DIR/$tmp_script_dir/$module_name/"
+  #else
+  #  # copy the whole module directory
+  #  cp -r --dereference "$script_dir" "$CHROOT_DIR/$tmp_script_dir/"
+  #fi
+
+  #chroot "$CHROOT_DIR" /usr/bin/env DEBIAN_FRONTEND=noninteractive PATH=/usr/sbin:/usr/bin/:/bin:/sbin:/usr/local/bin bash "${CHROOT_DIR}/${tmp_script_dir}/${module_name}/${script_name}" "${args[@]}"
   set +x
 
   #rm -r "${CHROOT_DIR:?}/$tmp_script_dir"
@@ -207,7 +217,7 @@ function cleanup()
 
 
   # do not remove the chroot if we are running a debug build
-  [[ -z $DEBUG ]] || rm -rf "$WORK_DIR"
+  #[[ -z $DEBUG ]] || rm -rf "$WORK_DIR"
 }
 
 trap cleanup EXIT
