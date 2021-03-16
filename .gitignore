@@ -3,3 +3,4 @@
 dist/
 util-node/files/
 .terraform
+*.qcow2
