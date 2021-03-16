@@ -88,6 +88,7 @@ build_ramroot() {
   packages=(
     ca-certificates
     curl
+    gettext-base    # needed for envsubst, in consul install
     glances # system monitoring
     gpg-agent
     htop    # ligherwirght monitoring
@@ -98,6 +99,7 @@ build_ramroot() {
     pixz
     pixz # need by ramroot script
     tar # need by ramroot script
+    unzip
     xfsprogs
   )
   debootstrap \
