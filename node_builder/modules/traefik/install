@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -eu
+set -Eeu
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 VERSION=2.2.11

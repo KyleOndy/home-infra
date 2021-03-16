@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-set -eu
-set -x
+set -Eeux
 
 # https://github.com/jtopjian/scripts/blob/master/gluster/gluster-status.sh
 

@@ -140,8 +140,8 @@ SSH
   # make sure we are running the latest security updates
   # todo: this doesn't work
   run_script_in_chroot "$WORK_DIR" "
-  apt-get -q update
-  apt-get -yq dist-upgrade
+  apt-get -qq update
+  apt-get -qq dist-upgrade
   "
 
   run_script_in_chroot "$WORK_DIR" "$SCRIPT_DIR/modules/glusterfs/install"
