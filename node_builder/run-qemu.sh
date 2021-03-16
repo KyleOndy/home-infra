@@ -23,13 +23,15 @@ RAMROOT=$3
 NGINX_CONTAINER_ID=$(docker run --rm -d -p 80 -v "$PWD/$(dirname "$RAMROOT"):/usr/share/nginx/html" nginx:stable)
 PORT="$(docker inspect -f '{{ (index (index .NetworkSettings.Ports "80/tcp") 0).HostPort }}' "$NGINX_CONTAINER_ID")"
 
-set -x
+rm -f nomados.qcow2
+qemu-img create -f qcow2 nomados.qcow2 32G
 qemu-system-x86_64 \
   -kernel "$KERNEL" \
   -initrd "$INITRD" \
   -nographic \
   -smp 2 \
   --enable-kvm \
+  -drive file=nomados.qcow2,media=disk,if=virtio \
   -cpu host \
   -append "
     console=ttyS0
@@ -37,4 +39,3 @@ qemu-system-x86_64 \
     hostname=foobar
     ramroot=http://10.24.89.110:$PORT/$(basename "$RAMROOT")" \
   -m 4G
-set +x
