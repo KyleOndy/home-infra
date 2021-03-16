@@ -8,4 +8,4 @@ env:
 	env | sort
 
 worker-node: $(shell fd --type=file . ./node_builder)
-	sudo -E ./node_builder/make_node ./dist
+	nix-shell --command "PIXZ_COMPRESSION_LEVEL=0 DEBUG=true sudo -E ./node_builder/make_node --initramfs --ramroot"
