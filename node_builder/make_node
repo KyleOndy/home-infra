@@ -80,8 +80,8 @@ build_initramfs() {
 
   cp -p --dereference "${WORK_DIR}/boot"/vmlinuz-*    "${OUT_DIR}/vmlinuz"
   cp -p --dereference "${WORK_DIR}/boot"/initrd.img-* "${OUT_DIR}/initramfs"
-  chown kyle "${OUT_DIR}/vmlinuz" "${OUT_DIR}/initramfs"
   chmod 755 "${OUT_DIR}/vmlinuz" "${OUT_DIR}/initramfs"
+  chown kyle -R "${OUT_DIR}"
   umount "$WORK_DIR/proc" "$WORK_DIR/sys"
   rm -r "${WORK_DIR}"
 }
@@ -181,8 +181,8 @@ SSH
   } && popd
   pixz "-$PIXZ_COMPRESSION_LEVEL" < "${tmp}/ramroot.tar" > "${tmp}/ramroot.tar.xz"
   cp -p "${tmp}/ramroot.tar.xz" "${OUT_DIR}/ramroot.tar.xz"
-  chown kyle "${OUT_DIR}/ramroot.tar.xz"
   chmod 755 "${OUT_DIR}/ramroot.tar.xz"
+  chown kyle -R "${OUT_DIR}"
   rm -r "${WORK_DIR}"
 }
 
