@@ -79,6 +79,7 @@ build_initramfs() {
   cp -p --dereference "${WORK_DIR}/boot"/initrd.img-* "${OUT_DIR}/initramfs"
   chown kyle "${OUT_DIR}/vmlinuz" "${OUT_DIR}/initramfs"
   chmod 755 "${OUT_DIR}/vmlinuz" "${OUT_DIR}/initramfs"
+  umount "$WORK_DIR/proc" "$WORK_DIR/sys"
   rm -r "${WORK_DIR}"
 }
 
