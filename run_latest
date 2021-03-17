@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -e
+./node_builder/run-qemu.sh \
+  "$(fd --type=file vmlinuz ./dist | sort | tail -n1)" \
+  "$(fd --type=file initramfs ./dist | sort | tail -n1)" \
+  "$(fd --type=file ramroot.tar.xz ./dist | sort | tail -n1)"
