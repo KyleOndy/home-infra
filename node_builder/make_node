@@ -75,7 +75,6 @@ build_initramfs() {
   echo overlay      >> /etc/initramfs-tools/modules
   echo br_netfilter >> /etc/initramfs-tools/modules
 
-  ls -laxo /etc/initramfs-tools/
   update-initramfs -cu
   "
 
@@ -259,7 +258,7 @@ log() {
 
 BUILD_KERNEL=false
 BUILD_INITRAMFS=false
-BUILD_RAMROOM=false
+BUILD_RAMROOT=false
 
 while (( "$#" )); do
   case "$1" in
