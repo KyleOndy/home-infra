@@ -128,6 +128,9 @@ build_ramroot() {
 
   mount --bind /dev/pts "${WORK_DIR}/dev/pts"
 
+  # todo: will this break the real deployment?
+  cp -L /etc/resolv.conf "$WORK_DIR/etc/resolv.conf"
+
   # book keeping
   run_script_in_chroot "${WORK_DIR}" "
   locale-gen 'en_US.UTF-8'
