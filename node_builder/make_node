@@ -105,13 +105,14 @@ build_ramroot() {
     glances # system monitoring
     gpg-agent
     htop    # ligherwirght monitoring
+    linux-generic # todo: I should be able to copy these from initramfs?
     locales
     mosh    # better ssh
     neovim  # text editing
     openssh-server
     parted # formating disks
     pixz # need by ramroot script
-    linux-generic # todo: I should be able to copy these from initramfs?
+    resolvconf # ddn
     tar # need by ramroot script
     unzip
     xfsprogs
