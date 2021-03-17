@@ -2,6 +2,8 @@
 Description=Nomad
 Documentation=https://nomadproject.io/docs/
 Wants=network-online.target
+After=format-scratch.service
+Requires=format-scratch.service
 # todo: require gluster to be mounted
 StartLimitIntervalSec=10
 
