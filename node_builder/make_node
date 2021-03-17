@@ -238,7 +238,7 @@ run_script_in_chroot() {
     script_dir=$(dirname "$script")
     module_name=$(basename "$script_dir")
     script_name=$(basename "$script")
-    cp -vr --dereference "$script_dir" "$CHROOT_DIR/$tmp_script_dir/"
+    cp -r --dereference "$script_dir" "$CHROOT_DIR/$tmp_script_dir/"
   else
     module_name="inline"
     script_name=$$
