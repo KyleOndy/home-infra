@@ -108,7 +108,7 @@ build_ramroot() {
     mosh    # better ssh
     neovim  # text editing
     openssh-server
-    pixz
+    parted # formating disks
     pixz # need by ramroot script
     tar # need by ramroot script
     unzip
