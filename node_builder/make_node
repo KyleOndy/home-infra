@@ -73,12 +73,12 @@ build_initramfs() {
   echo \"$BUILD_TIMESTAMP\" > /etc/node-build-date
   passwd -d root # remove password on root account
 
-  cat << MODULES >> /etc/initramfs-tools/modules
-overlay
-br_netfilter
-ip_tables
-iptable_nat
-MODULES
+#  cat << MODULES >> /etc/initramfs-tools/modules
+#overlay
+#br_netfilter
+#ip_tables
+#iptable_nat
+#MODULES
 
   update-initramfs -cu
   "
@@ -111,6 +111,7 @@ build_ramroot() {
     openssh-server
     parted # formating disks
     pixz # need by ramroot script
+    linux-generic # todo: I should be able to copy these from initramfs?
     tar # need by ramroot script
     unzip
     xfsprogs
