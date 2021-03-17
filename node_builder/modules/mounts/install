@@ -6,9 +6,9 @@ set -Eeu
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-cp "$DIR/../files/format-scratch.service"  "/etc/systemd/system/"
-cp "$DIR/../files/scratch-local.mount"     "/etc/systemd/system/"
-#cp "$DIR/../files/mnt-nfs.mount"           "$CHROOT_DIR/etc/systemd/system/"
+cp "$DIR/format-scratch.service"  "/etc/systemd/system/"
+cp "$DIR/scratch-local.mount"     "/etc/systemd/system/"
+#cp "$DIR/mnt-nfs.mount"           "/etc/systemd/system/"
 
 systemctl enable format-scratch
 systemctl enable scratch-local.mount
