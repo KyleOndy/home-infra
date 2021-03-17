@@ -161,15 +161,15 @@ SSH
   # I install traefik as a system service so I can easily bind to the floating IP. Initally I tried to run this under nomad for the flexibility, but had trouble getting nomad to work correctly with a floating IP.
   run_script_in_chroot "$WORK_DIR" "$SCRIPT_DIR/modules/traefik/install"
 
-  #run_script_in_chroot "$WORK_DIR" "
-  ## setup mount points
-  ##cp "$SCRIPT_DIR/../files/format-scratch.service"  "$CHROOT_DIR/etc/systemd/system/"
-  ##cp "$SCRIPT_DIR/../files/scratch-local.mount"     "$CHROOT_DIR/etc/systemd/system/"
-  ##cp "$SCRIPT_DIR/../files/mnt-nfs.mount"           "$CHROOT_DIR/etc/systemd/system/"
-  ##systemctl enable format-scratch
-  ##systemctl enable scratch-local.mount
-  ##systemctl enable mnt-nfs.mount
-  #"
+  run_script_in_chroot "$WORK_DIR" "
+  # setup mount points
+  cp $SCRIPT_DIR/../files/format-scratch.service  $CHROOT_DIR/etc/systemd/system/
+  cp $SCRIPT_DIR/../files/scratch-local.mount     $CHROOT_DIR/etc/systemd/system/
+  #cp "$SCRIPT_DIR/../files/mnt-nfs.mount"           "$CHROOT_DIR/etc/systemd/system/"
+  #systemctl enable format-scratch
+  #systemctl enable scratch-local.mount
+  #systemctl enable mnt-nfs.mount
+  "
 
 
   # ------------------
