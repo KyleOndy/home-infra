@@ -60,6 +60,8 @@ build_initramfs() {
   "$WORK_DIR" \
   http://archive.ubuntu.com/ubuntu/
 
+  mount --bind /dev/pts "${WORK_DIR}/dev/pts"
+
   cp -r "$SCRIPT_DIR"/initramfs-tools/* "$WORK_DIR/etc/initramfs-tools/"
   # Implement insecurity
   run_script_in_chroot "${WORK_DIR}" "
@@ -87,7 +89,7 @@ build_initramfs() {
   cp -p --dereference "${WORK_DIR}/boot"/initrd.img-* "${OUT_DIR}/initramfs"
   chmod 755 "${OUT_DIR}/vmlinuz" "${OUT_DIR}/initramfs"
   chown kyle -R "${OUT_DIR}"
-  umount "$WORK_DIR/proc" "$WORK_DIR/sys"
+  umount "$WORK_DIR/proc" "$WORK_DIR/sys" "$WORK_DIR/dev/pts"
   rm -r "${WORK_DIR}"
 }
 
@@ -120,6 +122,7 @@ build_ramroot() {
   "$WORK_DIR" \
   http://archive.ubuntu.com/ubuntu/
 
+  mount --bind /dev/pts "${WORK_DIR}/dev/pts"
 
   # book keeping
   run_script_in_chroot "${WORK_DIR}" "
@@ -171,7 +174,7 @@ SSH
   # Done with chroot
   # ------------------
 
-  umount "$WORK_DIR/proc" "$WORK_DIR/sys"
+  umount "$WORK_DIR/proc" "$WORK_DIR/sys" "$WORK_DIR/dev/pts"
   tmp=$(mktemp -d)
   pushd "$WORK_DIR" && {
     tar --sort=name -cf "$tmp/ramroot.tar" .
