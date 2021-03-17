@@ -184,7 +184,7 @@ SSH
   umount "$WORK_DIR/proc" "$WORK_DIR/sys" "$WORK_DIR/dev/pts"
   tmp=$(mktemp -d)
   pushd "$WORK_DIR" && {
-    tar --sort=name -cf "$tmp/ramroot.tar" .
+    tar --sort=name -cpf "$tmp/ramroot.tar" .
   } && popd
   pixz "-$PIXZ_COMPRESSION_LEVEL" < "${tmp}/ramroot.tar" > "${tmp}/ramroot.tar.xz"
   cp -p "${tmp}/ramroot.tar.xz" "${OUT_DIR}/ramroot.tar.xz"
