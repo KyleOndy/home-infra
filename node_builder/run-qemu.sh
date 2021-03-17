@@ -33,6 +33,7 @@ qemu-system-x86_64 \
   --enable-kvm \
   -net user,hostfwd=tcp::10022-:22 \
   -net nic \
+  -netdev user,id=n0,dns=10.24.89.4 \
   -drive file=nomados.qcow2,media=disk,if=none,id=NVME1 \
   -device nvme,drive=NVME1,serial=nvme-1 \
   -cpu host \
