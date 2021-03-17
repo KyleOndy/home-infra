@@ -33,7 +33,8 @@ qemu-system-x86_64 \
   --enable-kvm \
   -net user,hostfwd=tcp::10022-:22 \
   -net nic \
-  -drive file=nomados.qcow2,media=disk,if=virtio \
+  -drive file=nomados.qcow2,media=disk,if=virtio,id=NVME1 \
+  -device nvme,drive=NVME1,serial=nvme-1 \
   -cpu host \
   -append "
     console=ttyS0
