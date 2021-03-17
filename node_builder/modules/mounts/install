@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -Eeu
+
+# todo: secure this
+#   auth.allow
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+cp "$DIR/../files/format-scratch.service"  "$CHROOT_DIR/etc/systemd/system/"
+cp "$DIR/../files/scratch-local.mount"     "$CHROOT_DIR/etc/systemd/system/"
+#cp "$DIR/../files/mnt-nfs.mount"           "$CHROOT_DIR/etc/systemd/system/"
+
+systemctl enable format-scratch
+systemctl enable scratch-local.mount
+#systemctl enable mnt-nfs.mount
