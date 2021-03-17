@@ -73,10 +73,12 @@ build_initramfs() {
   echo \"$BUILD_TIMESTAMP\" > /etc/node-build-date
   passwd -d root # remove password on root account
 
-  # for docker
-  echo overlay      >> /etc/initramfs-tools/modules
-  echo br_netfilter >> /etc/initramfs-tools/modules
-  echo ip_tables    >> /etc/initramfs-tools/modules
+  cat << MODULES >> /etc/initramfs-tools/modules
+overlay
+br_netfilter
+ip_tables
+iptable_nat
+MODULES
 
   update-initramfs -cu
   "
