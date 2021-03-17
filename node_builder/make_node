@@ -161,7 +161,7 @@ SSH
   run_script_in_chroot "$WORK_DIR" "$SCRIPT_DIR/modules/scheduled_reboot/install"
 
   # todo: install this the real way
-  run_script_in_chroot "$WORK_DIR" "curl -fsSL https://get.docker.com | sh"
+  run_script_in_chroot "$WORK_DIR" "$SCRIPT_DIR/modules/docker/install"
 
   # keep alive lets me have a floating IP between all worker nodes
   run_script_in_chroot "$WORK_DIR" "$SCRIPT_DIR/modules/keepalived/install"
