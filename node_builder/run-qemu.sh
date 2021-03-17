@@ -31,6 +31,8 @@ qemu-system-x86_64 \
   -nographic \
   -smp 2 \
   --enable-kvm \
+  -net user,hostfwd=tcp::10022-:22 \
+  -net nic \
   -drive file=nomados.qcow2,media=disk,if=virtio \
   -cpu host \
   -append "
