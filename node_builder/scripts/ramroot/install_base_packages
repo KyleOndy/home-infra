@@ -11,7 +11,6 @@ packages=(
 #neovim          # my favorite text editor
 #nfs-common
 #pixz            # need by ramroot script
-#resolvconf      # dns # broken
 #rsync
 #software-properties-common
 #tar
@@ -24,6 +23,7 @@ iputils-ping    # I like to have ping
 kmod            # kernel stuff
 locales         # sane working environment
 openssh-server  # remote access
+resolvconf      # dns
 systemd         # init
 systemd-sysv    # /sbin/init symlink
 udev            # system devices
@@ -32,7 +32,7 @@ vim             # light text editing
 apt-get update -qq
 
 # without this, resolvconf will failed to install and break the build
-#echo "resolvconf resolvconf/linkify-resolvconf boolean false" | debconf-set-selections
+echo "resolvconf resolvconf/linkify-resolvconf boolean false" | debconf-set-selections
 apt-get install -qy  "${packages[@]}"
 apt-get clean all
 

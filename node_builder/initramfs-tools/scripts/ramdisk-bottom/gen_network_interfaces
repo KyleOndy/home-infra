@@ -9,7 +9,8 @@ if [ "$1" = "prereqs" ]; then
   exit 0
 fi
 
-if [ -n "$BOOTIF" ] && [ -z "$(ls ${rootmnt}/etc/network/interfaces.d)" ]; then
+# shellcheck disable=SC2154
+if [ -n "$BOOTIF" ] && [ -z "$(ls "${rootmnt}/etc/network/interfaces.d")" ]; then
   bootif_mac="$(echo "${BOOTIF#01-}" | busybox tr - :)"
   # look for devices with matching mac address, and set DEVICE to
   # appropriate value if match is found.
@@ -24,7 +25,10 @@ if [ -n "$BOOTIF" ] && [ -z "$(ls ${rootmnt}/etc/network/interfaces.d)" ]; then
   done
   if [ -n "$DEVICE" ]; then
     # todo: fix DNS the right way, set via DHCP
-    cat > ${rootmnt}/etc/network/interfaces.d/bootif <<EOF
+    # fixing resolveconf?
+    ln -sr "${rootmnt}/etc/resolvconf/run/resolv.conf" "${rootmnt}/etc/resolv.conf"
+
+    cat > "${rootmnt}/etc/network/interfaces.d/bootif" <<EOF
 auto lo
 iface lo inet loopback
 
