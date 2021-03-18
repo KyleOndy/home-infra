@@ -26,19 +26,23 @@ def boot(mac):
 
     if mac in ["00:1e:06:45:28:5c", "00:1e:06:45:28:5d"]:
         hostname = "w1"
-        arch = "x86_64"
+        arch = "amd64"
         build = "latest"
         role = "worker"
         app.logger.debug(f"booting x86 for {hostname} ({mac})")
 
     elif mac in ["00:1e:06:45:20:02", "00:1e:06:45:20:03"]:
         hostname = "w2"
-        arch = "x86_64"
+        arch = "amd64"
+        build = "latest"
+        role = "worker"
         app.logger.debug(f"booting x86 for {hostname} ({mac})")
 
     elif mac in ["00:1e:06:45:2e:ec", "00:1e:06:45:2e:ed"]:
         hostname = "w3"
-        arch = "x86_64"
+        arch = "amd64"
+        build = "latest"
+        role = "worker"
         app.logger.debug(f"booting x86 for {hostname} ({mac})")
 
     elif mac in ["dc:a6:32:55:33:40"]:
@@ -51,9 +55,13 @@ def boot(mac):
         app.logger.debug(f"no definition for '{mac}' found")
         abort(404)
 
+    kernel = "vmlinuz" if build = "latest" else f"{build}.vmlinuz"
+    initrd = "initrd.img" if build = "latest" else f"{build}.initrd.img"
+    ramroot = "ramroot.tar.xz" if build = "latest" else f"{build}.ramroot.tar.xz"
+
     r = {
-        "kernel": f"{fileServer}/{role}/{arch}/vmlinuz",  # .efi?
-        "initrd": [f"{fileServer}/{role}/{arch}/initrd.img"],
+        "kernel": f"{fileServer}/{role}/{arch}/{kernel}",
+        "initrd": [f"{fileServer}/{role}/{arch}/{initrds}"],
         "cmdline": " ".join(
             [
                 "console=serial0,115200",  # this breaks the boot?
@@ -70,7 +78,7 @@ def boot(mac):
                 "boot=ramdisk",
                 f"BOOTIF={mac}",
                 f"hostname={hostname}",
-                f"ramroot={fileServerIP}/{role}/{arch}/ramroot.tar.xz",
+                f"ramroot={fileServerIP}/{role}/{arch}/{arch}/{ramroot}",
             ]
         ),
     }
