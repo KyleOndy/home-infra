@@ -2,7 +2,6 @@
 set -Eeu
 
 packages=(
-#ca-certificates
 #curl
 #gettext-base    # needed for envsubst, in consul install
 #glances         # system monitoring
@@ -21,6 +20,7 @@ packages=(
 #tar
 #unzip
 #xfsprogs
+ca-certificates # HTTPS is important
 locales         # sane working environment
 openssh-server  # remote access
 systemd         # init
