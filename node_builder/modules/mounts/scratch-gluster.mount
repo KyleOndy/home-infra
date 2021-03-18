@@ -1,0 +1,13 @@
+[Unit]
+Description=glusterfs drive mount
+Requires=format-scratch.service
+After=format-scratch.service
+DefaultDependencies=no
+
+[Mount]
+What=/dev/nvme0n1p1
+Where=/scratch/gluster
+Type=xfs
+
+[Install]
+WantedBy=multi-user.target

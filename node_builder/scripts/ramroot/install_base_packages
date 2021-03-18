@@ -15,14 +15,15 @@ packages=(
 #software-properties-common
 #tar
 #unzip
-#xfsprogs
 ca-certificates # HTTPS is important
 curl            # handy to have
 ifupdown        # ip <foo> commands
 iputils-ping    # I like to have ping
+jq              # working with json
 kmod            # kernel stuff
 locales         # sane working environment
 openssh-server  # remote access
+rsync           # gotta move file
 systemd         # init
 systemd-sysv    # /sbin/init symlink
 udev            # system devices

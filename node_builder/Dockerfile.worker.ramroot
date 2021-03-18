@@ -34,6 +34,9 @@ RUN ./scripts/nomad_agent/install
 COPY ./modules/traefik/ ./scripts/traefik/
 RUN ./scripts/traefik/install
 
+# cleanup
+RUN rm -rf /scripts
+
 # todo: locales
 # todo: add ssh-key
 # todo: install consul agent
