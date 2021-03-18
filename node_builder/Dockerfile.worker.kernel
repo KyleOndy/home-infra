@@ -9,12 +9,29 @@ COPY ./initramfs-tools /etc/initramfs-tools
 
 # Install dependencies
 RUN apt-get update -qq \
- && apt-get -qq install \
+ && apt-get -qq install --install-recommends \
         initramfs-tools \
         isc-dhcp-client \
+        linux-generic-hwe-20.04 \
         pixz \
         tar \
  && apt-get clean all
 
+# the overlay module doesn't seem to be added to the kernel installed via
+# docker automatically.
+RUN echo "docker modules" \
+ && echo br_netfilter           >> /etc/initramfs-tools/modules \
+ && echo bridge                 >> /etc/initramfs-tools/modules \
+ && echo ip_tables              >> /etc/initramfs-tools/modules \
+ && echo ipt_MASQUERADE         >> /etc/initramfs-tools/modules \
+ && echo iptable_filter         >> /etc/initramfs-tools/modules \
+ && echo iptable_nat            >> /etc/initramfs-tools/modules \
+ && echo nf_conntrack_netlink   >> /etc/initramfs-tools/modules \
+ && echo nf_nat                 >> /etc/initramfs-tools/modules \
+ && echo nf_tables              >> /etc/initramfs-tools/modules \
+ && echo overlay                >> /etc/initramfs-tools/modules \
+ && echo xt_addrtype            >> /etc/initramfs-tools/modules \
+ && echo xt_conntrack           >> /etc/initramfs-tools/modules \
+ && update-initramfs -vcu
 # Install the kernel (will auto-generate the ramroot-enabled initrd)
-RUN apt-get -qq install linux-image-virtual
+#RUN apt-get -qq install linux-image-virtual

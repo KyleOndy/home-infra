@@ -6,7 +6,6 @@ packages=(
 #glances         # system monitoring
 #gpg-agent
 #htop            # ligherwirght monitoring
-#ifupdown
 #keepalived
 #linux-generic   # need firmware and goodies
 #mosh            # better ssh
@@ -20,7 +19,9 @@ packages=(
 #xfsprogs
 ca-certificates # HTTPS is important
 curl            # handy to have
+ifupdown        # ip <foo> commands
 iputils-ping    # I like to have ping
+kmod            # kernel stuff
 locales         # sane working environment
 openssh-server  # remote access
 resolvconf      # dns
