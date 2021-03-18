@@ -2,3 +2,7 @@
 dist/
 util-node/files/
 .terraform
+ramroot.tar.xz.tmp
+.tmp/
+.direnv/
+*.qcow2

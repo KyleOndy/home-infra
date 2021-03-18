@@ -1,0 +1,16 @@
+#!/bin/sh
+# shellcheck disable=SC2154
+set -e
+
+# this is stuff that I could not due in the docker container
+
+if [ "$1" = "prereqs" ]; then
+  exit 0
+fi
+
+# docker binds /etc/resolv.conf into the container, so we need to do some final
+# setup here before booting. We are using systemd-resolved for DNS, and need to
+# make the symlink.
+ln -sf "/run/systemd/resolve/stub-resolv.conf" "${rootmnt}/etc/resolv.conf"
+
+exit 0

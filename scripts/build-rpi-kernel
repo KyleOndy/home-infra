@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -ex
+
+REV="c1cfa734c2e07ced2040211d18b4d3d2578dba1e"
+
+cd "$HOME"
+if [ -d linux ]; then
+  cd linux
+  git clean -ffdx
+else
+  # building HEAD, YOLO!
+  git clone --depth=1 https://github.com/raspberrypi/linux
+  cd linux
+  git checkout "$REV"
+fi
+
+
+cpu_count="$(grep -c '^processor' /proc/cpuinfo)"
+_make() {
+  make -j"$cpu_count" "$@"
+}
+
+export KERNEL=kernel8
+_make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- bcm2711_defconfig
+_make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- Image modules dtbs
+
+out_dir="/out"
+mkdir -p "$out_dir/fat32/overlays" "$out_dir/ext4"
+
+_make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- INSTALL_MOD_PATH="$out_dir/ext4" modules_install
+cp arch/arm64/boot/Image "$out_dir/fat32/$KERNEL.img"
+cp arch/arm64/boot/dts/broadcom/*.dtb "$out_dir/fat32/"
+cp arch/arm64/boot/dts/overlays/*.dtb* "$out_dir/fat32/overlays/"
+cp arch/arm64/boot/dts/overlays/README "$out_dir/fat32/overlays/"

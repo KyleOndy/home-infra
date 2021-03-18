@@ -1,0 +1,30 @@
+---
+version: "3.7"
+services:
+  pixiecore:
+    build: ./pixiecore
+    restart: unless-stopped
+    network_mode: "host"  # need to listen for dhcp on host
+    command: [
+      "api",
+      # todo: fix DNS
+      #"http://util.dmz.509ely.com:9090/",
+      "http://10.25.89.4:9090/",
+      "--log-timestamps"
+    ]
+
+  file-server:
+    image: nginx:stable
+    restart: unless-stopped
+    volumes:
+      - ./files:/usr/share/nginx/html:ro
+    ports:
+      - 8080:80
+
+  pxe-api:
+    build: ./pxe-api
+    restart: unless-stopped
+    image: registry-prod.apps.509ely.com/pxe-api:latest
+    ports:
+      - 9090:5000
+    working_dir: /app

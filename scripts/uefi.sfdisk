@@ -1,0 +1,8 @@
+label: dos
+label-id: 0xe310e430
+device: /dev/mmcblk0
+unit: sectors
+sector-size: 512
+
+/dev/mmcblk0p1 : start=        2048, size=     8388608, type=b
+/dev/mmcblk0p2 : start=     8390656, size=    53943296, type=83

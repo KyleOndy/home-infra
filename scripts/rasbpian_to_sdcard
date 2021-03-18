@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -eux
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+# shellcheck source=_common
+source "$DIR/_common"
+
+_main() {
+  if [ -z "$1" ]; then
+    lib.log.error "Must pass sd card device!"
+  fi
+
+  # todo: check sha
+  #SHA256="12ae6e17bf95b6ba83beca61e7394e7411b45eba7e6a520f434b0748ea7370e8" # pragma: allowlist secret
+
+  RASPIOS_VERRSION="2021-01-12"
+  # the date in the filename does not match the folder name.
+  zip=$(lib.download "https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2021-01-12/2021-01-11-raspios-buster-armhf-lite.zip" "raspios-buster-armhf-${RASPIOS_VERRSION}.zip")
+
+  unzipped="$(lib.extract "$zip" "raspios-buster-armhf-${RASPIOS_VERRSION}")"
+
+
+  #  log "To write: $_IMG to $1"
+
+  # not sure why the glob wouldn't expand in the dd commnad
+  img=$(echo "$unzipped/"*.img)
+  sudo dd status=progress bs=4M if="$img" of="$1" conv=fsync
+
+  tmp_mnt="$(mktemp -d)"
+
+  # without the sleep, I was occassionally getting `special device does not
+  # exist`.
+  sleep 5
+
+  sudo mount "$1p1" "$tmp_mnt"
+  sudo touch "$tmp_mnt/ssh"
+  cat << CONFIG | sudo tee "$tmp_mnt/config.txt"
+arm_64bit=1
+enable_uart=1
+uart_2ndstage=1
+dtoverlay=disable-bt
+CONFIG
+
+  # I am using serial1, not the default
+  #sudo sed -i'' -e 's/serial0/ttyAMA0/g' "$tmp_mnt/cmdline.txt"
+  #echo " earlycon=pl011,mmio32,0xfe201000" >> "$tmp_mnt/cmdline.txt"
+  sudo umount "$1p1"
+  sudo rmdir "$tmp_mnt"
+}
+
+_main "$@"

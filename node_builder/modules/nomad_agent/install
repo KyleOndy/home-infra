@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -Eeu
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+export NOMAD_VERSION="1.0.4"
+
+# todo: abscrt this out
+ARCH=$(uname -m)
+NOMAD_ARCH=
+if [[ $ARCH == "x86_64" ]]; then
+  NOMAD_ARCH="amd64"
+elif [[ $ARCH == "armv7l" ]]; then
+  NOMAD_ARCH=armhfv6
+else
+  echo "unknown architecture: $ARCH"
+  exit 1
+fi
+
+
+# https://www.nomadproject.io/docs/install/production/deployment-guide/
+pushd "$(mktemp -d)" && {
+  curl --silent --show-error --remote-name https://releases.hashicorp.com/nomad/${NOMAD_VERSION}/nomad_${NOMAD_VERSION}_linux_${NOMAD_ARCH}.zip
+  unzip nomad_${NOMAD_VERSION}_linux_${NOMAD_ARCH}.zip
+  chown root:root nomad
+  mv nomad /usr/local/bin/
+  nomad version
+  nomad -autocomplete-install
+  complete -C /usr/local/bin/nomad nomad
+}
+
+cp "$DIR/nomad.service" /etc/systemd/system/nomad.service
+
+mkdir --parents /opt/nomad
+mkdir --parents /etc/nomad.d
+chmod 700 /etc/nomad.d
+
+cp "$DIR/nomad.hcl" /etc/nomad.d/nomad.hcl
+cp "$DIR/client.hcl" /etc/nomad.d/client.hcl
+
+systemctl enable nomad

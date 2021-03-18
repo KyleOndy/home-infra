@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -ex
+
+# git clone https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+KERNEL_VERSION="5.12-rc2"
+
+if ! [ -d "linux-${KERNEL_VERSION}" ]; then
+  wget https://git.kernel.org/torvalds/t/linux-${KERNEL_VERSION}.tar.gz
+  tar -xzf linux-${KERNEL_VERSION}.tar.gz
+fi
+
+cd "linux-${KERNEL_VERSION}"
+#export ARCH=arm
+#export CROSS_COMPILE=/opt/gcc-linaro-7.3.1-2018.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-
+
+cpu_count="$(grep -c '^processor' /proc/cpuinfo)"
+_make() {
+  make -j"$cpu_count" "$@"
+}
+
+#export KERNEL=kernel8
+_make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig
+_make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- Image modules dtbs
+
+out_dir="/out"
+mkdir -p "$out_dir/fat32/overlays" "$out_dir/ext4"
+
+_make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- INSTALL_MOD_PATH="$out_dir/ext4" modules_install
+cp arch/arm64/boot/Image "$out_dir/fat32/$KERNEL.img"
+#cp arch/arm64/boot/dts/broadcom/*.dtb "$out_dir/fat32/"
+#cp arch/arm64/boot/dts/overlays/*.dtb* "$out_dir/fat32/overlays/"
+#cp arch/arm64/boot/dts/overlays/README "$out_dir/fat32/overlays/"

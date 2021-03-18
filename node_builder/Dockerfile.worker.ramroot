@@ -1,0 +1,54 @@
+# todo: pin to sha?
+# todo: build my own base image
+FROM ubuntu:20.04
+
+# Prevent dpkg from asking questions
+ARG DEBIAN_FRONTEND=noninteractive
+
+# Install ifupdown, so DNS will work in the booted system
+COPY ./scripts/ramroot/install_base_packages /scripts/install_base_packages
+RUN /scripts/install_base_packages
+
+COPY ./modules/mounts/ ./scripts/mounts/
+RUN ./scripts/mounts/install
+
+COPY ./modules/docker/ ./scripts/docker/
+RUN ./scripts/docker/install
+
+COPY ./modules/scheduled_reboot/ ./scripts/scheduled_reboot/
+RUN ./scripts/scheduled_reboot/install
+
+ARG CONSUL_ENCRYPT_KEY
+COPY ./modules/consul_agent/ ./scripts/consul_agent/
+RUN ./scripts/consul_agent/install ${CONSUL_ENCRYPT_KEY}
+
+COPY ./modules/glusterfs/ ./scripts/glusterfs/
+RUN ./scripts/glusterfs/install
+
+COPY ./modules/keepalived/ ./scripts/keepalived/
+RUN ./scripts/keepalived/install
+
+COPY ./modules/nomad_agent/ ./scripts/nomad_agent/
+RUN ./scripts/nomad_agent/install
+
+COPY ./modules/traefik/ ./scripts/traefik/
+RUN ./scripts/traefik/install
+
+# todo: locales
+# todo: add ssh-key
+# todo: install consul agent
+# todo: install nomad agent
+# todo: install scheduled reboot task
+# todo: install docker
+# todo: install keeepalived
+# todo: install traefik
+# todo: setup gluster
+# todo: setup partitions
+
+# Unset the root password
+RUN passwd -d root
+
+ARG COMMIT
+ARG BUILD_TIMESTAMP
+RUN echo ${COMMIT} > /etc/node-build-rev
+RUN echo ${BUILD_TIMESTAMP} > /etc/node-build-timestamp

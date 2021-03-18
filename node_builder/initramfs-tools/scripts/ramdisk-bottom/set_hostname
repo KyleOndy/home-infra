@@ -1,0 +1,26 @@
+#!/bin/sh
+set -e
+
+if [ "$1" = "prereqs" ]; then
+  exit 0
+fi
+
+set_hostname() {
+  local hostname
+  # Parse command line options to get hostname
+  for x in $(cat /proc/cmdline); do
+    case "$x" in
+    hostname=*)
+      hostname="${x#hostname=}"
+      ;;
+    esac
+  done
+
+  if [ -n "$hostname" ]; then
+    # shellcheck disable=SC2154
+    echo "${hostname}" > "${rootmnt}/etc/hostname"
+  fi
+}
+
+set_hostname
+exit 0

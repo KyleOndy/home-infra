@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+set -euo pipefail
+set -x
+
+# The following documentation was taken wholesale and without shame from the offical documention. [1]
+#
+# The `BOOT_ORDER` setting allows flexible configuration for the priority of
+# different bootmodes. It is represented as 32bit unsigned integer where each
+# nibble represents a bootmode. The bootmodes are attempted in lowest
+# significant nibble to highest significant nibble order.
+#
+# E.g.`0xf41` means continuously trying SD card followed by USB mass storage.
+# Whereas, `0xf12` means continuously trying network boot followed by SD card
+# boot. The retry counters are reset when switching to the next boot mode.
+#
+# The BOOT_ORDER property defines the sequence for the different boot modes. It
+# is read right to left and up to 8 digits may be defined.
+#
+# | Value | Mode         | Description                                                                                       |
+# |-------|--------------|---------------------------------------------------------------------------------------------------|
+# |  0x1  |  SD CARD     |  SD card (or eMMC on Compute Module 4)                                                            |
+# |  0x2  |  NETWORK     |  Network boot                                                                                     |
+# |  0x3  |  RPIBOOT     |  RPIBOOT -  See [usbboot](https://github.com/raspberrypi/usbboot)  (since 2020-09-03)             |
+# |  0x4  |  USB-MSD     |  USB mass storage boot (since 2020-09-03)                                                         |
+# |  0x5  |  BCM-USB-MSD |  USB 2.0 boot from USB Type-C socket or USB Type-A socket on CM4 IO board.     (since 2020-12-14) |
+# |  0xe  |  STOP        |  Stop and display error pattern (since 2020-09-03). A power cycle is required to exit this state. |
+# |  0xf  |  RESTART     |  Start again with the first boot order field. (since 2020-09-03)                                  |
+#
+# After trying each non-zero boot mode the bootloader stops. However, from
+# 2020-09-03 the bootloader will monitor the SD card detect pin and try SD boot
+# if a new SD card is inserted.
+#
+# # [1]: https://github.com/raspberrypi/documentation/blob/f9fd298e63a6ba2f3658ea3484b41780a66c87b1/hardware/raspberrypi/bcm2711_bootloader_config.md
+#
+# With all that said, we want to always boot from networks
+
+# just keep trying network boot.
+
+PI_EEPROM_VERSION=pieeprom-2021-02-16
+wget https://github.com/raspberrypi/rpi-eeprom/raw/master/firmware/beta/${PI_EEPROM_VERSION}.bin
+
+cat << CONF > bootconf.txt
+# enable uart console
+BOOT_UART=1
+
+# just sd card for now, keep iteration quick
+BOOT_ORDER=0xf12
+
+# use mac address, wait awhile in case its a big file
+TFTP_PREFIX=2
+TFTP_FILE_TIMEOUT=300000
+CONF
+
+sudo rpi-eeprom-config --out ${PI_EEPROM_VERSION}-netboot.bin --config bootconf.txt ${PI_EEPROM_VERSION}.bin
+sudo rpi-eeprom-update -d -f ./${PI_EEPROM_VERSION}-netboot.bin
+sudo shutdown -r now

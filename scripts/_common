@@ -1,0 +1,86 @@
+#!/use/bin/env bash
+set -Ee
+
+# this is a pseudo-stdlib I use in my other scripts.
+
+TMP_DIR=${TMP_DIR:-$(mktemp -d)}
+
+lib.download() {
+  # download the given file, using the TMP_DIR as a pull through cache. Leaving
+  # cache busting as a manual process for now, its not a common thing to do,
+  # and if so, a git clean takes care of it.
+
+  url="$1"
+  # if a filenmae is not passed, pull everything after the last `/` and use
+  # that.
+  name=${2:-$(echo "$1" | rev | cut -d'/' -f1 | rev)}
+  download_cache_dir="$TMP_DIR/download_cache"
+  destination="$download_cache_dir/$name"
+  [ -d "$download_cache_dir" ] || mkdir -p "$download_cache_dir"
+
+  if [ -f "$destination" ]; then
+    echo "$destination"
+    exit 0
+  fi
+
+  curl \
+    --silent \
+    --show-error \
+    --location \
+    --output "$destination" \
+    "$url"
+  echo "$destination"
+}
+
+lib.extract() {
+  archive_file="$1"
+  dir_name="$2"
+
+  extraction_cache_dir="$TMP_DIR/extraction_cache"
+  destination="$extraction_cache_dir/$dir_name"
+  [ -d "$extraction_cache_dir" ] || mkdir -p "$extraction_cache_dir"
+
+  if [ -d "$destination" ]; then
+    echo "$destination"
+    return 0
+  fi
+
+  case $archive_file in
+    *.zip)
+      unzip -qd "$destination" "$archive_file"
+      ;;
+    *.tar.gz)
+      mkdir "$destination"
+      tar -zxf "$archive_file" -C "$destination" --strip-components 1
+      ;;
+    *)
+      echo "ERROR: unsupported archive type: $archive_file"
+      exit 1
+  esac
+  echo "$destination"
+}
+
+lib.sync_dir() {
+  src="$1"
+  dst="$2"
+
+  rsync \
+    --archive \
+    --recursive \
+    --links \
+    --delete \
+    "$src" "$dst"
+}
+
+lib.log.msg() { echo "=> LOG: $*" 1>&2; }
+lib.log.error() {
+  lib.log.msg "ERROR: $1"
+  exit 1
+}
+
+lib.pushd() {
+  pushd "$1" || exit 1> /dev/null
+}
+lib.popd() {
+  popd || exit 1> /dev/null
+}

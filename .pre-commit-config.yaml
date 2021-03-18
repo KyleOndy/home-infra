@@ -5,13 +5,13 @@ repos:
     hooks:
       - id: detect-secrets
         args: ['--baseline', '.secrets.baseline']
-        exclude: flake.lock
+        exclude: .*/tests/.*
   - repo: https://github.com/nix-community/nixpkgs-fmt
     rev: v1.0.0
     hooks:
       - id: nixpkgs-fmt
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.4.0
+    rev: v3.2.0
     hooks:
       - id: check-added-large-files
       - id: check-executables-have-shebangs
@@ -20,7 +20,7 @@ repos:
       - id: pretty-format-json
       - id: trailing-whitespace
   - repo: https://github.com/adrienverge/yamllint
-    rev: v1.25.0
+    rev: v1.24.2
     hooks:
       - id: yamllint
   - repo: https://github.com/jumanjihouse/pre-commit-hooks
