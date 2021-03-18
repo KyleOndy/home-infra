@@ -29,11 +29,11 @@ pushd "$(mktemp -d)" && {
 
 cp "$DIR/nomad.service" /etc/systemd/system/nomad.service
 
-sudo mkdir --parents /opt/nomad
-sudo mkdir --parents /etc/nomad.d
-sudo chmod 700 /etc/nomad.d
+mkdir --parents /opt/nomad
+mkdir --parents /etc/nomad.d
+chmod 700 /etc/nomad.d
 
 cp "$DIR/nomad.hcl" /etc/nomad.d/nomad.hcl
 cp "$DIR/client.hcl" /etc/nomad.d/client.hcl
 
-sudo systemctl enable nomad
+systemctl enable nomad
