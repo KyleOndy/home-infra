@@ -7,7 +7,7 @@ packages=(
   parted # for formatting the disks
 )
 
-apt update -qq
+apt-get update -qq
 apt-get install -qy  "${packages[@]}"
 apt-get clean all
 

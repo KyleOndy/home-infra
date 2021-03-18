@@ -9,7 +9,7 @@ packages=(
   unzip
 )
 
-apt update -qq
+apt-get update -qq
 apt-get install -qy  "${packages[@]}"
 apt-get clean all
 
