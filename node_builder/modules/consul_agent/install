@@ -3,6 +3,10 @@ set -eEu
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
+apt-get update -qq
+apt-get install -qq curl
+apt-get clean all
+
 # https://www.nomadproject.io/docs/install/production/deployment-guide/
 export CONSUL_VERSION="1.9.4"
 ENCRYPT_KEY=${CONSUL_ENCRYPT_KEY:-$1}
