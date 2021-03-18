@@ -47,8 +47,8 @@ chown --recursive consul:consul /opt/consul
 cp "$DIR/consul.service" /etc/systemd/system/consul.service
 
 mkdir --parents /etc/consul.d
-#cp "$DIR/consul.hcl" /etc/consul.d/consul.hcl
 envsubst \$ENCRYPT_KEY < "$DIR/consul.hcl" > /etc/consul.d/consul.hcl
+cp "$DIR/server.hcl" /etc/consul.d/server.hcl
 
 chown --recursive consul:consul    /etc/consul.d
 chmod 640 /etc/consul.d/consul.hcl
