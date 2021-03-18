@@ -15,8 +15,8 @@ RUN ./scripts/mounts/install
 COPY ./modules/docker/ ./scripts/docker/
 RUN ./scripts/docker/install
 
-#COPY ./modules/consul_agent/ ./scripts/consul_agent/
-#RUN ./scripts/consul_agent/install
+COPY ./modules/consul_agent/ ./scripts/consul_agent/
+RUN ./scripts/consul_agent/install
 
 #COPY ./modules/glusterfs/ ./scripts/glusterfs/
 #RUN ./scripts/glusterfs/install
