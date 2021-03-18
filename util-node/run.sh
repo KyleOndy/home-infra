@@ -13,4 +13,4 @@ fi
 
 docker-compose -f "$dc" pull
 docker-compose -f "$dc" up --build -d --remove-orphans
-docker-compose -f "$dc" logs -f --timestamps --tail 40
+docker-compose -f "$dc" logs -f --tail 40

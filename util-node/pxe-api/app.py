@@ -6,7 +6,7 @@ import logging
 
 app = Flask(__name__)
 fileServer = "http://util.dmz.509ely.com:8080"
-fileServerIP = "http://10.25.89.4:8080"
+fileServer = "http://10.25.89.4:8080"
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -61,7 +61,7 @@ def boot(mac):
 
     r = {
         "kernel": f"{fileServer}/{role}/{arch}/{kernel}",
-        "initrd": [f"{fileServer}/{role}/{arch}/{initrds}"],
+        "initrd": [f"{fileServer}/{role}/{arch}/{initrd}"],
         "cmdline": " ".join(
             [
                 "console=serial0,115200",  # this breaks the boot?
@@ -78,7 +78,7 @@ def boot(mac):
                 "boot=ramdisk",
                 f"BOOTIF={mac}",
                 f"hostname={hostname}",
-                f"ramroot={fileServerIP}/{role}/{arch}/{arch}/{ramroot}",
+                f"ramroot={fileServer}/{role}/{arch}/{ramroot}",
             ]
         ),
     }
