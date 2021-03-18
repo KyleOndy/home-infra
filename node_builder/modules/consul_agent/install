@@ -53,4 +53,4 @@ envsubst \$ENCRYPT_KEY < "$DIR/consul.hcl" > /etc/consul.d/consul.hcl
 chown --recursive consul:consul    /etc/consul.d
 chmod 640 /etc/consul.d/consul.hcl
 
-sudo systemctl enable consul
+systemctl enable consul
