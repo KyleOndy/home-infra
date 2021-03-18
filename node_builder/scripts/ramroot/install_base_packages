@@ -39,8 +39,6 @@ update-locale LANG=en_US.UTF-8
 sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 sed -i 's/PermitEmptyPasswords no/PermitEmptyPasswords yes/'     /etc/ssh/sshd_config
 
-# use systemd-resolved for DNS
-ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 
 mkdir -p /root/.ssh
 cat << SSH >> /root/.ssh/authorized_keys

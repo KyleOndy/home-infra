@@ -24,7 +24,6 @@ if [ -n "$BOOTIF" ] && [ -z "$(ls "${rootmnt}/etc/network/interfaces.d")" ]; the
     fi
   done
   if [ -n "$DEVICE" ]; then
-    # todo: fix DNS the right way, set via DHCP
     cat > "${rootmnt}/etc/network/interfaces.d/bootif" <<EOF
 auto lo
 iface lo inet loopback
