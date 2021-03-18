@@ -1,10 +1,15 @@
 #!/usr/bin/env bash
-set -eEu
+set -Eeu
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-apt-get update -qq
-apt-get install -qq curl
+packages=(
+  curl
+  unzip
+)
+
+apt update -qq
+apt-get install -qy  "${packages[@]}"
 apt-get clean all
 
 # https://www.nomadproject.io/docs/install/production/deployment-guide/
@@ -26,7 +31,7 @@ fi
 
 pushd "$(mktemp -d)" && {
   curl --silent --show-error --remote-name https://releases.hashicorp.com/consul/${CONSUL_VERSION}/consul_${CONSUL_VERSION}_linux_${CONSUL_ARCH}.zip
-  unzip consul_${CONSUL_VERSION}_linux_${CONSUL_ARCH}.zip
+  unzip -qq consul_${CONSUL_VERSION}_linux_${CONSUL_ARCH}.zip
   chown root:root consul
   mv consul /usr/local/bin/
   consul version
