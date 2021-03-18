@@ -30,6 +30,7 @@ RUN echo "docker modules" \
  && echo nf_nat                 >> /etc/initramfs-tools/modules \
  && echo nf_tables              >> /etc/initramfs-tools/modules \
  && echo overlay                >> /etc/initramfs-tools/modules \
+ && echo veth                   >> /etc/initramfs-tools/modules \
  && echo xt_addrtype            >> /etc/initramfs-tools/modules \
  && echo xt_conntrack           >> /etc/initramfs-tools/modules \
  && update-initramfs -vcu
