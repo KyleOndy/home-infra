@@ -16,6 +16,7 @@ BUILD_TIMESTAMP:=$(date --utc +%Y-%m-%d_%H%M%S)
 
 DOCKER=docker --host=$(DOCKER_HOST)
 DOCKER_BUILD=$(DOCKER) build \
+                   --pull \
                    --build-arg=COMMIT=$(GIT_REV) \
                    --build-arg=BUILD_TIMESTAMP=$(shell date --utc --iso-8601=seconds)
 
