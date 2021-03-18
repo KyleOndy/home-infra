@@ -13,10 +13,14 @@ GIT_REV:=$(shell git rev-parse --short HEAD)$(GIT_CHANGES)
 
 # can't use ISO-8601 due to `:` in file paths
 BUILD_TIMESTAMP:=$(date --utc +%Y-%m-%d_%H%M%S)
+CONSUL_ENCRYPT_KEY:=$(shell pass show 509ely.com/consul_encryption_key)
 
 DOCKER=docker --host=$(DOCKER_HOST)
+# todo: don't pass all args to all contianers. This _is_ a security issue, but
+# since I control the build, I am not too worried right now.
 DOCKER_BUILD=$(DOCKER) build \
                    --pull \
+                   --build-arg=CONSUL_ENCRYPT_KEY=$(CONSUL_ENCRYPT_KEY) \
                    --build-arg=COMMIT=$(GIT_REV) \
                    --build-arg=BUILD_TIMESTAMP=$(shell date --utc --iso-8601=seconds)
 
