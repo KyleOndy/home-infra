@@ -1,0 +1,59 @@
+# todo: pin to sha?
+# todo: build my own base image
+FROM ubuntu:20.04
+
+# Prevent dpkg from asking questions
+ARG DEBIAN_FRONTEND=noninteractive
+
+# Install ifupdown, so DNS will work in the booted system
+RUN apt-get update -qq && \
+    #apt-get -qy dist-upgrade && \
+    apt-get -qq install \
+        # ####################
+        # core system packages
+        # ####################
+        # need firmware and goodies
+        linux-generic \
+        initramfs-tools \
+
+        ifupdown \
+        neovim \
+        locales \
+
+        #openssh-server \
+        #htop \
+        #mosh \
+        #vim \
+        #gettext-base \
+        #keepalived \
+        #nfs-common \
+        #ca-certificates \
+        #curl \
+        #gpg-agent \
+        #parted \
+        #pixz \
+        #rsync \
+        #software-properties-common \
+        #tar \
+        #unzip \
+        #xfsprogs \
+    && apt-get clean all
+
+# todo: locales
+# todo: add ssh-key
+# todo: install consul agent
+# todo: install nomad agent
+# todo: install scheduled reboot task
+# todo: install docker
+# todo: install keeepalived
+# todo: install traefik
+# todo: setup gluster
+# todo: setup partitions
+
+# Unset the root password
+RUN passwd -d root
+
+ARG COMMIT
+ARG BUILD_TIMESTAMP
+RUN echo ${COMMIT} > /etc/node-build-rev
+RUN echo ${BUILD_TIMESTAMP} > /etc/node-build-timestamp

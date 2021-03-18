@@ -1,0 +1,27 @@
+FROM ubuntu:20.04
+
+ARG DEBIAN_FRONTEND=noninteractive
+run apt-get -q update \
+ && apt-get -yq install \
+        bc \
+        bison \
+        build-essential \
+        crossbuild-essential-arm64 \
+        curl \
+        device-tree-compiler \
+        flex \
+        gcc \
+        git \
+        kmod \
+        libc6-dev \
+        libncurses-dev \
+        libncurses5-dev \
+        libssl-dev \
+        make \
+        neovim \
+        wget
+
+COPY ./scripts/build-rpi-kernel /rpi-build
+COPY ./scripts/build_kernel /build
+RUN chmod +x /build /rpi-build
+#RUN /build

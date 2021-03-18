@@ -1,0 +1,13 @@
+[Unit]
+Description=scratch local drive mount
+Requires=format-scratch.service
+After=format-scratch.service
+DefaultDependencies=no
+
+[Mount]
+What=/dev/nvme0n1p2
+Where=/scratch/local
+Type=ext4
+
+[Install]
+WantedBy=multi-user.target

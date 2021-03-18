@@ -1,20 +1,17 @@
-deploy/w1:
+# todo:
+#       - check ARCH
 
+# todo: do I need this?
+#.SECONDEXPANSION:
 
-deploy/all:
-	nix run github:serokell/deploy-rs . -- --interactive
+CONSUL_ENCRYPT_KEY?=not_a_valid_consul_key
+# 9 is max, good for deployment, set to 0 for dev
+COMPRESSION_LEVEL=9
+DIST_DIR=./dist
+.PHONY: env
+env:
+	env | sort
 
-deploy/all-auto:
-	nix run github:serokell/deploy-rs . --
-
-update/all:
-	nix flake update --recreate-lock-file
-
-update/nixpkgs:
-	nix flake update --update-input nixpkgs
-
-update/deploy-rs:
-	nix flake update --update-input deploy-rs
-
-k3s-config:
-	@rsync -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" root@10.25.89.5:/etc/rancher/k3s/k3s.yaml .
+.PHONY: run-qemu
+run-qemu: worker-node
+	./scripts/run-qemu.sh $(DIST_DIR)/vmlinuz $(DIST_DIR)/initrd.img $(DIST_DIR)/ramroot.tar.xz

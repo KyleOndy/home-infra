@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -eu
+set -x
+
+# https://www.virtuallyghetto.com/2020/07/two-methods-to-network-boot-raspberry-pi-4.html
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+# shellcheck source=_common
+source "$DIR/_common"
+
+RPI_FIRMWARE_VERSION="1.20210303"
+UEFI_FIRMWARE_VERSION="1.24"
+
+uefi_firmware() {
+  rpi_uefi_firmware=$(lib.download "https://github.com/pftf/RPi4/releases/download/v${UEFI_FIRMWARE_VERSION}/RPi4_UEFI_Firmware_v${UEFI_FIRMWARE_VERSION}.zip")
+  lib.extract "$rpi_uefi_firmware" "uefi_firmare_${UEFI_FIRMWARE_VERSION}"
+}
+
+rpi_firmware() {
+  rpi_firmware=$(lib.download "https://github.com/raspberrypi/firmware/archive/${RPI_FIRMWARE_VERSION}.tar.gz")
+  lib.extract "$rpi_firmware" "rpi_firmware_${RPI_FIRMWARE_VERSION}"
+}
+
+uefi_part_contents="$TMP_DIR/workspace/uefi_part"
+mkdir -p "$uefi_part_contents"
+
+uefi_firmware_dir=$(uefi_firmware)
+#rpi_firmware_dir=$(rpi_firmware)
+
+# the sync here cleans the dir of any dangling files
+#lib.sync_dir "$rpi_firmware_dir/boot/" "$uefi_part_contents"
+#rm "$uefi_part_contents/kernel"*.img
+#cp -ar "$uefi_firmware_dir/." "$uefi_part_contents/"
+
+#echo "earlycon=pl011,mmio32,0xfe201000" >> "$uefi_firmware_dir/config.txt"
+lib.sync_dir "$uefi_firmware_dir/." "$uefi_part_contents"
+
+
+device="$1"
+if [ -z "$device" ]; then
+  echo "ERROR! Must pass sd card device!"
+  exit 1
+fi
+
+sudo sfdisk "$device" < "$DIR/uefi.sfdisk"
+sudo mkfs.vfat -F 32 "${device}p1"
+tmp_mnt="$(mktemp -d)"
+sudo mount "${device}p1" "$tmp_mnt"
+sudo cp -r "$uefi_part_contents/." "$tmp_mnt"
+sudo umount "$tmp_mnt"
+rmdir "$tmp_mnt"

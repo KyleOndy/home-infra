@@ -1,0 +1,20 @@
+# todo: build own base image
+FROM ubuntu:20.04
+
+# Prevent dpkg from asking questions
+ARG DEBIAN_FRONTEND=noninteractive
+
+# Install ramroot
+COPY ./initramfs-tools /etc/initramfs-tools
+
+# Install dependencies
+RUN apt-get update -qq \
+ && apt-get -qq install \
+        initramfs-tools \
+        isc-dhcp-client \
+        pixz \
+        tar \
+ && apt-get clean all
+
+# Install the kernel (will auto-generate the ramroot-enabled initrd)
+RUN apt-get -qq install linux-image-virtual
