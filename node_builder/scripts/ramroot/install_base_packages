@@ -2,27 +2,27 @@
 set -Eeu
 
 packages=(
-#glances         # system monitoring
 #gpg-agent
-#htop            # ligherwirght monitoring
 #keepalived
 #linux-generic   # need firmware and goodies
-#mosh            # better ssh
-#neovim          # my favorite text editor
 #nfs-common
 #pixz            # need by ramroot script
-#rsync
 #software-properties-common
 #tar
 #unzip
-#xfsprogs
 ca-certificates # HTTPS is important
 curl            # handy to have
+glances         # system monitoring
+htop            # ligherwirght monitoring
 ifupdown        # ip <foo> commands
 iputils-ping    # I like to have ping
+jq              # working with json
 kmod            # kernel stuff
 locales         # sane working environment
+mosh            # better ssh
+neovim          # my favorite text editor, muscle memory is hard to break
 openssh-server  # remote access
+rsync           # gotta move file
 systemd         # init
 systemd-sysv    # /sbin/init symlink
 udev            # system devices
@@ -43,4 +43,5 @@ sed -i 's/PermitEmptyPasswords no/PermitEmptyPasswords yes/'     /etc/ssh/sshd_c
 mkdir -p /root/.ssh
 cat << SSH >> /root/.ssh/authorized_keys
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDZq6q45h3OVj7Gs4afJKL7mSz/bG+KMG0wIOEH+wXmzDdJ0OX6DLeN7pua5RAB+YFbs7ljbc8AFu3lAzitQ2FNToJC1hnbLKU0PyoYNQpTukXqP1ptUQf5EsbTFmltBwwcR1Bb/nBjAIAgi+Z54hNFZiaTNFmSTmErZe35bikqS314Ej60xw2/5YSsTdqLOTKcPbOxj2kulznM0K/z/EDcTzGqc0Mcnf51NtzxlmB9NR4ppYLoi7x+rVWq04MbdAmZK70p5ndRobqYSWSKq+WDUAt2+CiTm6ItDowTLuo3zjHyYV1eCnB35DdakKVldIHrQyhmhbf5hJi6Ywx6XCzlFoNpkl/++RrJT2rf0XpGdlRoLQoKFvNRfnO4LI499SIfFb9Pwq7LhF1C1kTmshN/9S44d6VCCYXLE4uS8OPv7IXxUvFQZaIKCbomd2FzXxUwf4lg2gSlczysgDaVsMAUvlfDVgTFX8Xt1LFl3DqNtUiUpa9+Jnst/jCqqOBf3e8= kyle@alpha
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCn14IgARsVC7o7ZV1xBxZDxV9v+logg7BRG/0Ba0S/zO/ffEXa1THK0c+zr7aPlgGOVRXdL7eXexjhh+g1OMGXtDbr1sqYizOApeclfiCtpv3kQP9twKrVMiNK40G9WIqvvf5/1MqosNnFFxc9Tz60fKIjz8B7CJzlVMupXvvDU/BF0Ynhf2yrZVKkqFeWlgDd0QgLWCnTzWtD9TMmBX0ZZer3cZVBjZIsiHG795TGE/7g2QmvSwyfCqxuFr4pylJpOKEXRAJGZsUONSD7MhGW82g53KXYGqInyzpwayRdyBam5awXpfLgeMakx5RdGxzLpO3SIkqsuYnw+zwTtFg5 kyle@omega
 SSH

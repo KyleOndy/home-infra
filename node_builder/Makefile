@@ -88,4 +88,4 @@ $(DIST_DIR)/worker/$(ARCH)/ramroot.tar.xz.$(GIT_REV): | docker-worker-ramroot
 
 .PHONY: clean
 clean:
-	rm -r $(DIST_DIR)/*
+	[ -d $(DIST_DIR) ] && rm -rf $(DIST_DIR)/*

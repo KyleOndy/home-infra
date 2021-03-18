@@ -7,6 +7,10 @@ The `-` could be any delimiter.
 
 `<role>-<arch>-<component>`
 
+## Todo / Roadmap
+
+- Block nomad until glusterfs has replicated
+
 ## Modules
 
 I am not using any configuration management system. Just good old bash.

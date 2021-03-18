@@ -11,10 +11,12 @@ apt-get update -qq
 apt-get install -qy  "${packages[@]}"
 apt-get clean all
 
-cp "$DIR/format-scratch.service"  "/etc/systemd/system/"
-cp "$DIR/scratch-local.mount"     "/etc/systemd/system/"
-#cp "$DIR/mnt-nfs.mount"           "/etc/systemd/system/"
+cp "$DIR/"*.service  "/etc/systemd/system/"
+cp "$DIR/"*.mount    "/etc/systemd/system/"
 
-systemctl enable format-scratch
+# todo: probably need more explicit dependencies here
+systemctl enable format-scratch.service
+systemctl enable mnt-nfs.mount
+#systemctl enable mnt-shared.mount
+systemctl enable scratch-gluster.mount
 systemctl enable scratch-local.mount
-#systemctl enable mnt-nfs.mount

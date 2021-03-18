@@ -9,6 +9,9 @@ ARG DEBIAN_FRONTEND=noninteractive
 COPY ./scripts/ramroot/install_base_packages /scripts/install_base_packages
 RUN /scripts/install_base_packages
 
+COPY ./modules/babashka/ ./scripts/babashka/
+RUN ./scripts/babashka/install
+
 COPY ./modules/mounts/ ./scripts/mounts/
 RUN ./scripts/mounts/install
 
@@ -33,6 +36,9 @@ RUN ./scripts/nomad_agent/install
 
 COPY ./modules/traefik/ ./scripts/traefik/
 RUN ./scripts/traefik/install
+
+# cleanup
+RUN rm -rf /scripts
 
 # todo: locales
 # todo: add ssh-key

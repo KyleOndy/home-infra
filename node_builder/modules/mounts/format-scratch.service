@@ -7,11 +7,11 @@ Type=oneshot
 RemainAfterExit=yes
 ExecStart=/usr/bin/dd if=/dev/zero of=/dev/nvme0n1 bs=512 count=1
 ExecStart=/usr/sbin/parted /dev/nvme0n1 --script -- mklabel msdos
-ExecStart=/usr/sbin/parted /dev/nvme0n1 --script -- mkpart primary 0% 90%
-ExecStart=/usr/sbin/parted /dev/nvme0n1 --script -- mkpart primary 91% 100%
+ExecStart=/usr/sbin/parted /dev/nvme0n1 --script -- mkpart primary 0% 70%
+ExecStart=/usr/sbin/parted /dev/nvme0n1 --script -- mkpart primary 71% 100%
 # hack: let the system recognise the drive
 ExecStart=/bin/sleep 2
-# todo: partition 1 for clustered FS
+ExecStart=/usr/sbin/mkfs.xfs -f -i size=512 /dev/nvme0n1p1
 ExecStart=/usr/sbin/mkfs.ext4 -F /dev/nvme0n1p2
 # hack: let system see the FS
 ExecStart=/bin/sleep 2

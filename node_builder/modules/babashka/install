@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -Eeu
+#DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+export VERSION="0.3.0"
+
+#https://github.com/babashka/babashka/releases/download/v0.3.0/babashka-0.3.0-linux-static-amd64.tar.gz
+tmp_dir=$(mktemp -d)
+
+pushd "$tmp_dir" && {
+  curl --silent --show-error --output babashka.tar.gz -L "https://github.com/babashka/babashka/releases/download/v${VERSION}/babashka-${VERSION}-linux-amd64.tar.gz"
+
+  tar -zxf babashka.tar.gz
+  mv ./bb /usr/bin/bb
+  chmod +x /usr/bin/bb
+}
+
+rm -rf "$tmp_dir"
