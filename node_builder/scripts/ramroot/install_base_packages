@@ -2,7 +2,6 @@
 set -Eeu
 
 packages=(
-#gettext-base    # needed for envsubst, in consul install
 #glances         # system monitoring
 #gpg-agent
 #htop            # ligherwirght monitoring
