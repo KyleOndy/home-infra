@@ -30,8 +30,7 @@ iface lo inet loopback
 
 auto $DEVICE
 iface $DEVICE inet dhcp
-dns-nameservers 10.25.89.1
-dns-nameservers 1.1.1.1
+dns-nameservers 10.25.89.1 1.1.1.1
 dns-search dmz.509ely.com
 EOF
   fi
