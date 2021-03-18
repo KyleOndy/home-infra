@@ -20,6 +20,7 @@ packages=(
 #xfsprogs
 ca-certificates # HTTPS is important
 curl            # handy to have
+iputils-ping    # I like to have ping
 locales         # sane working environment
 openssh-server  # remote access
 resolvconf      # dns
