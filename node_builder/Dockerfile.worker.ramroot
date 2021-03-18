@@ -15,8 +15,12 @@ RUN ./scripts/mounts/install
 COPY ./modules/docker/ ./scripts/docker/
 RUN ./scripts/docker/install
 
+COPY ./modules/scheduled_reboot/ ./scripts/scheduled_reboot/
+RUN ./scripts/scheduled_reboot/install
+
+ARG CONSUL_ENCRYPT_KEY=todo
 COPY ./modules/consul_agent/ ./scripts/consul_agent/
-RUN ./scripts/consul_agent/install
+RUN ./scripts/consul_agent/install ${CONSUL_ENCRYPT_KEY}
 
 #COPY ./modules/glusterfs/ ./scripts/glusterfs/
 #RUN ./scripts/glusterfs/install
@@ -27,8 +31,6 @@ RUN ./scripts/consul_agent/install
 #COPY ./modules/nomad_agent/ ./scripts/nomad_agent/
 #RUN ./scripts/nomad_agent/install
 
-#COPY ./modules/scheduled_reboot/ ./scripts/scheduled_reboot/
-#RUN ./scripts/scheduled_reboot/install
 
 #COPY ./modules/traefik/ ./scripts/traefik/
 #RUN ./scripts/traefik/install
