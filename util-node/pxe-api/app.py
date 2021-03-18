@@ -55,9 +55,9 @@ def boot(mac):
         app.logger.debug(f"no definition for '{mac}' found")
         abort(404)
 
-    kernel = "vmlinuz" if build = "latest" else f"{build}.vmlinuz"
-    initrd = "initrd.img" if build = "latest" else f"{build}.initrd.img"
-    ramroot = "ramroot.tar.xz" if build = "latest" else f"{build}.ramroot.tar.xz"
+    kernel = "vmlinuz" if build == "latest" else f"{build}.vmlinuz"
+    initrd = "initrd.img" if build == "latest" else f"{build}.initrd.img"
+    ramroot = "ramroot.tar.xz" if build == "latest" else f"{build}.ramroot.tar.xz"
 
     r = {
         "kernel": f"{fileServer}/{role}/{arch}/{kernel}",

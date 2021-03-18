@@ -6,6 +6,7 @@ RUN apk add --no-cache make git
 
 WORKDIR /build
 RUN git clone https://github.com/danderson/netboot.git .
+# https://github.com/linuxserver/docker-papermerge/issues/4#issuecomment-735236388
 RUN make build
 
 FROM golang:alpine3.12
