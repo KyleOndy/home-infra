@@ -13,7 +13,6 @@ packages=(
 #neovim          # my favorite text editor
 #nfs-common
 #pixz            # need by ramroot script
-#resolvconf      # dns
 #rsync
 #software-properties-common
 #tar
@@ -23,6 +22,7 @@ ca-certificates # HTTPS is important
 curl            # handy to have
 locales         # sane working environment
 openssh-server  # remote access
+resolvconf      # dns
 systemd         # init
 systemd-sysv    # /sbin/init symlink
 udev            # system devices
