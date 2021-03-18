@@ -15,6 +15,6 @@ EOM
 # stage files to copy up to the node
 # todo: this will break sometime in the future
 mkdir -p ./util-node/files/
-cp -ra ./dist/. ./util-node/files/
+cp -ra ./node_builder/dist/. ./util-node/files/
 
-rsync -avrplP --delete "./util-node/" "${UTIL_NODE_USERNAME}@${UTIL_NODE_HOSTNAME}:${BOOT_STRAPPING_DIR}"
+rsync -avrpll --delete "./util-node/" "${UTIL_NODE_USERNAME}@${UTIL_NODE_HOSTNAME}:${BOOT_STRAPPING_DIR}"
