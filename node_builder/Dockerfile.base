@@ -1,6 +1,0 @@
-# todo: pin to sha
-# todo: build my own
-FROM ubuntu:20.04
-
-# Prevent dpkg from asking questions
-ARG DEBIAN_FRONTEND=noninteractive
