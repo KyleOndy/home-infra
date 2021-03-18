@@ -13,6 +13,7 @@ GIT_REV:=$(shell git rev-parse --short HEAD)$(GIT_CHANGES)
 
 # can't use ISO-8601 due to `:` in file paths
 BUILD_TIMESTAMP:=$(date --utc +%Y-%m-%d_%H%M%S)
+# todo: mask this in the logs?
 CONSUL_ENCRYPT_KEY:=$(shell pass show 509ely.com/consul_encryption_key)
 
 DOCKER=docker --host=$(DOCKER_HOST)
