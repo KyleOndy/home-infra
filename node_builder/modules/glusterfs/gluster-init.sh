@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -Eeu
+set -x
 
 # https://github.com/jtopjian/scripts/blob/master/gluster/gluster-status.sh
 
@@ -101,7 +102,7 @@ main() {
   # return quick on the happiest path. This should be the path taken during
   # normal operation. If we are mounted, no need to even check everything else
   # below.
-  if findmnt -T $MOUNT; then
+  if findmnt --mountpoint $MOUNT; then
     # todo: check gluster has replicated / healed before exiting with 0. The
     #       assumption here is once we exit with a zero, systemd will mount
     #       `/mnt/data` for us.
@@ -179,8 +180,10 @@ main() {
 
   # todo: assuming the volume is stated
   if gluster volume info $VOLUME | grep -q "$(hostname -f)"; then
-    #systemctl enable mnt-shared.mount
-    #systemctl start mnt-shared.mount
+    mkdir -p /mnt/shared # todo: do I need to create this?
+    #mount -t glusterfs "$(hostname -f):/shared" /mnt/shared
+    systemctl enable mnt-shared.mount
+    systemctl start mnt-shared.mount
     exit 0 # todo
   fi
 

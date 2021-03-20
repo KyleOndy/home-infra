@@ -6,7 +6,7 @@ Description=mount glusterfs for "better" shared storage
 #Requires=gluster-init.service
 
 [Mount]
-What=localhost:/scratch/gluster
+What=localhost:/shared
 Where=/mnt/shared
 Type=glusterfs
 
