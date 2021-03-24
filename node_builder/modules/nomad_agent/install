@@ -36,4 +36,7 @@ chmod 700 /etc/nomad.d
 cp "$DIR/nomad.hcl" /etc/nomad.d/nomad.hcl
 cp "$DIR/client.hcl" /etc/nomad.d/client.hcl
 
+# todo: move this to server nodes
+cp "$DIR/server.hcl" /etc/nomad.d/server.hcl
+
 systemctl enable nomad
