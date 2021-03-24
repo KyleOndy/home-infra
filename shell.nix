@@ -17,7 +17,7 @@ stdenv.mkDerivation {
   ];
 
   shellHook = ''
-    export NOMAD_ADDR=http://10.25.89.10:4646
-    export CONSUL_ADDR=http://10.25.89.10:8500
+    export NOMAD_ADDR=http://10.25.89.20:4646
+    export CONSUL_ADDR=http://10.25.89.20:8500
   '';
 }
