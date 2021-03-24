@@ -1,13 +1,8 @@
 { pkgs ? import <nixpkgs> { } }:
 
 with pkgs;
-
-stdenv.mkDerivation {
-  name = "home_infra";
-
+mkShell {
   buildInputs = [
-    debootstrap
-
     # pre-commit
     # https://pre-commit.com/
     pre-commit
