@@ -1,6 +1,8 @@
 [Unit]
 Wants=network-online.target
 After=network-online.target
+# todo: is `Before` the proper way to do this. I do not want nomad to start at
+#       all before the storage is good.
 Before=nomad.service
 
 [Service]
