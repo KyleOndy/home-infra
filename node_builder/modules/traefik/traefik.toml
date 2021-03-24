@@ -19,6 +19,8 @@
   # between nodes, bad things can happen. This is really directored more at a
   # typicall load balancer situation. As I only have one node active at a time,
   # I __should__ be able to avoid any race conditions.
+  #
+  # todo: update to glusterfs storage. Once I have nodes up long term
   storage = "/mnt/nfs/traefik/acme/acme.json"
   [certificatesResolvers.myresolver.acme.tlsChallenge]
 
