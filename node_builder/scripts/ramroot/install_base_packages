@@ -40,8 +40,9 @@ update-locale LANG=en_US.UTF-8
 sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 sed -i 's/PermitEmptyPasswords no/PermitEmptyPasswords yes/'     /etc/ssh/sshd_config
 
-# use the newer iptables-nft. Fixes docker issues.
-update-alternatives --set iptables /usr/sbin/iptables-nft
+update-alternatives --set iptables /usr/sbin/iptables-legacy
+update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
+#update-alternatives --set iptables /usr/sbin/iptables-nft
 #update-alternatives --set ip6tables /usr/sbin/ip6tables-nft
 #update-alternatives --set arptables /usr/sbin/arptables-nft
 #update-alternatives --set ebtables /usr/sbin/ebtables-nft
