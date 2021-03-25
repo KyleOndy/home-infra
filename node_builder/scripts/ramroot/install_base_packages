@@ -41,10 +41,10 @@ sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_c
 sed -i 's/PermitEmptyPasswords no/PermitEmptyPasswords yes/'     /etc/ssh/sshd_config
 
 # use the newer iptables-nft. Fixes docker issues.
-update-alternatives --set iptables /usr/sbin/iptables-nft
-update-alternatives --set ip6tables /usr/sbin/ip6tables-nft
-update-alternatives --set arptables /usr/sbin/arptables-nft
-update-alternatives --set ebtables /usr/sbin/ebtables-nft
+#update-alternatives --set iptables /usr/sbin/iptables-nft
+#update-alternatives --set ip6tables /usr/sbin/ip6tables-nft
+#update-alternatives --set arptables /usr/sbin/arptables-nft
+#update-alternatives --set ebtables /usr/sbin/ebtables-nft
 
 mkdir -p /root/.ssh
 cat << SSH >> /root/.ssh/authorized_keys
