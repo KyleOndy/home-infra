@@ -33,6 +33,7 @@ RUN echo "docker modules" \
  && echo veth                   >> /etc/initramfs-tools/modules \
  && echo xt_addrtype            >> /etc/initramfs-tools/modules \
  && echo xt_conntrack           >> /etc/initramfs-tools/modules \
+ && echo xt_nat                 >> /etc/initramfs-tools/modules \
  && update-initramfs -vcu
 # Install the kernel (will auto-generate the ramroot-enabled initrd)
 #RUN apt-get -qq install linux-image-virtual
