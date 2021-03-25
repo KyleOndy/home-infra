@@ -12,7 +12,7 @@ RUN apt-get update -qq \
  && apt-get -qq install --install-recommends \
         initramfs-tools \
         isc-dhcp-client \
-        linux-generic-hwe-20.10 \
+        linux-image-generic \
         pixz \
         tar \
  && apt-get clean all
