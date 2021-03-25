@@ -104,6 +104,11 @@ boot the ramroot image with some fancy magic, and into running os
 
         VMLINUZ CAN NOT BE COMPRESSEDk
 
+## Things still done manually
+
+- Setting up Dynmaic DNS is unifi
+- Setting up DNS in Namecheap
+
 ## External Links
 
 These repositioes, blog posts, and other resources all helped me get to where I am.
