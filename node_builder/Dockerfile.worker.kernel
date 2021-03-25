@@ -17,6 +17,10 @@ RUN apt-get update -qq \
         tar \
  && apt-get clean all
 
+# install docker to get the modules
+COPY ./modules/docker/ ./scripts/docker/
+RUN ./scripts/docker/install && rm -rf /scripts
+
 # the overlay module doesn't seem to be added to the kernel installed via
 # docker automatically.
 RUN echo "docker modules" \
@@ -34,6 +38,5 @@ RUN echo "docker modules" \
  && echo xt_addrtype            >> /etc/initramfs-tools/modules \
  && echo xt_conntrack           >> /etc/initramfs-tools/modules \
  && echo xt_nat                 >> /etc/initramfs-tools/modules \
+ && echo configs                >> /etc/initramfs-tools/modules \
  && update-initramfs -vcu
-# Install the kernel (will auto-generate the ramroot-enabled initrd)
-#RUN apt-get -qq install linux-image-virtual

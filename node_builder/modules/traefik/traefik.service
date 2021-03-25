@@ -3,8 +3,8 @@ Description=Traefik
 Documentation=https://docs.traefik.io
 After=network-online.target
 Requires=mnt-nfs.mount
-#AssertFileIsExecutable=/usr/bin/traefik
-#AssertPathExists=/etc/traefik/traefik.toml
+AssertFileIsExecutable=/usr/bin/traefik
+AssertPathExists=/etc/traefik/traefik.toml
 
 [Service]
 # Run traefik as its own user (create new user with: useradd -r -s /bin/false -U -M traefik)

@@ -23,6 +23,7 @@ for node in "${nodes[@]}"; do
   ssh "$node" reboot || true
 
   # todo: break out of loop after so many iterations
+  # todo: check glusterfs is replicated on node before rebooting
   # this just waits for the node to come up and be available
   loop_count=1
   until [[ $(curl -s "${node}.dmz.509ely.com:4646/v1/agent/health" | jq '.client.ok') == "true" ]]; do

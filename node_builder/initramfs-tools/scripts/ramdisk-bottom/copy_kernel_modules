@@ -13,6 +13,7 @@ fi
 # shellcheck disable=SC2154
 if [ ! -d "${rootmnt}/lib/modules" ]; then
   cp -a /lib/modules /lib/firmware "${rootmnt}/lib"
+  cp -a /boot "${rootmnt}/boot"
 fi
 
 exit 0
