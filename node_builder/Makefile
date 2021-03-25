@@ -86,6 +86,13 @@ $(DIST_DIR)/worker/$(ARCH)/ramroot.tar.xz.$(GIT_REV): | docker-worker-ramroot
 	$(DOCKER) rm -f $(GIT_REV)
 	chmod 755 $@
 
+.PHONY: run-kernel-image run-ramroot-image
+run-kernel-image:
+	$(DOCKER) run --rm -it $(KERNEL_WORKER_IMAGE) bash
+
+run-ramroot-image:
+	$(DOCKER) run --rm -it $(RAMROOT_WORKER_IMAGE) bash
+
 .PHONY: clean
 clean:
 	[ -d $(DIST_DIR) ] && rm -rf $(DIST_DIR)/*

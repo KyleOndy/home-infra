@@ -18,11 +18,13 @@ RUN apt-get update -qq \
  && apt-get clean all
 
 # install docker to get the modules
-COPY ./modules/docker/ ./scripts/docker/
-RUN ./scripts/docker/install && rm -rf /scripts
+COPY ./modules/docker/ /scripts/docker/
+RUN /scripts/docker/install && rm -rf /scripts
 
-# the overlay module doesn't seem to be added to the kernel installed via
-# docker automatically.
+# these modules were pulled from the check-config [1] script. I need to figure
+# out how to run this progamataclly and fail the build if this scripts fails.
+#
+# [1]: https://github.com/moby/moby/blob/master/contrib/check-config.sh
 RUN echo "docker modules" \
  && echo br_netfilter           >> /etc/initramfs-tools/modules \
  && echo bridge                 >> /etc/initramfs-tools/modules \
@@ -40,3 +42,8 @@ RUN echo "docker modules" \
  && echo xt_nat                 >> /etc/initramfs-tools/modules \
  && echo configs                >> /etc/initramfs-tools/modules \
  && update-initramfs -vcu
+
+# todo: pull locally, or at least refernce a single commit, don't just track
+# master
+COPY ./scripts/check-config /config-check
+RUN bash -Eexs /config-check
