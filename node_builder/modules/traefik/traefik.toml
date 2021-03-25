@@ -1,9 +1,12 @@
+[log]
+  level = "DEBUG"
 [api]
   dashboard = true
 [providers.consulCatalog]
   exposedByDefault = false
   [providers.consulCatalog.endpoint]
     address = "http://127.0.0.1:8500"
+    datacenter = "509ely"
 [entryPoints.web]
   # todo: point to server cluster once setup
   address = "10.25.89.20:80"
