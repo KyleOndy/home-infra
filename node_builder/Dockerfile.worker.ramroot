@@ -1,6 +1,6 @@
 # todo: pin to sha?
 # todo: build my own base image
-FROM ubuntu:20.10
+FROM ubuntu:20.04
 
 # Prevent dpkg from asking questions
 ARG DEBIAN_FRONTEND=noninteractive

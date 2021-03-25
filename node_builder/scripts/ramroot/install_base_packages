@@ -31,7 +31,7 @@ vim             # light text editing
 )
 apt-get update -qq
 
-apt-get install -qy  "${packages[@]}"
+apt-get install -qy "${packages[@]}"
 apt-get clean all
 
 locale-gen 'en_US.UTF-8'
