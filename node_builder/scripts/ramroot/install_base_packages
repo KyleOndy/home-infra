@@ -15,6 +15,7 @@ curl            # handy to have
 glances         # system monitoring
 htop            # ligherwirght monitoring
 ifupdown        # ip <foo> commands
+iptables        # firewall
 iputils-ping    # I like to have ping
 jq              # working with json
 kmod            # kernel stuff
