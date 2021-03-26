@@ -4,7 +4,8 @@ set -Eeu
 packages=(
 #gpg-agent
 #keepalived
-#linux-generic   # need firmware and goodies
+linux-generic   # need firmware and goodies
+linux-image-generic
 #nfs-common
 #pixz            # need by ramroot script
 #software-properties-common
@@ -28,6 +29,10 @@ systemd         # init
 systemd-sysv    # /sbin/init symlink
 udev            # system devices
 vim             # light text editing
+
+xtables-addons-common
+xtables-addons-dkms
+xtables-addons-source
 )
 apt-get update -qq
 
