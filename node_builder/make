@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+# todo: port to Makefile
+
+src_chroot=${1:-$(mktemp -d)}
+
+pkgs=(
+neovim
+
+# -------------------------------------------------
+# BELOW are packages I was installing in the prior version of this script.
+# Keeping them here handy incase I need them again. I'd like to validate the
+# need of each one.
+#
+# core system package. Without these system will not boot
+#locales
+#openssh-server # it will boot, but I like remote access
+#initramfs-tools
+#linux-generic
+
+# debugging / util. These increase size, but are nice to have
+#htop
+#mosh
+# vim-tiny
+
+# application specific
+# todo: should thier own scripts handle installing these?
+#gettext-base    # needed for envsubst, in consul install
+#keepalived      # used for poor mans load balanceer
+#nfs-common      # for NFS share, used by traefik
+
+# these need to be verified that they are required
+#ca-certificates
+#curl
+#gpg-agent
+#parted
+#pixz
+#rsync
+#software-properties-common
+#tar
+#unzip
+#xfsprogs
+)
+
+[[ -d "$src_chroot" ]] || "$DIR/bin/generate_chroot" "$src_chroot" "${pkgs[@]}"
+
+# even though the naive path would be to provison the chroot we just created,
+# still copy it over incase we want to inspect the base chroot, or tweak
+# something.
+
+dist_chroot=$(mktemp -d)
+"$DIR/bin/copy_chroot" "$src_chroot" "$dist_chroot"
+
+# these modules are installed in the order given in the array.
+modules=(
+  initial_prep
+  initramfs_tools
+  babashka
+  docker
+  keepalived
+  nomad_agent
+  traefik
+  consul_agent
+  glusterfs
+  mounts
+  scheduled_reboot
+  final_prep
+)
+
+for module in "${modules[@]}"; do
+  "$DIR/bin/provision_chroot" "$dist_chroot" "${DIR}/modules/$module/install"
+done
+
+#PIXZ_COMPRESSION_LEVEL=${PIXZ_COMPRESSION_LEVEL:-9}
+"$DIR/bin/package_chroot" "$dist_chroot"
