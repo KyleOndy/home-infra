@@ -3,6 +3,8 @@
 with pkgs;
 mkShell {
   buildInputs = [
+    debootstrap
+
     nomad_1_0
     terraform_0_14
 

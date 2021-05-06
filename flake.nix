@@ -1,8 +1,7 @@
 {
-  description = "Kyle Ondy's home infrastrucure monorepo";
-
+  description = "my project description";
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:r-ryantm/nixpkgs/auto-update/debootstrap";
     flake-utils.url = "github:numtide/flake-utils";
   };
 

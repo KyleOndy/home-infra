@@ -1,17 +1,15 @@
-# todo:
-#       - check ARCH
-
-# todo: do I need this?
-#.SECONDEXPANSION:
-
+# if this is not set to a valid key (use `consul keygen`) the node will build,
+# but consul will not start if you try to run the node.
 CONSUL_ENCRYPT_KEY?=not_a_valid_consul_key
-# 9 is max, good for deployment, set to 0 for dev
+
+# pixz can compress between 0 (nothing) and 9 (MAX!). 0 is best for iteration,
+# use a high value for production builds.
 COMPRESSION_LEVEL=9
-DIST_DIR=./dist
-.PHONY: env
+
+.PHONY: worker-node env
+
 env:
 	env | sort
 
-.PHONY: run-qemu
-run-qemu: worker-node
-	./scripts/run-qemu.sh $(DIST_DIR)/vmlinuz $(DIST_DIR)/initrd.img $(DIST_DIR)/ramroot.tar.xz
+worker-node:
+	sudo -E ./node_builder/make_node ./dist ${CONSUL_ENCRYPT_KEY}
