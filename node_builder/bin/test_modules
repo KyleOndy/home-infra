@@ -15,7 +15,8 @@ for module in $modules; do
   module_chroot=$(mktemp -d)
   "$DIR/copy_chroot" "$src_chroot" "$module_chroot"
   if "$DIR/provision_chroot" "$module_chroot" "${module}/install"; then
-    errors+=("$(basename "$module")")
+    module_name="$(basename "$module")"
+    errors+=( "$module_name" )
   fi
 done
 
