@@ -2,6 +2,12 @@
 set -Eeu
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
+packages=(
+  curl
+)
+apt-get update -qq
+apt-get install -qy  "${packages[@]}"
+
 VERSION=2.4.8
 
 cd "$(mktemp -d)" && {
@@ -17,3 +23,5 @@ cp "$DIR/traefik.service" /etc/systemd/system/traefik.service
 
 mkdir --parents /etc/traefik
 cp "$DIR/traefik.toml" /etc/traefik/traefik.toml
+
+echo "Done!"

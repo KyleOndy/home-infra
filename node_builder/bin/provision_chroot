@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-# helper script to run bash scripts within the chroot we just created.
-
-echo " Running '$*'"
 # todo: I am just giving every script my consul encryption key. This is a
 # pretty bad security issues, but I also control all the scripts running, so
 # its not too terrible. I need to work out how to best propagate secrets into
@@ -20,12 +17,21 @@ echo " Running '$*'"
 # /prod/self/fd/ and it doesn't work as expeced?
 
 # todo: tmpdir
+
+chroot_dir="$1"
+script="$2"
+args=( "${@:3}" ) # could be empty
 tmp_script_dir_in_chroot="/tmp/chroot-script"
-script="$1"
-args=( "${@:2}" ) # could be empty
 script_dir=$(dirname "$script")
 module_name=$(basename "$script_dir")
 script_name=$(basename "$script")
+
+if [ ${#args[@]} -eq 0 ]; then
+  args_str="no args"
+else
+  args_str="the args '${args[*]}'"
+fi
+echo "Running '$script' with $args_str inside '$chroot_dir'"
 
 # debug info
 #echo "tmp_script_dir_in_chroot: $tmp_script_dir_in_chroot"
@@ -35,17 +41,17 @@ script_name=$(basename "$script")
 #echo "module_name: $module_name"
 #echo "script_name: $script_name"
 
-mkdir -p "$CHROOT_DIR/$tmp_script_dir_in_chroot"
+mkdir -p "$chroot_dir/$tmp_script_dir_in_chroot"
 if [[ "$script_dir" == "/dev/fd" ]]; then
   # copy just the text "script"
   module_name="inline"
-  mkdir "$CHROOT_DIR/$tmp_script_dir_in_chroot/$module_name"
-  cp --dereference "$script" "$CHROOT_DIR/$tmp_script_dir_in_chroot/$module_name/"
+  mkdir "$chroot_dir/$tmp_script_dir_in_chroot/$module_name"
+  cp --dereference "$script" "$chroot_dir/$tmp_script_dir_in_chroot/$module_name/"
 else
   # copy the whole module directory
-  cp -r --dereference "$script_dir" "$CHROOT_DIR/$tmp_script_dir_in_chroot/"
+  cp -r --dereference "$script_dir" "$chroot_dir/$tmp_script_dir_in_chroot/"
 fi
 
-chroot "$CHROOT_DIR" /usr/bin/env PATH=/usr/sbin:/usr/bin/:/bin:/sbin:/usr/local/bin bash "$tmp_script_dir_in_chroot/$module_name/$script_name" "${args[@]}"
+sudo chroot "$chroot_dir" /usr/bin/env PATH=/usr/sbin:/usr/bin/:/bin:/sbin:/usr/local/bin bash "$tmp_script_dir_in_chroot/$module_name/$script_name" "${args[@]}"
 
-rm -r "${CHROOT_DIR:?}/$tmp_script_dir_in_chroot"
+rm -r "${chroot_dir:?}/$tmp_script_dir_in_chroot"
