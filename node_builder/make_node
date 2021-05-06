@@ -119,7 +119,7 @@ debootstrap \
   --components=main,universe \
   --cache-dir=$DEB_BOOTSTRAP \
   --include="${debootstrap_packages[*]}" \
-  hirsute \
+  focal \
   "$CHROOT_DIR" \
   http://archive.ubuntu.com/ubuntu/ #> /dev/null # less noise
 cp -r "$SCRIPT_DIR"/initramfs-tools/* "$CHROOT_DIR/etc/initramfs-tools/"
