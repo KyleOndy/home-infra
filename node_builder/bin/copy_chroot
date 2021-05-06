@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+src_dir="$1"
+dst_dir="$2"
+
+# just in case
+sudo umount "$1/proc" "$1/sys" "$1/dev"|| true
+
+# https://unix.stackexchange.com/a/112325
+rsync_args=(
+#--verbose
+--archive
+--one-file-system
+--xattrs
+--hard-links
+--numeric-ids
+--sparse
+--acls
+#--exclude "$src_dir/var/log/*"
+)
+
+sudo rsync "${rsync_args[@]}" "$src_dir" "$dst_dir"
+me=$(whoami)
+sudo chown -R "$me" "$dst_dir"

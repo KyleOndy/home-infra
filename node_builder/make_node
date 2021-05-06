@@ -6,6 +6,21 @@ set -Eeuo pipefail
 # node artifacts. This script is a prime target for refactoring in the future.
 # -------------------------------------------------------------------------
 
+# -------------------------------------------------------------------------
+# TODO
+#   - Be able to generate chroot seperately. Clone it, and run the provisioning
+#     step.
+# -------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------
+# -------------------------------------------------------------------------
+#
+# -------------------------------------------------------------------------
+# -------------------------------------------------------------------------
+generate_chroot() {
+
+}
+
 # to avoid prepending command with sudo and having the build timeout waiting
 # for a password just require that script to be run as root.
 if [ "$EUID" -ne 0 ]
@@ -57,7 +72,7 @@ trap cleanup EXIT
 # cleaning up the mount points debootstrap creates if things go awry. I reboot
 # my machines pretty frequently so this will resolve itself.
 WORK_DIR=$(mktemp -d --tmpdir=/tmp debootstrap.XXXX)
-CHROOT_DIR="$WORK_DIR/chroot"
+CHROOT_DIR="$1"
 
 GIT_REF=$(git rev-parse --short HEAD)
 # Should this build be marked as dirty?
@@ -84,96 +99,38 @@ mkdir --parent "$OUT_DIR" "$DEB_BOOTSTRAP"
 
 debootstrap_packages=(
   # core system package. Without these system will not boot
-  locales
-  openssh-server # it will boot, but I like remote access
-  initramfs-tools
-  linux-generic
+  #locales
+  #openssh-server # it will boot, but I like remote access
+  #initramfs-tools
+  #linux-generic
 
   # debugging / util. These increase size, but are nice to have
-  htop
-  mosh
-  vim
+  #htop
+  #mosh
+  vim-tiny
 
   # application specific
   # todo: should thier own scripts handle installing these?
-  gettext-base    # needed for envsubst, in consul install
-  keepalived      # used for poor mans load balanceer
-  nfs-common      # for NFS share, used by traefik
+  #gettext-base    # needed for envsubst, in consul install
+  #keepalived      # used for poor mans load balanceer
+  #nfs-common      # for NFS share, used by traefik
 
   # these need to be verified that they are required
-  ca-certificates
-  curl
-  gpg-agent
-  parted
-  pixz
-  rsync
-  software-properties-common
-  tar
-  unzip
-  xfsprogs
+  #ca-certificates
+  #curl
+  #gpg-agent
+  #parted
+  #pixz
+  #rsync
+  #software-properties-common
+  #tar
+  #unzip
+  #xfsprogs
 )
 
-log "Running debootstrap"
-debootstrap \
-  --arch=amd64 \
-  --components=main,universe \
-  --cache-dir=$DEB_BOOTSTRAP \
-  --include="${debootstrap_packages[*]}" \
-  focal \
-  "$CHROOT_DIR" \
-  http://archive.ubuntu.com/ubuntu/ #> /dev/null # less noise
 cp -r "$SCRIPT_DIR"/initramfs-tools/* "$CHROOT_DIR/etc/initramfs-tools/"
 
 
-run_script_in_chroot() {
-  # helper script to run bash scripts within the chroot we just created.
-
-  log " Running '$*'"
-  # todo: I am just giving every script my consul encryption key. This is a
-  # pretty bad security issues, but I also control all the scripts running, so
-  # its not too terrible. I need to work out how to best propagate secrets into
-  # all the configuration files.
-
-  # shellcheck disable=SC2024
-  # deep breath. Stuff of madness or genious below. The goal here is to be able
-  # to write scripts in a normal way, refrencing files alongside or deeper in
-  # the file hiarchery. This way I don't need to heredoc every config file
-  # inline with a script. However, some of my "scripts" are still just text,
-  # hence having to check if this "script" lives under /prod/self/fd.
-  #
-  # I suppose there is some edge case where I actaully write a script under
-  # /prod/self/fd/ and it doesn't work as expeced?
-
-  tmp_script_dir="/tmp/chroot-script"
-  script="$1"
-  args=( "${@:2}" ) # could be empty
-  script_dir=$(dirname "$script")
-  module_name=$(basename "$script_dir")
-  script_name=$(basename "$script")
-
-  # debug info
-  #echo "tmp_script_dir: $tmp_script_dir"
-  #echo "script: $script"
-  #echo "args: ${args[*]}"
-  #echo "script_dir: $script_dir"
-  #echo "module_name: $module_name"
-  #echo "script_name: $script_name"
-
-  mkdir -p "$CHROOT_DIR/$tmp_script_dir"
-  if [[ "$script_dir" == "/dev/fd" ]]; then
-    # copy just the text "script"
-    module_name="inline"
-    mkdir "$CHROOT_DIR/$tmp_script_dir/$module_name"
-    cp --dereference "$script" "$CHROOT_DIR/$tmp_script_dir/$module_name/"
-  else
-    # copy the whole module directory
-    cp -r --dereference "$script_dir" "$CHROOT_DIR/$tmp_script_dir/"
-  fi
-
-  chroot "$CHROOT_DIR" /usr/bin/env PATH=/usr/sbin:/usr/bin/:/bin:/sbin:/usr/local/bin bash "$tmp_script_dir/$module_name/$script_name" "${args[@]}"
-
-  rm -r "${CHROOT_DIR:?}/$tmp_script_dir"
-}
 
 run_script_in_chroot "$SCRIPT_DIR/modules/glusterfs/install"
 

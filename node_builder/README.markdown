@@ -1,5 +1,21 @@
 # Node Builder
 
+## Usage
+
+Starting with a new chroot
+```bash
+# build source chroot
+src_chroot=$(mktemp -d)
+./bin/generate_chroot $src_chroot <pkgs>
+```
+
+Iterating on provisioning
+```bash
+new_chroot=$(mktemp -d)
+./bin/copy_chroot $src_chroot $new_chroot
+./make_node $new_chroot
+```
+
 ## Naming
 
 Precedence of naming components.

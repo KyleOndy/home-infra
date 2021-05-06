@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+chroot_dir="$1"
+pkgs="${*:2}"
+
+# todo: honor $TMPDIR, don't assume /tmp
+bootstrap_dir="${XDG_CACHE_HOME:-/tmp/}/deb_bootstrap"
+mkdir -p "$bootstrap_dir"
+
+args=(
+--arch=amd64                 # target machines are amd64 boxes
+--components="main,universe" # package I use may exist in universe
+--cache-dir="$bootstrap_dir" # don't need to download everytime
+)
+# if positional arguments are passed to this script, treat them as packages to
+# install into the chroot
+[[ -z "$pkgs" ]] || args+=(--include="$pkgs")
+
+args+=(
+hirsute                           # building the latest (21.04) Ubuntu flavor
+"$chroot_dir"                     # where the chroot will be on disk
+http://archive.ubuntu.com/ubuntu/ # set the mirror, not building debian
+)
+
+
+sudo debootstrap "${args[@]}"
