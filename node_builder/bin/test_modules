@@ -6,6 +6,10 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 # should be fully self contianed, installing whatever packages it needs. This test makes no promises about things working at runtime, this simply checks that the modules will install properly.
 
 modules=$(fd --type=directory --max-depth=1 . "$DIR/../modules/")
+if [ $# -ne 0 ]
+  then
+    modules="$*"
+fi
 
 src_chroot=$(mktemp -d)
 "$DIR/generate_chroot" "$src_chroot"
@@ -14,7 +18,7 @@ errors=()
 for module in $modules; do
   module_chroot=$(mktemp -d)
   "$DIR/copy_chroot" "$src_chroot" "$module_chroot"
-  if "$DIR/provision_chroot" "$module_chroot" "${module}/install"; then
+  if "$DIR/provision_chroot" "$module_chroot" "$DIR/../${module}/install"; then
     module_name="$(basename "$module")"
     errors+=( "$module_name" )
   fi
