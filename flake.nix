@@ -1,7 +1,7 @@
 {
   description = "my project description";
   inputs = {
-    nixpkgs.url = "github:r-ryantm/nixpkgs/auto-update/debootstrap";
+    nixpkgs.url = "github:NixOS/nixpkgs/master";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
