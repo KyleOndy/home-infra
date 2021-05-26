@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -Ee
+
+mounts=(
+"$1/proc"
+"$1/sys"
+"$1/dev"
+)
+
+for mount in "${mounts[@]}"; do
+  mountpoint -q "$mount" && sudo umount "$mount"
+done
+
+sudo rm -r "$1"

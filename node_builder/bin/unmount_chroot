@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+chroot_dir="$1"
+
+mounts=(
+"${chroot_dir}/proc"
+"${chroot_dir}/sys"
+"${chroot_dir}/dev"
+)
+
+for mount in "${mounts[@]}"; do
+  mountpoint -q "$mount" && sudo umount "$mount"
+done

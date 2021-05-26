@@ -3,7 +3,9 @@ set -Eeuo pipefail
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 # this runs each module against a fresh chroot, the idea being that each module
-# should be fully self contianed, installing whatever packages it needs. This test makes no promises about things working at runtime, this simply checks that the modules will install properly.
+# should be fully self contianed, installing whatever packages it needs. This
+# test makes no promises about things working at runtime, this simply checks
+# that the modules will install properly.
 
 modules=$(fd --type=directory --max-depth=1 . "$DIR/../modules/")
 if [ $# -ne 0 ]
@@ -11,17 +13,25 @@ if [ $# -ne 0 ]
     modules="$*"
 fi
 
-src_chroot=$(mktemp -d)
-"$DIR/generate_chroot" "$src_chroot"
+# todo: blindly trust $1 is a chroot
+if [[ -z "$1" ]]; then
+  src_chroot=$(mktemp -d)
+  "$DIR/generate_chroot" "$src_chroot"
+else
+  src_chroot=$1
+fi
 
 errors=()
 for module in $modules; do
   module_chroot=$(mktemp -d)
   "$DIR/copy_chroot" "$src_chroot" "$module_chroot"
-  if "$DIR/provision_chroot" "$module_chroot" "$DIR/../${module}/install"; then
+  set -x
+  echo "module: $module"
+  if "$DIR/provision_chroot" "$module_chroot" "${module}/install"; then
     module_name="$(basename "$module")"
     errors+=( "$module_name" )
   fi
+  "$DIR/cleanup_chroot" "$module_chroot"
 done
 
 if [ ${#errors[@]} -ne 0 ]; then

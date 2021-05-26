@@ -30,10 +30,11 @@ rsync_args=(
 
 sudo rsync "${rsync_args[@]}" "${src_dir}/" "$dst_dir"
 
+set -x
 mkdir -p "$dst_dir"/{proc,sys,dev}
 sudo mount -t proc /proc "$dst_dir/proc/"
-sudo mount --rbind /sys "$dst_dir/sys/"
-sudo mount --rbind /dev "$dst_dir/dev/"
+sudo mount --rbind --make-rslave /sys "$dst_dir/sys/"
+sudo mount --rbind --make-rslave /dev "$dst_dir/dev/"
 
 #me=$(whoami)
 #sudo chown -R "$me" "$dst_dir"
