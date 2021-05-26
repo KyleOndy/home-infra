@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-
-
-ssh "$1" journalctl --boot --lines=all --follow --unit "$2"

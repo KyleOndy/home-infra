@@ -1,0 +1,51 @@
+[log]
+#level = "DEBUG"
+[api]
+  dashboard = true
+  insecure = true
+[providers.consulCatalog]
+  prefix           = "traefik"
+  exposedByDefault = false
+  [providers.consulCatalog.endpoint]
+    address = "http://127.0.0.1:8500"
+    datacenter = "dc1"
+[entryPoints]
+[entryPoints.web]
+  # todo: point to server cluster once setup
+#address = "10.25.89.22:80"
+  address = ":80"
+  [entryPoints.web.http]
+    [entryPoints.web.http.redirections]
+      [entryPoints.web.http.redirections.entryPoint]
+        to = "websecure"
+        scheme = "https"
+[entryPoints.websecure]
+#  # todo: point to server cluster once setup
+  address = ":443"
+[certificatesResolvers.myresolver.acme]
+  email = "kyle@ondy.org"
+  #caServer = "https://acme-staging-v02.api.letsencrypt.org/directory"
+  storage = "/var/lib/traefik/acme.json"
+  # yes, traefik is very adament about not sharing the lets letsencrypt acme
+  # between nodes, bad things can happen. This is really directored more at a
+  # typicall load balancer situation. As I only have one node active at a time,
+  # I __should__ be able to avoid any race conditions.
+  #
+  # todo: update to glusterfs storage. Once I have nodes up long term
+  #storage = "/root/data/traefik/acme/acme.json"
+[certificatesResolvers.myresolver.acme.tlsChallenge]
+#[certificatesResolvers.myresolver.acme.httpChallenge]
+#  entryPoint = "web"
+#[certificatesResolvers.myresolver.acme.dnsChallenge]
+#  provider = "route53"
+
+# https://docs.traefik.io/operations/dashboard/#secure-mode
+#[http.routers.my-api]
+#  rule = "Host(`traefik.apps.509ely.com`)"
+#  service = "api@internal"
+#  #middlewares = ["traefik-auth"]
+#
+#[http.middlewares.traefik-auth.basicAuth]
+#  users = [
+#    "kyle:$apr1$C.zhFNPC$uBk/NdASEIjqnNGGu4Sv//",
+#  ]

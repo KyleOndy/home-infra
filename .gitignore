@@ -1,4 +1,4 @@
-.cache/
-dist/
-util-node/files/
-.terraform
+.terraform*
+terraform.tfstate*
+backups/
+*.key

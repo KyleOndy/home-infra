@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -e
+
+for node in w2; do
+  # todo: pull from a branch, that way changes have to be in source?
+  ssh "$node" "mkdir -p /opt/home-infra"
+  rsync -ar \
+    --exclude=.git \
+    --exclude=.terraform \
+    --delete \
+    . w2:/opt/home-infra/
+
+# todo: can I move the touch / chown into nix?
+ssh w2  << SSH
+set -ex
+mkdir -p /var/lib/traefik
+chmod 600 /var/lib/traefik/acme.json
+chown traefik /var/lib/traefik/acme.json
+
+NIXOS_CONFIG=/opt/home-infra/nodes/${node}/configuration.nix nixos-rebuild switch
+nix-shell --command 'fd --type=file . /opt/home-infra/services | xargs -I{} -- nomad job run {}' /opt/home-infra/shell.nix
+SSH
+done

@@ -1,10 +1,15 @@
 { pkgs ? import <nixpkgs> { } }:
 
 pkgs.mkShell {
-  buildInputs = [
-    pkgs.detect-secrets
+  buildInputs = with pkgs; [
+    # for building
+    gnumake
 
-    # for markdown-lint (pre-commit check)
-    pkgs.ruby
+    # for debugging
+    lsof
+    consul
+    nomad
+    fd
   ];
 }
+

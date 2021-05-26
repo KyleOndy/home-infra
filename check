@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -e
+
+check() {
+  curl -L "$1"
+}
+
+for proto in http https; do
+  check "${proto}://kyleondy.com"
+  check "${proto}://kyleondy.com"
+done

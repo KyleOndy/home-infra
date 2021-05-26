@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -e
+
+
+paths=(
+  /var/lib/traefik
+)
+
+local_backups=backups
+set -x
+for path in "${paths[@]}";do
+  mkdir -p "${local_backups}${path}"
+  rsync -avr "w2:${path}" "./${local_backups}${path}"
+done
