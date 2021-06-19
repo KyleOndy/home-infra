@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -Eeu
 
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+. "/tmp/_common.bash"
 packages=(
 #gpg-agent
 #keepalived
@@ -36,11 +38,7 @@ xtables-addons-source
 )
 apt-get update -qq
 
-apt-get install -qy "${packages[@]}"
-apt-get clean all
-
-locale-gen 'en_US.UTF-8'
-update-locale LANG=en_US.UTF-8
+common.install_packages "${packages[@]}"
 
 sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 sed -i 's/PermitEmptyPasswords no/PermitEmptyPasswords yes/'     /etc/ssh/sshd_config

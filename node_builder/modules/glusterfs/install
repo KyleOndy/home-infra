@@ -5,23 +5,11 @@ set -Eeu
 #   auth.allow
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-
-packages=(
-  software-properties-common
-  xfsprogs
-)
-apt-get update -qq
-apt-get install -qy  "${packages[@]}"
-
+. "/tmp/_common.bash"
+common.install_packages software-properties-common xfsprogs
 
 add-apt-repository ppa:gluster/glusterfs-9 -y
-packages=(
-  glusterfs-client
-  glusterfs-server
-)
-apt-get update -qq
-apt-get install -qy  "${packages[@]}"
-apt-get clean all
+common.install_packages glusterfs-client glusterfs-server
 
 
 systemctl enable glusterd.service

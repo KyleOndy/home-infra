@@ -2,14 +2,8 @@
 set -Eeu
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-
-packages=(
-  parted # for formatting the disks
-)
-
-apt-get update -qq
-apt-get install -qy  "${packages[@]}"
-apt-get clean all
+. "/tmp/_common.bash"
+common.install_packages parted
 
 cp "$DIR/"*.service  "/etc/systemd/system/"
 cp "$DIR/"*.mount    "/etc/systemd/system/"

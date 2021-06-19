@@ -2,12 +2,13 @@
 set -Eeu
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
+#. "/tmp/_common.bash"
+#common.install_packages
 
 locale-gen 'en_US.UTF-8'
 update-locale LANG=en_US.UTF-8
 
-echo \"$(git rev-parse HEAD)\" > /etc/node-build-rev
-echo \"$BUILD_TIMESTAMP\" > /etc/node-build-date
+date +%s > /etc/node-build-date
 
 # todo: still needed?
 # I had an issue where the scripts in '/etc/initramfs-tools/hooks' seemed to be

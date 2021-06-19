@@ -25,7 +25,6 @@ errors=()
 for module in $modules; do
   module_chroot=$(mktemp -d)
   "$DIR/copy_chroot" "$src_chroot" "$module_chroot"
-  set -x
   echo "module: $module"
   if "$DIR/provision_chroot" "$module_chroot" "${module}/install"; then
     module_name="$(basename "$module")"

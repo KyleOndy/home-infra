@@ -22,7 +22,4 @@ rsync_args=(
 
 sudo rsync "${rsync_args[@]}" "${src_dir}/" "$dst_dir"
 
-set -x
 "$DIR/mount_chroot" "$dst_dir"
-#me=$(whoami)
-#sudo chown -R "$me" "$dst_dir"

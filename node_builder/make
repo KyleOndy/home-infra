@@ -4,10 +4,14 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 # todo: port to Makefile
 
-if [ -z "${src_chroot-}" ]; then
+
+if [ -z "${1-}" ]; then
   # todo: add some template to mktemp
   src_chroot=$(mktemp -d)
   new_chroot=true
+else
+  src_chroot="$1"
+  new_chroot=false
 fi
 
 
@@ -49,7 +53,8 @@ pkgs=(
 #xfsprogs
 )
 
-[[ -n $new_chroot ]] && "$DIR/bin/generate_chroot" "$src_chroot" "${pkgs[@]}"
+[[ $new_chroot == true ]] && "$DIR/bin/generate_chroot" "$src_chroot" "${pkgs[@]}"
+echo "original chroot $src_chroot"
 
 # even though the naive path would be to provison the chroot we just created,
 # still copy it over incase we want to inspect the base chroot, or tweak
@@ -57,7 +62,6 @@ pkgs=(
 
 dist_chroot=$(mktemp -d)
 "$DIR/bin/copy_chroot" "$src_chroot" "$dist_chroot"
-echo "original chroot $src_chroot"
 echo "new chroot      $dist_chroot"
 
 # these modules are installed in the order given in the array.
@@ -76,8 +80,15 @@ modules=(
   final_prep
 )
 
+sudo cp "$DIR/modules/_common.bash" "$dist_chroot/tmp/"
 for module in "${modules[@]}"; do
-  "$DIR/bin/provision_chroot" "$dist_chroot" "${DIR}/modules/$module/install"
+  if [[ -f "${DIR}/modules/$module/setup" ]]; then
+    "${DIR}/modules/$module/setup" "$dist_chroot"
+  fi
+
+  if [[ -f "${DIR}/modules/$module/install" ]]; then
+    "$DIR/bin/provision_chroot" "$dist_chroot" "${DIR}/modules/$module/install"
+  fi
 done
 
 #PIXZ_COMPRESSION_LEVEL=${PIXZ_COMPRESSION_LEVEL:-9}

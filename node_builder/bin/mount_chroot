@@ -3,7 +3,7 @@ set -Eeuo pipefail
 
 chroot_dir="$1"
 
-mkdir -p "$chroot_dir"/{proc,sys,dev}
+sudo mkdir -p "$chroot_dir"/{proc,sys,dev}
 sudo mount -t proc /proc "$chroot_dir/proc/"
 sudo mount --rbind --make-rslave /sys "$chroot_dir/sys/"
 sudo mount --rbind --make-rslave /dev "$chroot_dir/dev/"

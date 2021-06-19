@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -Eeu
-
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+chroot=$1
 
-cp -r "$DIR"/initramfs-tools/* "$CHROOT_DIR/etc/initramfs-tools/"
+git rev-parse HEAD | sudo tee "$chroot/etc/node-build-rev"
