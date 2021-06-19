@@ -52,6 +52,9 @@ else
   cp -r --dereference "$script_dir" "$chroot_dir/$tmp_script_dir_in_chroot/"
 fi
 
-sudo chroot "$chroot_dir" /usr/bin/env PATH=/usr/sbin:/usr/bin/:/bin:/sbin:/usr/local/bin bash "$tmp_script_dir_in_chroot/$module_name/$script_name" "${args[@]}"
+# todo: dummy consul key
+# todo: need a better way of passing this, than setting the env var, I'd like
+#       to pass it as a runtime var via pxe boot
+sudo chroot "$chroot_dir" /usr/bin/env CONSUL_ENCRYPT_KEY=b/YT8Qj7W7mWvWmMBq8lPIbDZcf/VUH+JImmBh0kCt4= PATH=/usr/sbin:/usr/bin/:/bin:/sbin:/usr/local/bin bash "$tmp_script_dir_in_chroot/$module_name/$script_name" "${args[@]}"
 
 rm -r "${chroot_dir:?}/$tmp_script_dir_in_chroot"

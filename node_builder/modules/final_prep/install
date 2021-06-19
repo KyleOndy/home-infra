@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -Eeu
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+. "/tmp/_common.bash"
+common.install_packages initramfs-tools
 
 echo 'root:root' | chpasswd # todo: pull from password manager
 echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
