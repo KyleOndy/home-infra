@@ -92,4 +92,6 @@ for module in "${modules[@]}"; do
 done
 
 #PIXZ_COMPRESSION_LEVEL=${PIXZ_COMPRESSION_LEVEL:-9}
-"$DIR/bin/package_chroot" "$dist_chroot"
+echo "new chroot      $dist_chroot"
+"$DIR/bin/unmount_chroot" "$dist_chroot"
+"$DIR/bin/package_chroot" "$dist_chroot" /tmp/out

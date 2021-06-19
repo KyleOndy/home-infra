@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+set -x
+chroot="$1"
+out_dir="$2"
+
+WORK_DIR=$(mktemp -d --tmpdir=/tmp debootstrap.package.XXXX)
+
+pushd "$chroot" > /dev/null && {
+  # todo: I feel like there should be an easier way to do this.
+  sudo tar -cf "$WORK_DIR/ramroot.tar" .
+}
+popd > /dev/null
+
+pixz "-$PIXZ_COMPRESSION_LEVEL" < "$WORK_DIR/ramroot.tar" > "$WORK_DIR/ramroot.tar.xz"
+mkdir -p "$out_dir"
+cp "$WORK_DIR/ramroot.tar.xz" "$out_dir/ramroot.tar.xz"
