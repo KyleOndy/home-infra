@@ -4,6 +4,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 # todo: port to Makefile
 
+dst_dir="$1"
 
 if [ -z "${1-}" ]; then
   # todo: add some template to mktemp
@@ -94,4 +95,11 @@ done
 #PIXZ_COMPRESSION_LEVEL=${PIXZ_COMPRESSION_LEVEL:-9}
 echo "new chroot      $dist_chroot"
 "$DIR/bin/unmount_chroot" "$dist_chroot"
-"$DIR/bin/package_chroot" "$dist_chroot" /tmp/out
+
+# copy out kernel and initramfs
+"$DIR/bin/copy_assets" "$dist_chroot" "$dst_dir"
+#
+## strip ramroot
+"$DIR/bin/strip_chroot" "$dist_chroot"
+#
+"$DIR/bin/package_chroot" "$dist_chroot" "$dst_dir"

@@ -5,9 +5,8 @@ set -x
 chroot_dir="$1"
 
 is_chroot_unmounted() {
-  mount | rg --quiet "$chroot_dir"
   # there is probably a better wat to do this
-  if $?; then
+  if mount | rg --quiet "$chroot_dir"; then
     return 1
   else
     return 0
@@ -27,7 +26,10 @@ is_chroot_unmounted() {
 # bail early if things are looking good.
 is_chroot_unmounted && exit 0
 
+# todo: how to get this to not stop on error
+set +e
 mount | rg "$chroot_dir" | cut -d' ' -f3 | xargs -r -L1 sudo umount --recursive
+set -e
 
 # check if eveything was unmounted correctly
 is_chroot_unmounted && exit 0
