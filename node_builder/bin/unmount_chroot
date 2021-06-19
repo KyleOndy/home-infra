@@ -3,12 +3,14 @@ set -Eeuo pipefail
 
 chroot_dir="$1"
 
-mounts=(
-"${chroot_dir}/proc"
-"${chroot_dir}/sys"
-"${chroot_dir}/dev"
-)
+#mounts=(
+#"${chroot_dir}/proc"
+#"${chroot_dir}/dev"
+#"${chroot_dir}/sys"
+#)
+#
+#for mount in "${mounts[@]}"; do
+#  if mountpoint -q "$mount"; then sudo umount "$mount"; fi
+#done
 
-for mount in "${mounts[@]}"; do
-  if mountpoint -q "$mount"; then sudo umount "$mount"; fi
-done
+mount | rg "$chroot_dir" | cut -d' ' -f3 | xargs -r -L1 sudo umount --recursive
