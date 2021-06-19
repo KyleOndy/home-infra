@@ -3,6 +3,8 @@ set -Eeuo pipefail
 set -x
 chroot="$1"
 out_dir="$2"
+# todo: pass this in
+PIXZ_COMPRESSION_LEVEL=0
 
 WORK_DIR=$(mktemp -d --tmpdir=/tmp debootstrap.package.XXXX)
 
