@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -Ee
+set -Eeuo pipefail
 
 mounts=(
 "$1/proc"

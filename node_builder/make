@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
-set -x
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 # todo: port to Makefile
@@ -50,7 +49,7 @@ pkgs=(
 #xfsprogs
 )
 
-[[ -z $new_chroot ]] || "$DIR/bin/generate_chroot" "$src_chroot" "${pkgs[@]}"
+[[ -n $new_chroot ]] && "$DIR/bin/generate_chroot" "$src_chroot" "${pkgs[@]}"
 
 # even though the naive path would be to provison the chroot we just created,
 # still copy it over incase we want to inspect the base chroot, or tweak
@@ -58,6 +57,8 @@ pkgs=(
 
 dist_chroot=$(mktemp -d)
 "$DIR/bin/copy_chroot" "$src_chroot" "$dist_chroot"
+echo "original chroot $src_chroot"
+echo "new chroot      $dist_chroot"
 
 # these modules are installed in the order given in the array.
 modules=(

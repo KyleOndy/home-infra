@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
-set -x
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 src_dir="$1"
@@ -24,10 +23,6 @@ rsync_args=(
 sudo rsync "${rsync_args[@]}" "${src_dir}/" "$dst_dir"
 
 set -x
-mkdir -p "$dst_dir"/{proc,sys,dev}
-sudo mount -t proc /proc "$dst_dir/proc/"
-sudo mount --rbind --make-rslave /sys "$dst_dir/sys/"
-sudo mount --rbind --make-rslave /dev "$dst_dir/dev/"
-
+"$DIR/mount_chroot" "$dst_dir"
 #me=$(whoami)
 #sudo chown -R "$me" "$dst_dir"

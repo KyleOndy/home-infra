@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
-set -x
 
 # todo: I am just giving every script my consul encryption key. This is a
 # pretty bad security issues, but I also control all the scripts running, so
