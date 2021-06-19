@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
+set -x
 
 chroot_dir="$1"
 
@@ -10,5 +11,5 @@ mounts=(
 )
 
 for mount in "${mounts[@]}"; do
-  mountpoint -q "$mount" && sudo umount "$mount"
+  if mountpoint -q "$mount"; then sudo umount "$mount"; fi
 done

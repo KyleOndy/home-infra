@@ -1,19 +1,12 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
+set -x
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 src_dir="$1"
 dst_dir="$2"
 
-# just in case
-mounts=(
-"$1/proc"
-"$1/sys"
-"$1/dev"
-)
-
-for mount in "${mounts[@]}"; do
-  mountpoint -q "$mount" && sudo umount "$mount"
-done
+"$DIR/unmount_chroot" "$1"
 
 # https://unix.stackexchange.com/a/112325
 rsync_args=(

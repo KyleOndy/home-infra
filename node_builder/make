@@ -1,10 +1,16 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
+set -x
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 # todo: port to Makefile
 
-src_chroot=${1:-$(mktemp -d)}
+if [ -z "${src_chroot-}" ]; then
+  # todo: add some template to mktemp
+  src_chroot=$(mktemp -d)
+  new_chroot=true
+fi
+
 
 pkgs=(
 #neovim
@@ -44,7 +50,7 @@ pkgs=(
 #xfsprogs
 )
 
-[[ -d "$src_chroot" ]] || "$DIR/bin/generate_chroot" "$src_chroot" "${pkgs[@]}"
+[[ -z $new_chroot ]] || "$DIR/bin/generate_chroot" "$src_chroot" "${pkgs[@]}"
 
 # even though the naive path would be to provison the chroot we just created,
 # still copy it over incase we want to inspect the base chroot, or tweak
