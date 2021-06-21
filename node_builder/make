@@ -50,11 +50,11 @@ modules=(
   #docker
   #keepalived
   #nomad_agent
-  #traefik
-  #consul_agent
-  #glusterfs
-  #mounts
-  #scheduled_reboot
+  traefik
+  consul_agent
+  glusterfs
+  mounts
+  scheduled_reboot
   final_prep
 )
 
@@ -72,11 +72,10 @@ done
 
 #PIXZ_COMPRESSION_LEVEL=${PIXZ_COMPRESSION_LEVEL:-9}
 echo "new chroot      $dist_chroot"
-exit 1
 "$DIR/bin/unmount_chroot" "$dist_chroot"
 
 # copy out kernel and initramfs
-#"$DIR/bin/copy_assets" "$dist_chroot" "$dst_dir"
+"$DIR/bin/copy_assets" "$dist_chroot" "$dst_dir"
 #
 ## strip ramroot
 #"$DIR/bin/strip_chroot" "$dist_chroot"

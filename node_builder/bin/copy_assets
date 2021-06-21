@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+usage() {
+  echo "$0 <source_chroot> <destination>"
+  echo "    No output"
+}
+
+if [[ "$#" -ne 2 ]]; then
+  usage
+  exit 1
+fi
+
+
+
+src_dir="$1"
+dst_dir="$2"
+
+sudo cp -L "$src_dir/boot/initrd.img" "$dst_dir"
+sudo cp -L "$src_dir/boot/vmlinuz" "$dst_dir"
