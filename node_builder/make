@@ -46,10 +46,10 @@ echo "new chroot      $dist_chroot"
 modules=(
   #inital_prep
   #initramfs_tools
-  #babashka
-  #docker
-  #keepalived
-  #nomad_agent
+  babashka
+  docker
+  keepalived
+  nomad_agent
   traefik
   consul_agent
   glusterfs
@@ -80,4 +80,5 @@ echo "new chroot      $dist_chroot"
 ## strip ramroot
 #"$DIR/bin/strip_chroot" "$dist_chroot"
 #
-"$DIR/bin/package_chroot" "$dist_chroot" "$dst_dir"
+ramroot=$("$DIR/bin/package_chroot" "$dist_chroot")
+sudo mv "$ramroot" "$dst_dir"
