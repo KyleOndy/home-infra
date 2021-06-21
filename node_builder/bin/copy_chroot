@@ -34,4 +34,4 @@ rsync_args=(
 
 sudo rsync "${rsync_args[@]}" "${src_dir}/" "$dst_dir"
 
-"$DIR/mount_chroot" "$dst_dir"
+#"$DIR/mount_chroot" "$dst_dir"
