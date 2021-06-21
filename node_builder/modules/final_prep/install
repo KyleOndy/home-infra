@@ -2,10 +2,6 @@
 set -Eeu
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 . "/tmp/_common.bash"
-common.install_packages initramfs-tools linux-generic #-hwe-20.04-edge
+common.install_packages
 
 echo 'root:root' | chpasswd # todo: pull from password manager
-
-# this is what builds the updated initrd to network boot with. It will run the
-# scripts in /etc/initramfs-tools.
-update-initramfs -cvu -k all
