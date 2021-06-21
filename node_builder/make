@@ -45,7 +45,7 @@ echo "new chroot      $dist_chroot"
 # these modules are installed in the order given in the array.
 modules=(
   inital_prep
-  #initramfs_tools
+  initramfs_tools
   babashka
   docker
   keepalived

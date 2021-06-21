@@ -3,4 +3,4 @@ set -Eeu
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 chroot=$1
 
-sudo cp -r "$DIR"/initramfs-tools "$chroot/etc/"
+#sudo cp -r "$DIR"/initramfs-tools "$chroot/etc/"
