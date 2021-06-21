@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -e
+
+mount | rg /tmp/ | cut -d' ' -f3 | xargs -I{} -- sudo umount {}

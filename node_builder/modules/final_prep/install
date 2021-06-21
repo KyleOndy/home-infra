@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
 set -Eeu
-set -x
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 . "/tmp/_common.bash"
-common.install_packages initramfs-tools linux-headers-generic
+common.install_packages initramfs-tools linux-generic #-hwe-20.04-edge
 
 echo 'root:root' | chpasswd # todo: pull from password manager
 echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
 
 # this is what builds the updated initrd to network boot with. It will run the
 # scripts in /etc/initramfs-tools.
-update-initramfs -cvu
+update-initramfs -cvu -k all

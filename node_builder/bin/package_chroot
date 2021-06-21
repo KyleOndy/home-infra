@@ -1,8 +1,17 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
-set -x
+
+usage() {
+  echo "$0 <chroot>"
+  echo "    output: path to ramroot.tar.gz"
+}
+
+if [[ "$#" -ne 1 ]]; then
+  usage
+  exit 1
+fi
+
 chroot="$1"
-out_dir="$2"
 # todo: pass this in
 PIXZ_COMPRESSION_LEVEL=0
 
@@ -15,5 +24,4 @@ pushd "$chroot" > /dev/null && {
 popd > /dev/null
 
 pixz "-$PIXZ_COMPRESSION_LEVEL" < "$WORK_DIR/ramroot.tar" > "$WORK_DIR/ramroot.tar.xz"
-mkdir -p "$out_dir"
-cp "$WORK_DIR/ramroot.tar.xz" "$out_dir/ramroot.tar.xz"
+echo "$WORK_DIR/ramroot.tar.xz"

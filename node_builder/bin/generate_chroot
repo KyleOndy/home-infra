@@ -1,8 +1,18 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
+usage() {
+  echo "$0 <chroot>"
+  echo "    output: none"
+}
+
+if [[ "$#" -ne 1 ]]; then
+  usage
+  exit 1
+fi
+
 chroot_dir="$1"
-pkgs="${*:2}"
+pkgs=""
 
 # todo: honor $TMPDIR, don't assume /tmp
 bootstrap_dir="${XDG_CACHE_HOME:-/tmp/}/deb_bootstrap"

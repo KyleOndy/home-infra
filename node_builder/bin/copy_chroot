@@ -2,6 +2,18 @@
 set -Eeuo pipefail
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
+usage() {
+  echo "$0 <source_chroot> <destination_chroot>"
+  echo "    No output"
+}
+
+if [[ "$#" -ne 2 ]]; then
+  usage
+  exit 1
+fi
+
+
+
 src_dir="$1"
 dst_dir="$2"
 

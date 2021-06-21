@@ -1,60 +1,35 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
+set -x
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-# todo: port to Makefile
+# This script ties together all the individual sripts. This is convient when
+# things are working well. During dev and debuggings, these scripts are
+# intended to be run by themselves too.
+
+
+# this script starts from scratch, so only taking in a directory to place the
+# resultant files
+if [[ "$#" -gt 2 ]] || [[ "$#" -eq 0 ]]; then
+  echo "$0 dist_dir <chroot>"
+  exit 1
+fi
 
 dst_dir="$1"
+mkdir -p "$dst_dir"
 
-if [ -z "${1-}" ]; then
+
+if [ -z "${2-}" ]; then
   # todo: add some template to mktemp
   src_chroot=$(mktemp --tmpdir -d chroot.src.XXXX)
   new_chroot=true
 else
-  src_chroot="$1"
+  src_chroot="$2"
   new_chroot=false
 fi
 
-
-pkgs=(
-#neovim
-
-# -------------------------------------------------
-# BELOW are packages I was installing in the prior version of this script.
-# Keeping them here handy incase I need them again. I'd like to validate the
-# need of each one.
-#
-# core system package. Without these system will not boot
-#locales
-#openssh-server # it will boot, but I like remote access
-#initramfs-tools
-#linux-generic
-
-# debugging / util. These increase size, but are nice to have
-#htop
-#mosh
-# vim-tiny
-
-# application specific
-# todo: should thier own scripts handle installing these?
-#gettext-base    # needed for envsubst, in consul install
-#keepalived      # used for poor mans load balanceer
-#nfs-common      # for NFS share, used by traefik
-
-# these need to be verified that they are required
-#ca-certificates
-#curl
-#gpg-agent
-#parted
-#pixz
-#rsync
-#software-properties-common
-#tar
-#unzip
-#xfsprogs
-)
-
-[[ $new_chroot == true ]] && "$DIR/bin/generate_chroot" "$src_chroot" "${pkgs[@]}"
+[[ $new_chroot == true ]] && "$DIR/bin/generate_chroot" "$src_chroot"
+"$DIR/bin/unmount_chroot" "$src_chroot"
 echo "original chroot $src_chroot"
 
 # even though the naive path would be to provison the chroot we just created,
@@ -81,6 +56,7 @@ modules=(
   final_prep
 )
 
+mkdir -p "$dist_chroot/tmp"
 sudo cp "$DIR/modules/_common.bash" "$dist_chroot/tmp/"
 for module in "${modules[@]}"; do
   if [[ -f "${DIR}/modules/$module/setup" ]]; then
@@ -94,12 +70,13 @@ done
 
 #PIXZ_COMPRESSION_LEVEL=${PIXZ_COMPRESSION_LEVEL:-9}
 echo "new chroot      $dist_chroot"
+exit 1
 "$DIR/bin/unmount_chroot" "$dist_chroot"
 
 # copy out kernel and initramfs
-"$DIR/bin/copy_assets" "$dist_chroot" "$dst_dir"
+#"$DIR/bin/copy_assets" "$dist_chroot" "$dst_dir"
 #
 ## strip ramroot
-"$DIR/bin/strip_chroot" "$dist_chroot"
+#"$DIR/bin/strip_chroot" "$dist_chroot"
 #
 "$DIR/bin/package_chroot" "$dist_chroot" "$dst_dir"

@@ -1,14 +1,19 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-mounts=(
-"$1/proc"
-"$1/sys"
-"$1/dev"
-)
+usage() {
+  echo "$0 <chroot_dir>"
+  echo "    No output"
+}
 
-for mount in "${mounts[@]}"; do
-  mountpoint -q "$mount" && sudo umount "$mount"
-done
+if [[ "$#" -ne 1 ]]; then
+  usage
+  exit 1
+fi
 
-sudo rm -r "$1"
+chroot="$1"
+
+"$DIR/bin/unmount_chroot" "$chroot"
+
+sudo rm -r "$chroot"

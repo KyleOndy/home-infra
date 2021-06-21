@@ -13,13 +13,8 @@ if [ $# -ne 0 ]
     modules="$*"
 fi
 
-# todo: blindly trust $1 is a chroot
-if [[ -z "$1" ]]; then
-  src_chroot=$(mktemp -d)
-  "$DIR/generate_chroot" "$src_chroot"
-else
-  src_chroot=$1
-fi
+src_chroot=$(mktemp -d)
+"$DIR/generate_chroot" "$src_chroot"
 
 errors=()
 for module in $modules; do
