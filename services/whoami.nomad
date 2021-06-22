@@ -33,19 +33,21 @@ job "whoami" {
     }
 
     network {
-      port  "web" { to=80 }
+      # port that docker exposes
+      port  "web" { to= 80 }
     }
 
     service {
       name = "whoami"
+      port = "web"
       tags = [
         "traefik.enable=true",
-        "traefik.http.routers.whoami-prod.rule=Host(`whoami.apps.ondy.org`)",
+        "traefik.http.routers.whoami-prod.rule=Host(`whoami.apps.509ely.com`,`whoami.apps.ondy.org`)",
         "traefik.http.routers.whoami-prod.entrypoints=websecure",
+        #"traefik.http.routers.whoami-prod.entrypoints=web",
         "traefik.http.routers.whoami-prod.tls=true",
         "traefik.http.routers.whoami-prod.tls.certresolver=myresolver",
       ]
-      port = "web"
       check {
         type     = "http"
         port     = "web"
