@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 set -Ee
-set -x
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-MAX_HEALTY_LOOPS=15
-MAX_READY_LOOPS=15
+MAX_HEALTY_LOOPS=30
+MAX_READY_LOOPS=20
 MAX_GLUSTER_LOOPS=40
 SLEEP=15
 STEP=1
