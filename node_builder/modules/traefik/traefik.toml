@@ -1,4 +1,5 @@
 [log]
+  # todo: less logging
   level = "DEBUG"
 [api]
   dashboard = true

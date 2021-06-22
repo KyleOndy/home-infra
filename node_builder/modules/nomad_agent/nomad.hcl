@@ -1,4 +1,4 @@
-datacenter = "dc1"
+datacenter = "509ely"
 data_dir = "/scratch/local"
 telemetry {
   collection_interval = "1s"

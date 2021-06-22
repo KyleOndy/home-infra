@@ -1,6 +1,20 @@
 #!/usr/bin/env bash
 set -Eeu
 
+# common functions to be reused in modules
+
+# easitly install packages. usage:
+# 
+# common.install_packages foo bar
+#
+#
+# packages=(
+#   foo # bizz
+#   bar # bazz
+# )
+# common.install_packages "${packages[@]}"
+#
+#
 common.install_packages() {
   packages=$*
   apt-get -qq update

@@ -4,7 +4,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 . "/tmp/_common.bash"
 common.install_packages curl
 
-VERSION=2.4.8
+VERSION=2.4.9
 
 cd "$(mktemp -d)" && {
   curl --silent --show-error --output traefik.tar.gz -L "https://github.com/containous/traefik/releases/download/v${VERSION}/traefik_v${VERSION}_linux_amd64.tar.gz"

@@ -15,11 +15,11 @@ chroot="$1"
 
 # listed in rought how confident I am each line isn't goring to break something
 paths=(
-"/boot/"*
+"/boot/*"
 "/var/cache"
 
 )
 
-for path in "${paths[@]}"; do
-  sudo rm -r "${chroot}${path}"
+for p in "${paths[@]}"; do
+  sudo rm -r "${chroot}"${p}
 done
