@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -e
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 MAX_HEALTY_LOOPS=20
 MAX_READY_LOOPS=20
@@ -18,9 +19,9 @@ default_nodes=(
 nodes=("${@:-"${default_nodes[@]}"}")
 
 for node in "${nodes[@]}"; do
-  ssh "$node" nomad node drain -enable -yes -self
+  ssh -F "${SCRIPT_DIR}/../ssh_config" "$node" nomad node drain -enable -yes -self
   echo "Rebooting $node"
-  ssh "$node" reboot || true
+  ssh -F "${SCRIPT_DIR}/../ssh_config" "$node" reboot || true
 
   # todo: break out of loop after so many iterations
   # todo: check glusterfs is replicated on node before rebooting
