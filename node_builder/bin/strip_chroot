@@ -21,5 +21,5 @@ paths=(
 )
 
 for path in "${paths[@]}"; do
-  sudo rm -r "${chroot}/${path}"
+  sudo rm -r "${chroot}${path}"
 done
