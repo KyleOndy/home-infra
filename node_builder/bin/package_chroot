@@ -13,7 +13,7 @@ fi
 
 chroot="$1"
 # todo: pass this in
-PIXZ_COMPRESSION_LEVEL=3
+PIXZ_COMPRESSION_LEVEL=9
 
 WORK_DIR=$(mktemp -d --tmpdir=/tmp debootstrap.package.XXXX)
 
