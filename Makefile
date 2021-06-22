@@ -18,3 +18,5 @@ worker-node:
 .PHONY: artifcats
 artifcats:
 	./node_builder/make ./node_builder/dist
+	sudo chown $(shell whoami) -R ./node_builder/dist
+	sudo chmod -R 644 ./node_builder/dist

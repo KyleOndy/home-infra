@@ -13,4 +13,4 @@ fi
 
 chroot="$1"
 
-rm "$chroot/boot/"*
+sudo rm -r "$chroot/boot/"*
