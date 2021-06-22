@@ -5,15 +5,14 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 . "/tmp/_common.bash"
 common.install_packages curl gettext-base unzip
 
-# https://www.nomadproject.io/docs/install/production/deployment-guide/
+# https://learn.hashicorp.com/tutorials/consul/deployment-guide
 export CONSUL_VERSION="1.9.6"
 #ENCRYPT_KEY=${CONSUL_ENCRYPT_KEY:-$1}
 #export ENCRYPT_KEY
 
-# todo: dummy consul key
-# todo: need a better way of passing this, than setting the env var, I'd like
-#       to pass it as a runtime var via pxe boot
-ENCRYPT_KEY=b/YT8Qj7W7mWvWmMBq8lPIbDZcf/VUH+JImmBh0kCt4=
+chown root:root /tmp/consul_encryption_key
+ENCRYPT_KEY="$(cat /tmp/consul_encryption_key)"
+export ENCRYPT_KEY
 
 ARCH=$(uname -m)
 CONSUL_ARCH=

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -Eeu
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+chroot=$1
+
+# todo: this should be protected so only the consul group can read it
+pass show 509ely.com/consul_encryption_key > "$chroot/tmp/consul_encryption_key"
