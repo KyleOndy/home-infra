@@ -1,5 +1,5 @@
 job "prometheus" {
-  datacenters = ["dc1"]
+  datacenters = ["509ely"]
   type        = "service"
 
   group "monitoring" {

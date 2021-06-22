@@ -2,8 +2,9 @@
 set -e
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-MAX_HEALTY_LOOPS=30
-MAX_READY_LOOPS=30
+MAX_HEALTY_LOOPS=15
+MAX_READY_LOOPS=15
+MAX_GLUSTER_LOOPS=40
 SLEEP=15
 STEP=1
 STEPS=2
@@ -25,11 +26,18 @@ nodes=("${@:-"${default_nodes[@]}"}")
 
 for node in "${nodes[@]}"; do
   # is node ready to be rebooted?
+  loop_count=1
   until glusterfs_health "$node"; do
-    echo "Gluster not replicated"
-    sleep 15
+    if [[ "$loop_count" -gt "$MAX_GLUSTER_LOOPS" ]]; then
+      echo "Attempts exceeded. Exiting."
+      exit 1
+    fi
+    echo "s:$STEP/$STEPS a:$loop_count/$MAX_GLUSTER_LOOPS - Waiting for $node to be ready (glusterfs replication)"
+    sleep "$SLEEP"
+    loop_count=$((loop_count+1))
   done
-  echo "Gluster is health"
+  echo "Gluster is healthy"
+
 
   ssh -F "${SCRIPT_DIR}/../ssh_config" "$node" nomad node drain -enable -yes -self
   echo "Rebooting $node"
@@ -66,11 +74,11 @@ for node in "${nodes[@]}"; do
 
   # check glusterFS is all good and replicated
   until glusterfs_health "$node"; do
-    if [[ "$loop_count" -gt "$MAX_READY_LOOPS" ]]; then
+    if [[ "$loop_count" -gt "$MAX_GLUSTER_LOOPS" ]]; then
       echo "Attempts exceeded. Exiting."
       exit 1
     fi
-    echo "s:$STEP/$STEPS a:$loop_count/$MAX_HEALTY_LOOPS - Waiting for $node to be ready (glusterfs replication)"
+    echo "s:$STEP/$STEPS a:$loop_count/$MAX_GLUSTER_LOOPS - Waiting for $node to be ready (glusterfs replication)"
     sleep "$SLEEP"
     loop_count=$((loop_count+1))
   done

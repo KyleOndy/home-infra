@@ -1,7 +1,7 @@
 # vim: set ft=conf
 
 job "whoami" {
-  datacenters = ["dc1"]
+  datacenters = ["509ely"]
   type        = "service"
   update {
     max_parallel      = 1

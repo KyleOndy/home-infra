@@ -6,7 +6,7 @@
 #     - normal user for me to push/pull
 
 job "registry2" {
-  datacenters = ["dc1"]
+  datacenters = ["509ely"]
   type = "service"
   update {
     max_parallel = 1
