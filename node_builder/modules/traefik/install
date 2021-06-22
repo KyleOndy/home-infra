@@ -16,6 +16,7 @@ cd "$(mktemp -d)" && {
 }
 
 cp "$DIR/traefik.service" /etc/systemd/system/traefik.service
+systemctl enable traefik.service
 
 mkdir --parents /etc/traefik
 cp "$DIR/traefik.toml" /etc/traefik/traefik.toml

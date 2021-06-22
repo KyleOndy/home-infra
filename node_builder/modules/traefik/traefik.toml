@@ -9,7 +9,7 @@
     datacenter = "509ely"
 [entryPoints.web]
   # todo: point to server cluster once setup
-  address = "10.25.89.20:80"
+  address = ":80"
   [entryPoints.web.http]
     [entryPoints.web.http.redirections]
       [entryPoints.web.http.redirections.entryPoint]
@@ -17,7 +17,7 @@
         scheme = "https"
 [entryPoints.websecure]
   # todo: point to server cluster once setup
-  address = "10.25.89.20:443"
+  address = ":443"
 [certificatesResolvers.myresolver.acme]
   email = "kyle@ondy.org"
   # yes, traefik is very adament about not sharing the lets letsencrypt acme
