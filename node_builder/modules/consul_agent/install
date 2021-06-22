@@ -6,7 +6,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 common.install_packages curl gettext-base unzip
 
 # https://www.nomadproject.io/docs/install/production/deployment-guide/
-export CONSUL_VERSION="1.9.4"
+export CONSUL_VERSION="1.9.6"
 #ENCRYPT_KEY=${CONSUL_ENCRYPT_KEY:-$1}
 #export ENCRYPT_KEY
 
