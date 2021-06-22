@@ -13,4 +13,13 @@ fi
 
 chroot="$1"
 
-sudo rm -r "$chroot/boot/"*
+# listed in rought how confident I am each line isn't goring to break something
+paths=(
+"/boot/"*
+"/var/cache"
+
+)
+
+for path in "${paths[@]}"; do
+  sudo rm -r "${chroot}/${path}"
+done
