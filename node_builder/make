@@ -82,3 +82,9 @@ echo "new chroot      $dist_chroot"
 #
 ramroot=$("$DIR/bin/package_chroot" "$dist_chroot")
 sudo mv "$ramroot" "$dst_dir"
+
+# todo: ugly
+mkdir -p "$dst_dir/server/arm64"
+cp "$dst_dir/initrd.img"     "$dst_dir/server/arm64/initrd.img"
+cp "$dst_dir/ramroot.tar.xz" "$dst_dir/server/arm64/ramroot.tar.xz"
+cp "$dst_dir/vmlinuz"        "$dst_dir/server/arm64/vmlinuz"

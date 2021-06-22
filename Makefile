@@ -17,8 +17,4 @@ worker-node:
 # todo: use filesnames
 .PHONY: artifcats
 artifcats:
-	mkdir -p ./dist/server/arm64
 	./node_builder/make ./node_builder/dist
-	cp ./node_builder/dist/initrd.img     ./dist/server/arm64/initrd.img
-	cp ./node_builder/dist/ramroot.tar.xz ./dist/server/arm64/ramroot.tar.xz
-	cp ./node_builder/dist/vmlinuz        ./dist/server/arm64/vmlinuz
