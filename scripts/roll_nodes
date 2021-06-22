@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-set -e
+set -Ee
+set -x
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 MAX_HEALTY_LOOPS=15
@@ -47,7 +48,7 @@ for node in "${nodes[@]}"; do
   # todo: check glusterfs is replicated on node before rebooting
   # this just waits for the node to come up and be available
   loop_count=1
-  until [[ $(curl -s "${node}.dmz.509ely.com:4646/v1/agent/health" | jq '.client.ok') == "true" ]]; do
+  until [[ $(curl --fail -s "${node}.dmz.509ely.com:4646/v1/agent/health" | jq '.client.ok') == "true" ]]; do
     if [[ "$loop_count" -gt "$MAX_READY_LOOPS" ]]; then
       echo "Attempts exceeded. Exiting."
       exit 1
@@ -59,10 +60,10 @@ for node in "${nodes[@]}"; do
   step=$((step+1))
 
   echo "Getting $node's node_id"
-  node_id=$(curl -s w1.dmz.509ely.com:4646/v1/agent/self | jq -r '.stats.client.node_id')
+  node_id=$(curl --fail -s w1.dmz.509ely.com:4646/v1/agent/self | jq -r '.stats.client.node_id')
   loop_count=1
   # todo: break out of loop after so many iterations
-  until [[ $(curl -s "${node}.dmz.509ely.com:4646/v1/node/$node_id" | jq -r '.Status') == "ready" ]]; do
+  until [[ $(curl --fail -s "${node}.dmz.509ely.com:4646/v1/node/$node_id" | jq -r '.Status') == "ready" ]]; do
     if [[ "$loop_count" -gt "$MAX_READY_LOOPS" ]]; then
       echo "Attempts exceeded. Exiting."
       exit 1
