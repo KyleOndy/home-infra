@@ -17,4 +17,4 @@ EOM
 mkdir -p ./util-node/files/
 cp -ra ./node_builder/dist/. ./util-node/files/
 
-rsync -avrpll --delete "./util-node/" "${UTIL_NODE_USERNAME}@${UTIL_NODE_HOSTNAME}:${BOOT_STRAPPING_DIR}"
+rsync -avrpll --progress --delete "./util-node/" "${UTIL_NODE_USERNAME}@${UTIL_NODE_HOSTNAME}:${BOOT_STRAPPING_DIR}"

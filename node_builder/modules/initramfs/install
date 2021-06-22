@@ -6,4 +6,4 @@ common.install_packages pixz tar initramfs-tools linux-generic #-hwe-20.04-edge
 
 # this is what builds the updated initrd to network boot with. It will run the
 # scripts in /etc/initramfs-tools.
-update-initramfs -cvu -k all
+update-initramfs -cu -k all

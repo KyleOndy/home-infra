@@ -19,4 +19,11 @@ worker-node:
 artifcats:
 	./node_builder/make ./node_builder/dist
 	sudo chown $(shell whoami) -R ./node_builder/dist
-	sudo chmod -R 644 ./node_builder/dist
+	sudo chmod -R 755 ./node_builder/dist
+
+.PHONY: move_artifacts
+move_artifacts:
+	mkdir -p ./util-node/files/worker/amd64
+	sudo cp ./node_builder/dist/initrd.img     ./util-node/files/worker/amd64/initrd.img
+	sudo cp ./node_builder/dist/ramroot.tar.xz ./util-node/files/worker/amd64/ramroot.tar.xz
+	sudo cp ./node_builder/dist/vmlinuz        ./util-node/files/worker/amd64/vmlinuz

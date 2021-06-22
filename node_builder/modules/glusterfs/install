@@ -6,7 +6,7 @@ set -Eeu
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 . "/tmp/_common.bash"
-common.install_packages software-properties-common xfsprogs
+common.install_packages software-properties-common xfsprogs jq
 
 add-apt-repository ppa:gluster/glusterfs-9 -y
 common.install_packages glusterfs-client glusterfs-server
