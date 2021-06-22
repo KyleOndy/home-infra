@@ -15,10 +15,22 @@ default_nodes=(
   w3
 )
 
+glusterfs_health() {
+  # todo: find a better check.
+  ssh -F "$SCRIPT_DIR/../ssh_config" "$1" '[[ "$(gluster volume heal shared info | grep "Number of entries: 0" | wc -l)" -eq 3 ]]'
+}
+
 # can pass in nodes as args
 nodes=("${@:-"${default_nodes[@]}"}")
 
 for node in "${nodes[@]}"; do
+  # is node ready to be rebooted?
+  until glusterfs_health "$node"; do
+    echo "Gluster not replicated"
+    sleep 15
+  done
+  echo "Gluster is health"
+
   ssh -F "${SCRIPT_DIR}/../ssh_config" "$node" nomad node drain -enable -yes -self
   echo "Rebooting $node"
   ssh -F "${SCRIPT_DIR}/../ssh_config" "$node" reboot || true
@@ -51,5 +63,18 @@ for node in "${nodes[@]}"; do
     sleep "$SLEEP"
     loop_count=$((loop_count+1))
   done
+
+  # check glusterFS is all good and replicated
+  until glusterfs_health "$node"; do
+    if [[ "$loop_count" -gt "$MAX_READY_LOOPS" ]]; then
+      echo "Attempts exceeded. Exiting."
+      exit 1
+    fi
+    echo "s:$STEP/$STEPS a:$loop_count/$MAX_HEALTY_LOOPS - Waiting for $node to be ready (glusterfs replication)"
+    sleep "$SLEEP"
+    loop_count=$((loop_count+1))
+  done
+  echo "Gluster is healthy"
+
   echo "$node reports ready. Continuting to next node"
 done
