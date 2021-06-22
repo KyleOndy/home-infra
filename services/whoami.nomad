@@ -67,7 +67,7 @@ job "whoami" {
       }
 
       resources {
-        cpu    = 500 # 500 MHz
+        cpu    = 50 # 500 MHz
         memory = 256 # 256MB
       }
     }

@@ -1,6 +1,6 @@
 [log]
   # todo: less logging
-  level = "DEBUG"
+  level = "INFO"
 [api]
   dashboard = true
 [providers.consulCatalog]
