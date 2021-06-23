@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -e
+
+curl --request PUT http://10.25.89.20:4646/v1/system/gc
