@@ -9,7 +9,7 @@ StartLimitIntervalSec=10
 
 [Service]
 ExecReload=/bin/kill -HUP $MAINPID
-ExecStartPre=mkdir -p /mnt/shared/nomad
+ExecStartPre=+mkdir -p /mnt/shared/nomad
 ExecStart=/usr/local/bin/nomad agent -config /etc/nomad.d
 KillMode=process
 KillSignal=SIGINT
