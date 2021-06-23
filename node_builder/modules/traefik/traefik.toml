@@ -1,8 +1,6 @@
 [log]
   # todo: less logging
   level = "INFO"
-[api]
-  dashboard = true
 [providers.consulCatalog]
   exposedByDefault = false
   [providers.consulCatalog.endpoint]
@@ -31,12 +29,15 @@
   [certificatesResolvers.myresolver.acme.tlsChallenge]
 
 # https://docs.traefik.io/operations/dashboard/#secure-mode
-[http.routers.my-api]
-  rule = "Host(`traefik.apps.509ely.com`)"
-  service = "api@internal"
-  middlewares = ["traefik-auth"]
-
-[http.middlewares.traefik-auth.basicAuth]
-  users = [
-    "kyle:$apr1$C.zhFNPC$uBk/NdASEIjqnNGGu4Sv//",
-  ]
+[api]
+  dashboard = true
+  insecure = true
+#[http.routers.my-api]
+#  rule = "Host(`traefik.apps.509ely.com`)"
+#  service = "api@internal"
+#  middlewares = ["traefik-auth"]
+#
+#[http.middlewares.traefik-auth.basicAuth]
+#  users = [
+#    "kyle:$apr1$C.zhFNPC$uBk/NdASEIjqnNGGu4Sv//",
+#  ]
