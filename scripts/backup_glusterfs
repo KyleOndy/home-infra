@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -e
+
+BACKUP_DST="$HOME/backsups/home-infra/gluster"
+
+mkdir -p "$BACKUP_DST"
+
+rsync -e "ssh -F ssh_config" -avrP w1:/mnt/shared "$BACKUP_DST"
