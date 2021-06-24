@@ -25,6 +25,10 @@ glusterfs_health() {
 nodes=("${@:-"${default_nodes[@]}"}")
 
 for node in "${nodes[@]}"; do
+  # todo: is node even up?
+  # it would be nice to have the following function, would be way cleaner
+  #     (loop check_func max_loop loop_sleep)
+
   # is node ready to be rebooted?
   loop_count=1
   until glusterfs_health "$node"; do
@@ -58,6 +62,7 @@ for node in "${nodes[@]}"; do
   done
   step=$((step+1))
 
+  sleep 5
   echo "Getting $node's node_id"
   node_id=$(curl --fail -s w1.dmz.509ely.com:4646/v1/agent/self | jq -r '.stats.client.node_id')
   if [[ -z "$node_id" ]]; then
