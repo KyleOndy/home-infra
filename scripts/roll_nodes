@@ -47,6 +47,10 @@ for node in "${nodes[@]}"; do
   echo "Rebooting $node"
   ssh -F "${SCRIPT_DIR}/../ssh_config" "$node" reboot || true
 
+  # hacky way to wait until node goes down
+  while ! ping -c "$node" &>/dev/null; do :; done
+  sleep 10 # make sure node is _really_ down
+
   # todo: break out of loop after so many iterations
   # todo: check glusterfs is replicated on node before rebooting
   # this just waits for the node to come up and be available
