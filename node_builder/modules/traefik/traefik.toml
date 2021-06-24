@@ -25,7 +25,8 @@
   # I __should__ be able to avoid any race conditions.
   #
   # todo: update to glusterfs storage. Once I have nodes up long term
-  storage = "/mnt/nfs/services/traefik/acme/acme.json"
+  #storage = "/mnt/nfs/services/traefik/acme/acme.json"
+  storage = "/mnt/shared/services/traefik/acme.json"
   [certificatesResolvers.myresolver.acme.tlsChallenge]
 
 # https://docs.traefik.io/operations/dashboard/#secure-mode
