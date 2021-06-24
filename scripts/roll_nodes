@@ -48,7 +48,7 @@ for node in "${nodes[@]}"; do
   ssh -F "${SCRIPT_DIR}/../ssh_config" "$node" reboot || true
 
   # hacky way to wait until node goes down
-  while ! ping -c1 "$node" &>/dev/null; do :; done
+  while ! ping -c1 "$node.dmz.509ely.com" &>/dev/null; do :; done
   sleep 10 # make sure node is _really_ down
 
   # todo: break out of loop after so many iterations
