@@ -65,8 +65,8 @@ job "gitea" {
       #  "DB_PASSWD"  = "gitea"
       #}
       resources {
-        cpu    = 50
-        memory = 256
+        cpu    = 100
+        memory = 512
       }
     }
   }
