@@ -60,6 +60,11 @@ for node in "${nodes[@]}"; do
 
   echo "Getting $node's node_id"
   node_id=$(curl --fail -s w1.dmz.509ely.com:4646/v1/agent/self | jq -r '.stats.client.node_id')
+  if [[ -z "$node_id" ]]; then
+    # todo: shouldn't fail, should loop until I get node_id
+    echo "Could not get node ID!"
+    exit 1
+  fi
   loop_count=1
   # todo: break out of loop after so many iterations
   until [[ $(curl --fail -s "${node}.dmz.509ely.com:4646/v1/node/$node_id" | jq -r '.Status') == "ready" ]]; do
