@@ -62,7 +62,7 @@ job "kyleondy-web" {
       driver = "docker"
 
       config {
-        image = "kyleondy/website:9b16b54efcf7882afd8b602d7cc6b27aa5ca39ac"
+        image = "kyleondy/website:ec3c2f7d34d9c2df4b2ff7badbe68f9ea2da8a5c"
         ports = ["web"]
       }
 
