@@ -1,4 +1,4 @@
-.PHONY: apply destroy plan-destroy plan prep
+.PHONY: apply destroy plan-destroy plan prep get_opvn
 VARS="variables/$(ENV)-$(REGION).tfvars"
 
 plan:
@@ -30,3 +30,11 @@ prep:
 		-input=false \
 		-force-copy \
 		-upgrade
+
+get_opvn:
+	rsync \
+		-avrP \
+		--protect-args \
+		-e "ssh -o "StrictHostKeyChecking=no" -o UserKnownHostsFile=/dev/null -i $(shell terraform output --raw keypair)" \
+		ubuntu@$(shell terraform output --raw vpn_ip):ovpn/ \
+		./ovpn/
