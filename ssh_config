@@ -25,3 +25,6 @@ Host m2
 Host m3
   Hostname m3.dmz.509ely.com
   User root
+host util
+  Hostname util.dmz.509ely.com
+  user pi
