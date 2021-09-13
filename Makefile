@@ -11,9 +11,6 @@ COMPRESSION_LEVEL=9
 env:
 	env | sort
 
-worker-node:
-	sudo -E ./node_builder/make_node ./dist ${CONSUL_ENCRYPT_KEY}
-
 # todo: use filesnames
 .PHONY: artifcats
 artifcats:
