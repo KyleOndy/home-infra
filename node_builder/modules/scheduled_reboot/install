@@ -3,6 +3,8 @@ set -Eeu
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
+cp "$DIR/graceful_reboot"   /usr/local/bin/
+
 cp "$DIR/scheduled-reboot.service" /etc/systemd/system/scheduled-reboot.service
 cp "$DIR/scheduled-reboot.timer"   /etc/systemd/system/scheduled-reboot.timer
 systemctl enable scheduled-reboot.timer

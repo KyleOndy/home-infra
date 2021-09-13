@@ -3,4 +3,4 @@ Description=Scheduled Reboot
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/systemctl --force reboot
+ExecStart=/usr/local/bin/graceful_reboot

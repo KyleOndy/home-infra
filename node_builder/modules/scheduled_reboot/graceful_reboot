@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -e
+
+die() {
+  >&2 echo "Error! $*"
+  exit 1
+}
+
+is_glusterfs_healthy() {
+  /usr/local/bin/check_glusterfs_health > /dev/null
+  return $?
+}
+
+drain_nomad_jobs() {
+  nomad node drain -enable -yes -self
+}
+
+set_as_keepalived_passive() {
+  # todo: is this possible?
+  #die "todo keepalived"
+  pass
+}
+
+is_glusterfs_healthy || die "Glustefs is not in a good state"
+set_as_keepalived_passive
+drain_nomad_jobs
+reboot
+
