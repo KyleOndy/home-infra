@@ -16,7 +16,7 @@ Type=notify
 # hack: this path is hardcoded, which is bad.
 # on a cluster bootstrap, this directory doe not exisit, and traefik does not
 # creat it, it just fails to create any certs, which is frustrating.
-ExecStart=mkdir -p /mnt/shared/services/traefik/
+ExecStartPre=mkdir -p /mnt/shared/services/traefik/
 ExecStart=/usr/bin/traefik --configFile=/etc/traefik/traefik.toml
 Restart=always
 WatchdogSec=1s
