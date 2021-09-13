@@ -1,0 +1,8 @@
+- create graceful-reboot script on hosts
+- create glusterfs-healthy script on host
+- some kind of systemd lint
+- do a lint / sanity check before rolling nodes
+- add ability for a single node to canary deploy.
+  - initall as a passive node
+  - take over as leader
+  - roll rest of nodes
