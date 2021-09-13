@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -e
+
+if [[ "$(gluster volume heal shared info | grep -c "Number of entries: 0")" -eq 3 ]]; then
+  echo "Healthy"
+  exit 0
+else
+  echo "Unhealthy"
+  exit 1
+fi

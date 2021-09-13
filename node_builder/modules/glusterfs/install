@@ -20,3 +20,5 @@ systemctl enable gluster-init.timer
 
 mkdir -p /usr/local/bin/
 cp "$DIR/gluster-init.sh" /usr/local/bin/gluster-init.sh
+
+cp "$DIR/check_glusterfs_health" /usr/local/bin/check_glusterfs_health
